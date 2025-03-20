@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -115,6 +116,12 @@ class Offre
     #[ORM\OneToMany(targetEntity: Offreproduit::class, mappedBy: 'offre')]
     private Collection $offreproduits;
 
+    public function __construct()
+    {
+        $this->offrecoachs = new ArrayCollection();
+        $this->offreproduits = new ArrayCollection();
+    }
+
     /**
      * @return Collection<int, Offreproduit>
      */
@@ -137,6 +144,18 @@ class Offre
     public function removeOffreproduit(Offreproduit $offreproduit): self
     {
         $this->getOffreproduits()->removeElement($offreproduit);
+        return $this;
+    }
+
+    public function getDureeValidite(): ?\DateTimeInterface
+    {
+        return $this->duree_validite;
+    }
+
+    public function setDureeValidite(\DateTimeInterface $duree_validite): static
+    {
+        $this->duree_validite = $duree_validite;
+
         return $this;
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -83,6 +84,35 @@ class PaiementPlanning
     public function setDate_paiement(\DateTimeInterface $date_paiement): self
     {
         $this->date_paiement = $date_paiement;
+        return $this;
+    }
+
+    public function getIdPaiement(): ?int
+    {
+        return $this->id_paiement;
+    }
+
+    public function getEtatPaiement(): ?string
+    {
+        return $this->etat_paiement;
+    }
+
+    public function setEtatPaiement(string $etat_paiement): static
+    {
+        $this->etat_paiement = $etat_paiement;
+
+        return $this;
+    }
+
+    public function getDatePaiement(): ?\DateTimeInterface
+    {
+        return $this->date_paiement;
+    }
+
+    public function setDatePaiement(\DateTimeInterface $date_paiement): static
+    {
+        $this->date_paiement = $date_paiement;
+
         return $this;
     }
 

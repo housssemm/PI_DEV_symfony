@@ -59,6 +59,11 @@ class Categorie
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorie')]
     private Collection $produits;
 
+    public function __construct()
+    {
+        $this->produits = new ArrayCollection();
+    }
+
     /**
      * @return Collection<int, Produit>
      */

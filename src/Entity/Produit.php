@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -172,6 +173,12 @@ class Produit
 
     #[ORM\OneToMany(targetEntity: Panierproduit::class, mappedBy: 'produit')]
     private Collection $panierproduits;
+
+    public function __construct()
+    {
+        $this->offreproduits = new ArrayCollection();
+        $this->panierproduits = new ArrayCollection();
+    }
 
     /**
      * @return Collection<int, Panierproduit>

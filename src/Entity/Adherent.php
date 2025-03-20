@@ -168,6 +168,12 @@ class Adherent
     #[ORM\OneToMany(targetEntity: Seance::class, mappedBy: 'adherent')]
     private Collection $seances;
 
+    public function __construct()
+    {
+        $this->paiementPlannings = new ArrayCollection();
+        $this->seances = new ArrayCollection();
+    }
+
     /**
      * @return Collection<int, Seance>
      */
@@ -190,6 +196,30 @@ class Adherent
     public function removeSeance(Seance $seance): self
     {
         $this->getSeances()->removeElement($seance);
+        return $this;
+    }
+
+    public function getObjectifPersonnelle(): ?string
+    {
+        return $this->Objectif_personnelle;
+    }
+
+    public function setObjectifPersonnelle(?string $Objectif_personnelle): static
+    {
+        $this->Objectif_personnelle = $Objectif_personnelle;
+
+        return $this;
+    }
+
+    public function getNiveauActivites(): ?string
+    {
+        return $this->Niveau_activites;
+    }
+
+    public function setNiveauActivites(?string $Niveau_activites): static
+    {
+        $this->Niveau_activites = $Niveau_activites;
+
         return $this;
     }
 }

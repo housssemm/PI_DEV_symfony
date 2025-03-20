@@ -334,6 +334,20 @@ class User
     )]
     private Collection $evenements;
 
+    public function __construct()
+    {
+        $this->adherents = new ArrayCollection();
+        $this->admins = new ArrayCollection();
+        $this->coachs = new ArrayCollection();
+        $this->createurevenements = new ArrayCollection();
+        $this->investisseurproduits = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+        $this->paniers = new ArrayCollection();
+        $this->participantevenements = new ArrayCollection();
+        $this->reclamations = new ArrayCollection();
+        $this->evenements = new ArrayCollection();
+    }
+
     public function getEvenements(): Collection
     {
         if (!$this->evenements instanceof Collection) {

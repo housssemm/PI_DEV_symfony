@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -101,6 +102,11 @@ class Reclamation
 
     #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'reclamation')]
     private Collection $reponses;
+
+    public function __construct()
+    {
+        $this->reponses = new ArrayCollection();
+    }
 
     /**
      * @return Collection<int, Reponse>

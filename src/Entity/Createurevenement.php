@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -105,6 +106,30 @@ class Createurevenement
     public function setCertificat_valide(?bool $Certificat_valide): self
     {
         $this->Certificat_valide = $Certificat_valide;
+        return $this;
+    }
+
+    public function getNomOrganisation(): ?string
+    {
+        return $this->Nom_organisation;
+    }
+
+    public function setNomOrganisation(?string $Nom_organisation): static
+    {
+        $this->Nom_organisation = $Nom_organisation;
+
+        return $this;
+    }
+
+    public function isCertificatValide(): ?bool
+    {
+        return $this->Certificat_valide;
+    }
+
+    public function setCertificatValide(?bool $Certificat_valide): static
+    {
+        $this->Certificat_valide = $Certificat_valide;
+
         return $this;
     }
 

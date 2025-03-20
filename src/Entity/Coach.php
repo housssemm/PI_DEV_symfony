@@ -168,6 +168,13 @@ class Coach
     #[ORM\OneToMany(targetEntity: Seance::class, mappedBy: 'coach')]
     private Collection $seances;
 
+    public function __construct()
+    {
+        $this->offrecoachs = new ArrayCollection();
+        $this->plannings = new ArrayCollection();
+        $this->seances = new ArrayCollection();
+    }
+
     /**
      * @return Collection<int, Seance>
      */
@@ -190,6 +197,30 @@ class Coach
     public function removeSeance(Seance $seance): self
     {
         $this->getSeances()->removeElement($seance);
+        return $this;
+    }
+
+    public function getAnneeExperience(): ?int
+    {
+        return $this->Annee_experience;
+    }
+
+    public function setAnneeExperience(?int $Annee_experience): static
+    {
+        $this->Annee_experience = $Annee_experience;
+
+        return $this;
+    }
+
+    public function isCertificatValide(): ?bool
+    {
+        return $this->Certificat_valide;
+    }
+
+    public function setCertificatValide(?bool $Certificat_valide): static
+    {
+        $this->Certificat_valide = $Certificat_valide;
+
         return $this;
     }
 

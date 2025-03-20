@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -111,6 +112,11 @@ class Investisseurproduit
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'investisseurproduit')]
     private Collection $produits;
 
+    public function __construct()
+    {
+        $this->produits = new ArrayCollection();
+    }
+
     /**
      * @return Collection<int, Produit>
      */
@@ -133,6 +139,30 @@ class Investisseurproduit
     public function removeProduit(Produit $produit): self
     {
         $this->getProduits()->removeElement($produit);
+        return $this;
+    }
+
+    public function getNomEntreprise(): ?string
+    {
+        return $this->Nom_entreprise;
+    }
+
+    public function setNomEntreprise(?string $Nom_entreprise): static
+    {
+        $this->Nom_entreprise = $Nom_entreprise;
+
+        return $this;
+    }
+
+    public function isCertificatValide(): ?bool
+    {
+        return $this->Certificat_valide;
+    }
+
+    public function setCertificatValide(?bool $Certificat_valide): static
+    {
+        $this->Certificat_valide = $Certificat_valide;
+
         return $this;
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -82,6 +83,18 @@ class Reponse
     public function setStatus(string $status): self
     {
         $this->status = $status;
+        return $this;
+    }
+
+    public function getDateReponse(): ?\DateTimeInterface
+    {
+        return $this->Date_reponse;
+    }
+
+    public function setDateReponse(?\DateTimeInterface $Date_reponse): static
+    {
+        $this->Date_reponse = $Date_reponse;
+
         return $this;
     }
 

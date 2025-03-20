@@ -46,6 +46,11 @@ class Panier
     #[ORM\OneToMany(targetEntity: Panierproduit::class, mappedBy: 'panier')]
     private Collection $panierproduits;
 
+    public function __construct()
+    {
+        $this->panierproduits = new ArrayCollection();
+    }
+
     /**
      * @return Collection<int, Panierproduit>
      */
