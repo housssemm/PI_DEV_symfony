@@ -3,8 +3,8 @@
 /**
  * Returns the importmap for this application.
  *
- * - "path" is a path inside the asset mapper system. Use the
- *     "debug:asset-map" command to see the full list of paths.
+ * - "path" is a path inside the assets mapper system. Use the
+ *     "debug:assets-map" command to see the full list of paths.
  *
  * - "entrypoint" (JavaScript only) set to true for any module that will
  *     be used as an "entrypoint" (and passed to the importmap() Twig function).
