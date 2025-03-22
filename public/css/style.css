@@ -332,9 +332,24 @@ ol {
 	padding-top: 55px;
 	z-index: 99;
 }
-
+.col-lg-3 {
+	position: relative; /* Permet à .logoo d’être positionné par rapport à cette div */
+}
 .logo a {
 	display: inline-block;
+}
+.logoo {
+	position: absolute;
+	top: 50%; /* Centre verticalement */
+	left: 50%; /* Centre horizontalement */
+	transform: translate(-50%, -50%); /* Corrige l'alignement */
+}
+
+
+.logoo img {
+	display: block; /* Évite les marges indésirables */
+	max-width: 100%; /* Empêche le logo de dépasser son conteneur */
+	height: auto; /* Garde les proportions */
 }
 
 .nav-menu {
@@ -1141,6 +1156,7 @@ ol {
 
 .fs-about .fa-logo {
 	margin-bottom: 30px;
+	width: 200px;
 }
 
 .fs-about .fa-logo a {
