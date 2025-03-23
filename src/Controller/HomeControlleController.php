@@ -7,19 +7,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class HomeControlleController extends AbstractController{
-    #[Route('/', name: 'app_home_controlle')]
-    public function index(): Response
+    /**
+     * @Route("/api/pose-data", name="pose_data", methods={"POST"})
+     */
+    public function handlePoseData(Request $request, PostureAnalysisService $analysisService): JsonResponse
     {
-        return $this->render('base.html.twig', [
-            'controller_name' => 'HomeControlleController',
-        ]);
-    }
+        // Récupération des données envoyées par le front-end
+        $data = json_decode($request->getContent(), true);
+        $poseData = $data['pose'];
 
-    #[Route('/test', name: 'app_home_controllee')]
-    public function test(): Response
-    {
-        return $this->render('home_controlle/test.html.twig', [
-            'controller_name' => 'HomeControlleController',
+        // Appeler le service d'analyse de posture pour traiter les données
+        $result = $analysisService->analyzePose($poseData);
+
+        // Retourner une réponse JSON avec le résultat de l'analyse
+        return new JsonResponse([
+            'status' => 'success',
+            'message' => 'Données de posture reçues et analysées',
+            'result' => $result,
         ]);
     }
 }
