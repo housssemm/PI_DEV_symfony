@@ -204,4 +204,121 @@ final class EvenementController extends AbstractController
             'event' => $event
         ]);
     }
+//    #[Route('/bmi-calculator', name: 'app_bmi_calculator')]
+//    public function bmiCalculator(Request $request): Response
+//    {
+//        if ($request->isMethod('POST')) {
+//            $weight = $request->request->get('weight');
+//            $height = $request->request->get('height');
+//
+//            // Calculate BMI
+//            $heightInMeters = $height / 100;
+//            $bmi = $weight / ($heightInMeters * $heightInMeters);
+//
+//            // Return JSON response for AJAX requests
+//            if ($request->isXmlHttpRequest()) {
+//                return new JsonResponse([
+//                    'bmi' => round($bmi, 2),
+//                    'category' => $this->getBMICategory($bmi)
+//                ]);
+//            }
+//        }
+//
+//        return $this->render('evenement/bmi-calculator.html.twig');
+//    }
+//
+//    private function getBMICategory(float $bmi): string
+//    {
+//        if ($bmi < 18.5) return 'Underweight';
+//        if ($bmi < 25) return 'Normal weight';
+//        if ($bmi < 30) return 'Overweight';
+//        return 'Obese';
+//    }
+
+
+//
+//    #[Route('/bmi', name: 'bmi_calculator')]
+//    public function bmi(Request $request): Response
+//    {
+//        $bmi = null;
+//        $message = '';
+//
+//        if ($request->isMethod('POST')) {
+//            $height = (float)$request->request->get('height');
+//            $weight = (float)$request->request->get('weight');
+//
+//            if ($height > 0 && $weight > 0) {
+//                $bmi = $weight / (($height / 100) ** 2);
+//                $message = $this->getBMICategory($bmi);
+//            } else {
+//                $message = "Veuillez entrer des valeurs valides.";
+//            }
+//        }
+//
+//        return $this->render('evenement/bmi-calculator.html.twig', [
+//            'bmi' => $bmi,
+//            'message' => $message
+//        ]);
+//    }
+//
+//    private function getBMICategory(float $bmi): string
+//    {
+//        if ($bmi < 18.5) {
+//            return "Insuffisance pondérale (maigreur)";
+//        } elseif ($bmi < 24.9) {
+//            return "Poids normal";
+//        } elseif ($bmi < 29.9) {
+//            return "Surpoids";
+//        } else {
+//            return "Obésité";
+//        }
+//    }
+
+
+
+
+    #[Route('/bmi', name: 'bmi_calculator')]
+
+    public function ibm(Request $request)
+    {
+        $bmi = null;
+        $message = null;
+
+        if ($request->isMethod('POST')) {
+            // Get values from the form
+            $height = $request->request->get('height');
+            $weight = $request->request->get('weight');
+            $age = $request->request->get('age');
+            $sex = $request->request->get('sex');
+
+            // Validate the form data (you can add more validation here)
+            if ($height && $weight) {
+                // Convert height from cm to meters
+                $heightInMeters = $height / 100;
+
+                // Calculate BMI (BMI = weight / height^2)
+                $bmi = $weight / ($heightInMeters * $heightInMeters);
+
+                // Create a message based on BMI
+                if ($bmi < 18.5) {
+                    $message = 'Underweight';
+                } elseif ($bmi >= 18.5 && $bmi <= 24.9) {
+                    $message = 'Healthy weight';
+                } elseif ($bmi >= 25 && $bmi <= 29.9) {
+                    $message = 'Overweight';
+                } else {
+                    $message = 'Obese';
+                }
+            } else {
+                $message = 'Please provide valid height and weight values.';
+            }
+        }
+
+        // Render the form view with results
+        return $this->render('evenement/bmi-calculator.html.twig', [
+            'bmi' => $bmi,
+            'message' => $message
+        ]);
+    }
+
 }

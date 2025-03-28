@@ -2078,6 +2078,35 @@ ol {
 	background: #f36100;
 }
 
+
+
+
+.chart-calculate-form form select {
+	font-size: 14px;
+	color: #c4c4c4;
+	width: 100%;
+	height: 50px;
+	border: 1px solid #363636;
+	padding-left: 20px;
+	padding-right: 5px;
+	background: transparent;
+	margin-bottom: 20px;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
+.chart-calculate-form form select::-ms-expand {
+	display: none;
+}
+
+/* Optional: Add a custom dropdown arrow */
+.chart-calculate-form form select {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c4c4c4'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+	background-repeat: no-repeat;
+	background-position: right 20px center;
+	background-size: 20px;
+}
 /*---------------------
   Blog Section
 -----------------------*/
