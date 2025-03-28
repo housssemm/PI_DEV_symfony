@@ -22,11 +22,53 @@ final class EvenementController extends AbstractController
     }
 
     #[Route('/events', name: 'app_events')]
-    public function events(EvenementRepository $ev): Response
+    public function listEvenement(EvenementRepository $evenementRepository): Response
     {
-        $list = $ev->findAll();
+        $request = Request::createFromGlobals();
+        $queryBuilder = $evenementRepository->createQueryBuilder('e');
 
-        // Convertir les images en base64 si elles existent
+        // Handle status filter
+        $etatFilters = $request->query->all('etat');
+        if (!empty($etatFilters)) {
+            $queryBuilder->andWhere('e.etat IN (:etats)')
+                ->setParameter('etats', $etatFilters);
+        }
+
+        // Handle type filter
+        $typeFilters = $request->query->all('type');
+        if (!empty($typeFilters)) {
+            $queryBuilder->andWhere('e.type IN (:types)')
+                ->setParameter('types', $typeFilters);
+        }
+
+        // Handle price filter
+        $prixFilters = $request->query->all('prix');
+        if (!empty($prixFilters)) {
+            $priceConditions = [];
+            foreach ($prixFilters as $filter) {
+                switch ($filter) {
+                    case '0-50':
+                        $priceConditions[] = 'e.prix <= 50';
+                        break;
+                    case '50-100':
+                        $priceConditions[] = 'e.prix > 50 AND e.prix <= 100';
+                        break;
+                    case '100+':
+                        $priceConditions[] = 'e.prix > 100';
+                        break;
+                }
+            }
+            if (!empty($priceConditions)) {
+                $queryBuilder->andWhere('(' . implode(' OR ', $priceConditions) . ')');
+            }
+        }
+
+        // Order by date
+        $queryBuilder->orderBy('e.dateDebut', 'DESC');
+
+        $list = $queryBuilder->getQuery()->getResult();
+
+        // Convert images to base64 for display
         foreach ($list as $event) {
             $image = $event->getImage();
             if ($image) {
@@ -35,7 +77,7 @@ final class EvenementController extends AbstractController
         }
 
         return $this->render('evenement/ListEvenement.html.twig', [
-            "list" => $list
+            'list' => $list,
         ]);
     }
 
@@ -147,5 +189,19 @@ final class EvenementController extends AbstractController
         }
 
         return $this->render('evenement/AddEvenement.html.twig');
+    }
+
+    #[Route('/event/{id}', name: 'app_event_details')]
+    public function eventDetails(Evenement $event): Response
+    {
+        // Convert image to base64 for display
+        $image = $event->getImage();
+        if ($image) {
+            $event->setBase64Image(base64_encode($image));
+        }
+
+        return $this->render('evenement/EventDetails.html.twig', [
+            'event' => $event
+        ]);
     }
 }
