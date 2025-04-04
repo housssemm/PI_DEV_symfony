@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Evenement;
-
+use App\Form\EvenementFormType;
 final class EvenementController extends AbstractController
 {
     #[Route('/evenement', name: 'app_evenement')]
@@ -80,6 +80,53 @@ final class EvenementController extends AbstractController
             'list' => $list,
         ]);
     }
+//
+//    #[Route('/events/update/{id}', name: 'app_update_event')]
+//    public function update(Request $request, EvenementRepository $ev, EntityManagerInterface $em, $id): Response
+//    {
+//        $event = $ev->find($id);
+//
+//        if (!$event) {
+//            $this->addFlash('error', 'Événement non trouvé.');
+//            return $this->redirectToRoute('app_events');
+//        }
+//
+//        // Convert image to base64 for display
+//        $image = $event->getImage();
+//        if ($image) {
+//            $event->setBase64Image(base64_encode($image));
+//        }
+//
+//        if ($request->isMethod('POST')) {
+//            $event->setTitre($request->request->get('titre'));
+//            $event->setDescription($request->request->get('description'));
+//            $event->setDateDebut(new \DateTime($request->request->get('dateDebut')));
+//            $event->setDateFin(new \DateTime($request->request->get('dateFin')));
+//            $event->setLieu($request->request->get('lieu'));
+//            $event->setEtat($request->request->get('etat'));
+//            $event->setPrix($request->request->get('prix'));
+//            $event->setType($request->request->get('type'));
+//            $event->setOrganisateur($request->request->get('organisateur'));
+//            $event->setCapaciteMaximale($request->request->get('capaciteMaximale'));
+//
+//            // Handle image upload if provided
+//            if ($request->files->has('image')) {
+//                $imageFile = $request->files->get('image');
+//                if ($imageFile) {
+//                    $imageContent = file_get_contents($imageFile->getPathname());
+//                    $event->setImage($imageContent);
+//                }
+//            }
+//
+//            $em->flush();
+//            $this->addFlash('success', 'L\'événement a été mis à jour avec succès.');
+//            return $this->redirectToRoute('app_events');
+//        }
+//
+//        return $this->render('evenement/UpdateEvenement.html.twig', [
+//            'event' => $event
+//        ]);
+//    }
 
     #[Route('/events/update/{id}', name: 'app_update_event')]
     public function update(Request $request, EvenementRepository $ev, EntityManagerInterface $em, $id): Response
@@ -98,10 +145,69 @@ final class EvenementController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
+            $errors = [];
+
+            // Validate inputs
+            if (empty($request->request->get('titre'))) {
+                $errors['titre'] = 'Le titre est requis';
+            }
+
+            if (empty($request->request->get('description'))) {
+                $errors['description'] = 'La description est requise';
+            }
+
+            $dateDebut = $request->request->get('dateDebut');
+            $dateFin = $request->request->get('dateFin');
+
+            if (empty($dateDebut)) {
+                $errors['dateDebut'] = 'La date de début est requise';
+            }
+
+            if (empty($dateFin)) {
+                $errors['dateFin'] = 'La date de fin est requise';
+            } elseif ($dateDebut && $dateFin && new \DateTime($dateDebut) > new \DateTime($dateFin)) {
+                $errors['dateFin'] = 'La date de fin doit être après la date de début';
+            }
+
+            if (empty($request->request->get('lieu'))) {
+                $errors['lieu'] = 'Le lieu est requis';
+            }
+
+            if (!is_numeric($request->request->get('prix')) || $request->request->get('prix') < 0) {
+                $errors['prix'] = 'Le prix doit être un nombre positif';
+            }
+
+            if (!is_numeric($request->request->get('capaciteMaximale')) || $request->request->get('capaciteMaximale') <= 0) {
+                $errors['capaciteMaximale'] = 'La capacité doit être un nombre positif';
+            }
+
+            // Handle image upload if provided
+            if ($request->files->has('image')) {
+                $imageFile = $request->files->get('image');
+                if ($imageFile) {
+                    if ($imageFile->getSize() > 5 * 1024 * 1024) {
+                        $errors['image'] = 'La taille de l\'image ne peut pas dépasser 5MB';
+                    }
+
+                    $mimeType = $imageFile->getMimeType();
+                    if (!in_array($mimeType, ['image/jpeg', 'image/png'])) {
+                        $errors['image'] = 'Seuls les formats JPG et PNG sont acceptés';
+                    }
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $this->render('evenement/UpdateEvenement.html.twig', [
+                    'event' => $event,
+                    'errors' => $errors
+                ]);
+            }
+
+            // Update event if no errors
             $event->setTitre($request->request->get('titre'));
             $event->setDescription($request->request->get('description'));
-            $event->setDateDebut(new \DateTime($request->request->get('dateDebut')));
-            $event->setDateFin(new \DateTime($request->request->get('dateFin')));
+            $event->setDateDebut(new \DateTime($dateDebut));
+            $event->setDateFin(new \DateTime($dateFin));
             $event->setLieu($request->request->get('lieu'));
             $event->setEtat($request->request->get('etat'));
             $event->setPrix($request->request->get('prix'));
@@ -109,13 +215,10 @@ final class EvenementController extends AbstractController
             $event->setOrganisateur($request->request->get('organisateur'));
             $event->setCapaciteMaximale($request->request->get('capaciteMaximale'));
 
-            // Handle image upload if provided
-            if ($request->files->has('image')) {
-                $imageFile = $request->files->get('image');
-                if ($imageFile) {
-                    $imageContent = file_get_contents($imageFile->getPathname());
-                    $event->setImage($imageContent);
-                }
+            // Update image only if a new one was uploaded
+            if ($request->files->has('image') && $imageFile) {
+                $imageContent = file_get_contents($imageFile->getPathname());
+                $event->setImage($imageContent);
             }
 
             $em->flush();
@@ -124,7 +227,8 @@ final class EvenementController extends AbstractController
         }
 
         return $this->render('evenement/UpdateEvenement.html.twig', [
-            'event' => $event
+            'event' => $event,
+            'errors' => []
         ]);
     }
 
@@ -155,30 +259,60 @@ final class EvenementController extends AbstractController
         return $this->redirectToRoute('app_events');
     }
 
+//    #[Route('/events/add', name: 'app_add_event')]
+//    public function add(Request $request, EntityManagerInterface $em): Response
+//    {
+//        if ($request->isMethod('POST')) {
+//            $event = new Evenement();
+//
+//            $event->setTitre($request->request->get('titre'));
+//            $event->setDescription($request->request->get('description'));
+//            $event->setDateDebut(new \DateTime($request->request->get('dateDebut')));
+//            $event->setDateFin(new \DateTime($request->request->get('dateFin')));
+//            $event->setLieu($request->request->get('lieu'));
+//            $event->setEtat($request->request->get('etat'));
+//            $event->setPrix($request->request->get('prix'));
+//            $event->setType($request->request->get('type'));
+//            $event->setOrganisateur($request->request->get('organisateur'));
+//            $event->setCapaciteMaximale($request->request->get('capaciteMaximale'));
+//
+//            // Handle image upload if provided
+//            if ($request->files->has('image')) {
+//                $imageFile = $request->files->get('image');
+//                if ($imageFile) {
+//                    $imageContent = file_get_contents($imageFile->getPathname());
+//                    $event->setImage($imageContent);
+//                }
+//            }
+//
+//            $em->persist($event);
+//            $em->flush();
+//
+//            $this->addFlash('success', 'L\'événement a été ajouté avec succès.');
+//            return $this->redirectToRoute('app_events');
+//        }
+//
+//        return $this->render('evenement/AddEvenement.html.twig');
+//    }.
     #[Route('/events/add', name: 'app_add_event')]
     public function add(Request $request, EntityManagerInterface $em): Response
     {
-        if ($request->isMethod('POST')) {
-            $event = new Evenement();
+        $event = new Evenement();
 
-            $event->setTitre($request->request->get('titre'));
-            $event->setDescription($request->request->get('description'));
-            $event->setDateDebut(new \DateTime($request->request->get('dateDebut')));
-            $event->setDateFin(new \DateTime($request->request->get('dateFin')));
-            $event->setLieu($request->request->get('lieu'));
-            $event->setEtat($request->request->get('etat'));
-            $event->setPrix($request->request->get('prix'));
-            $event->setType($request->request->get('type'));
-            $event->setOrganisateur($request->request->get('organisateur'));
-            $event->setCapaciteMaximale($request->request->get('capaciteMaximale'));
+        // Crée le formulaire basé sur le type EvenementFormType
+        $form = $this->createForm(EvenementFormType::class, $event);
 
-            // Handle image upload if provided
-            if ($request->files->has('image')) {
-                $imageFile = $request->files->get('image');
-                if ($imageFile) {
-                    $imageContent = file_get_contents($imageFile->getPathname());
-                    $event->setImage($imageContent);
-                }
+        // Gère la requête (hydrate l'objet + vérifie s'il y a soumission)
+        $form->handleRequest($request);
+
+        // Si le formulaire est soumis et valide
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // Gère l'image uploadée
+            $imageFile = $form->get('image')->getData();
+            if ($imageFile) {
+                $imageContent = file_get_contents($imageFile->getPathname());
+                $event->setImage($imageContent);
             }
 
             $em->persist($event);
@@ -188,8 +322,12 @@ final class EvenementController extends AbstractController
             return $this->redirectToRoute('app_events');
         }
 
-        return $this->render('evenement/AddEvenement.html.twig');
+        // Rend la vue avec le formulaire
+        return $this->render('evenement/AddEvenement.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
+
 
     #[Route('/event/{id}', name: 'app_event_details')]
     public function eventDetails(Evenement $event): Response
@@ -277,7 +415,7 @@ final class EvenementController extends AbstractController
 
 
 
-    #[Route('/bmi', name: 'bmi_calculator')]
+//    #[Route('/bmi', name: 'bmi_calculator')]
 
     public function ibm(Request $request)
     {
@@ -320,5 +458,33 @@ final class EvenementController extends AbstractController
             'message' => $message
         ]);
     }
+    #[Route('/bmi', name: 'bmi_calculator')]
+    public function calculateBmi(Request $request)
+    {
+        $height = $request->get('height');
+        $weight = $request->get('weight');
+
+        if ($height && $weight) {
+            $bmi = $weight / (($height / 100) ** 2); // Calculate BMI
+            $bmiCategory = $this->getBmiCategory($bmi);
+        } else {
+            $bmi = null;
+            $bmiCategory = null;
+        }
+
+        return $this->render('evenement/bmi-calculator.html.twig', [
+            'bmi' => $bmi,
+            'bmiCategory' => $bmiCategory, // Pass bmiCategory to Twig template
+        ]);
+    }
+
+    private function getBmiCategory($bmi)
+    {
+        if ($bmi < 18.5) return "Underweight";
+        if ($bmi >= 18.5 && $bmi < 24.9) return "Healthy";
+        if ($bmi >= 25 && $bmi < 29.9) return "Overweight";
+        return "Obese";
+    }
+
 
 }
