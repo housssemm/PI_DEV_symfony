@@ -27,12 +27,12 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $email = $request->request->get('_username', '');
+        $email = $request->request->get('email', ''); // Changé de '_username' à 'email'
         $request->getSession()->set(Security::LAST_USERNAME, $email);
 
         return new Passport(
             new UserBadge($email),
-            new PasswordCredentials($request->request->get('_password', '')),
+            new PasswordCredentials($request->request->get('password', '')), // Changé de '_password' à 'password'
             [
                 new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
             ]
@@ -41,6 +41,13 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        // Optionnel : Redirection dynamique vers la page précédente
+        $request->getSession()->getFlashBag()->add('success', 'Connexion réussie ! Bienvenue sur Coachini.');
+        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+            return new RedirectResponse($targetPath);
+        }
+
+        // Redirection par défaut vers app_home
         return new RedirectResponse($this->urlGenerator->generate('app_home'));
     }
 
@@ -48,4 +55,4 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
-} 
+}

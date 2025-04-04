@@ -207,5 +207,40 @@
 
     createParticles();
     </script>
+    <!-- Ajout de SweetAlert2 et gestion des pop-ups -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            {% for message in app.flashes('success') %}
+            Swal.fire({
+                icon: 'success',
+                title: 'Succès',
+                text: '{{ message }}',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                background: '#1a1a1a',
+                color: '#fff',
+                toast: true,
+                position: 'top-end'
+            });
+            {% endfor %}
+
+            {% for message in app.flashes('error') %}
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: '{{ message }}',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                background: '#1a1a1a',
+                color: '#fff',
+                toast: true,
+                position: 'top-end'
+            });
+            {% endfor %}
+        });
+    </script>
 </body>
 </html> 

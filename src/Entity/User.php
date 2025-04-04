@@ -54,6 +54,55 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $userType = null;
 
+    #[ORM\OneToMany(targetEntity: Adherent::class, mappedBy: 'user')]
+    private Collection $adherents;
+
+    #[ORM\OneToMany(targetEntity: Admin::class, mappedBy: 'user')]
+    private Collection $admins;
+
+    #[ORM\OneToMany(targetEntity: Coach::class, mappedBy: 'user')]
+    private Collection $coachs;
+
+    #[ORM\OneToMany(targetEntity: CreateurEvenement::class, mappedBy: 'user')]
+    private Collection $createurevenements;
+
+    #[ORM\OneToMany(targetEntity: InvestisseurProduit::class, mappedBy: 'user')]
+    private Collection $investisseurproduits;
+
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user')]
+    private Collection $messages;
+
+    #[ORM\OneToMany(targetEntity: Panier::class, mappedBy: 'user')]
+    private Collection $paniers;
+
+    #[ORM\OneToMany(targetEntity: Participantevenement::class, mappedBy: 'user')]
+    private Collection $participantevenements;
+
+    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'user')]
+    private Collection $reclamations;
+
+    #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'users')]
+    #[ORM\JoinTable(
+        name: 'participation',
+        joinColumns: [new ORM\JoinColumn(name: 'userId', referencedColumnName: 'id')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'evenementId', referencedColumnName: 'id')]
+    )]
+    private Collection $evenements;
+
+    public function __construct()
+    {
+        $this->adherents = new ArrayCollection();
+        $this->admins = new ArrayCollection();
+        $this->coachs = new ArrayCollection();
+        $this->createurevenements = new ArrayCollection();
+        $this->investisseurproduits = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+        $this->paniers = new ArrayCollection();
+        $this->participantevenements = new ArrayCollection();
+        $this->reclamations = new ArrayCollection();
+        $this->evenements = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -88,7 +137,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -99,9 +148,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+        $this->plainPassword = null; // Efface le mot de passe en clair après utilisation
     }
 
     public function getNom(): ?string
@@ -148,287 +208,203 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Adherent::class, mappedBy: 'user')]
-    private Collection $adherents;
-
+    // Simplification des méthodes get pour les collections
     public function getAdherents(): Collection
     {
-        if (!$this->adherents instanceof Collection) {
-            $this->adherents = new ArrayCollection();
-        }
         return $this->adherents;
     }
 
     public function addAdherent(Adherent $adherent): self
     {
-        if (!$this->getAdherents()->contains($adherent)) {
-            $this->getAdherents()->add($adherent);
+        if (!$this->adherents->contains($adherent)) {
+            $this->adherents->add($adherent);
+            $adherent->setUser($this); // Si relation bidirectionnelle
         }
         return $this;
     }
 
     public function removeAdherent(Adherent $adherent): self
     {
-        $this->getAdherents()->removeElement($adherent);
+        $this->adherents->removeElement($adherent);
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Admin::class, mappedBy: 'user')]
-    private Collection $admins;
-
     public function getAdmins(): Collection
     {
-        if (!$this->admins instanceof Collection) {
-            $this->admins = new ArrayCollection();
-        }
         return $this->admins;
     }
 
     public function addAdmin(Admin $admin): self
     {
-        if (!$this->getAdmins()->contains($admin)) {
-            $this->getAdmins()->add($admin);
+        if (!$this->admins->contains($admin)) {
+            $this->admins->add($admin);
+            $admin->setUser($this);
         }
         return $this;
     }
 
     public function removeAdmin(Admin $admin): self
     {
-        $this->getAdmins()->removeElement($admin);
+        $this->admins->removeElement($admin);
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Coach::class, mappedBy: 'user')]
-    private Collection $coachs;
-
     public function getCoachs(): Collection
     {
-        if (!$this->coachs instanceof Collection) {
-            $this->coachs = new ArrayCollection();
-        }
         return $this->coachs;
     }
 
     public function addCoach(Coach $coach): self
     {
-        if (!$this->getCoachs()->contains($coach)) {
-            $this->getCoachs()->add($coach);
+        if (!$this->coachs->contains($coach)) {
+            $this->coachs->add($coach);
+            $coach->setUser($this);
         }
         return $this;
     }
 
     public function removeCoach(Coach $coach): self
     {
-        $this->getCoachs()->removeElement($coach);
+        $this->coachs->removeElement($coach);
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: CreateurEvenement::class, mappedBy: 'user')]
-    private Collection $createurevenements;
-
     public function getCreateurevenements(): Collection
     {
-        if (!$this->createurevenements instanceof Collection) {
-            $this->createurevenements = new ArrayCollection();
-        }
         return $this->createurevenements;
     }
 
     public function addCreateurevenement(CreateurEvenement $createurevenement): self
     {
-        if (!$this->getCreateurevenements()->contains($createurevenement)) {
-            $this->getCreateurevenements()->add($createurevenement);
+        if (!$this->createurevenements->contains($createurevenement)) {
+            $this->createurevenements->add($createurevenement);
+            $createurevenement->setUser($this);
         }
         return $this;
     }
 
     public function removeCreateurevenement(CreateurEvenement $createurevenement): self
     {
-        $this->getCreateurevenements()->removeElement($createurevenement);
+        $this->createurevenements->removeElement($createurevenement);
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: InvestisseurProduit::class, mappedBy: 'user')]
-    private Collection $investisseurproduits;
-
     public function getInvestisseurproduits(): Collection
     {
-        if (!$this->investisseurproduits instanceof Collection) {
-            $this->investisseurproduits = new ArrayCollection();
-        }
         return $this->investisseurproduits;
     }
 
     public function addInvestisseurproduit(InvestisseurProduit $investisseurproduit): self
     {
-        if (!$this->getInvestisseurproduits()->contains($investisseurproduit)) {
-            $this->getInvestisseurproduits()->add($investisseurproduit);
+        if (!$this->investisseurproduits->contains($investisseurproduit)) {
+            $this->investisseurproduits->add($investisseurproduit);
+            $investisseurproduit->setUser($this);
         }
         return $this;
     }
 
     public function removeInvestisseurproduit(InvestisseurProduit $investisseurproduit): self
     {
-        $this->getInvestisseurproduits()->removeElement($investisseurproduit);
+        $this->investisseurproduits->removeElement($investisseurproduit);
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user')]
-    private Collection $messages;
-
     public function getMessages(): Collection
     {
-        if (!$this->messages instanceof Collection) {
-            $this->messages = new ArrayCollection();
-        }
         return $this->messages;
     }
 
     public function addMessage(Message $message): self
     {
-        if (!$this->getMessages()->contains($message)) {
-            $this->getMessages()->add($message);
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setUser($this);
         }
         return $this;
     }
 
     public function removeMessage(Message $message): self
     {
-        $this->getMessages()->removeElement($message);
+        $this->messages->removeElement($message);
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Panier::class, mappedBy: 'user')]
-    private Collection $paniers;
-
     public function getPaniers(): Collection
     {
-        if (!$this->paniers instanceof Collection) {
-            $this->paniers = new ArrayCollection();
-        }
         return $this->paniers;
     }
 
     public function addPanier(Panier $panier): self
     {
-        if (!$this->getPaniers()->contains($panier)) {
-            $this->getPaniers()->add($panier);
+        if (!$this->paniers->contains($panier)) {
+            $this->paniers->add($panier);
+            $panier->setUser($this);
         }
         return $this;
     }
 
     public function removePanier(Panier $panier): self
     {
-        $this->getPaniers()->removeElement($panier);
+        $this->paniers->removeElement($panier);
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Participantevenement::class, mappedBy: 'user')]
-    private Collection $participantevenements;
-
     public function getParticipantevenements(): Collection
     {
-        if (!$this->participantevenements instanceof Collection) {
-            $this->participantevenements = new ArrayCollection();
-        }
         return $this->participantevenements;
     }
 
     public function addParticipantevenement(Participantevenement $participantevenement): self
     {
-        if (!$this->getParticipantevenements()->contains($participantevenement)) {
-            $this->getParticipantevenements()->add($participantevenement);
+        if (!$this->participantevenements->contains($participantevenement)) {
+            $this->participantevenements->add($participantevenement);
+            $participantevenement->setUser($this);
         }
         return $this;
     }
 
     public function removeParticipantevenement(Participantevenement $participantevenement): self
     {
-        $this->getParticipantevenements()->removeElement($participantevenement);
+        $this->participantevenements->removeElement($participantevenement);
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'user')]
-    private Collection $reclamations;
-
     public function getReclamations(): Collection
     {
-        if (!$this->reclamations instanceof Collection) {
-            $this->reclamations = new ArrayCollection();
-        }
         return $this->reclamations;
     }
 
     public function addReclamation(Reclamation $reclamation): self
     {
-        if (!$this->getReclamations()->contains($reclamation)) {
-            $this->getReclamations()->add($reclamation);
+        if (!$this->reclamations->contains($reclamation)) {
+            $this->reclamations->add($reclamation);
+            $reclamation->setUser($this);
         }
         return $this;
     }
 
     public function removeReclamation(Reclamation $reclamation): self
     {
-        $this->getReclamations()->removeElement($reclamation);
+        $this->reclamations->removeElement($reclamation);
         return $this;
-    }
-
-    #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'users')]
-    #[ORM\JoinTable(
-        name: 'participation',
-        joinColumns: [
-            new ORM\JoinColumn(name: 'userId', referencedColumnName: 'id')
-        ],
-        inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'evenementId', referencedColumnName: 'id')
-        ]
-    )]
-    private Collection $evenements;
-
-    public function __construct()
-    {
-        $this->adherents = new ArrayCollection();
-        $this->admins = new ArrayCollection();
-        $this->coachs = new ArrayCollection();
-        $this->createurevenements = new ArrayCollection();
-        $this->investisseurproduits = new ArrayCollection();
-        $this->messages = new ArrayCollection();
-        $this->paniers = new ArrayCollection();
-        $this->participantevenements = new ArrayCollection();
-        $this->reclamations = new ArrayCollection();
-        $this->evenements = new ArrayCollection();
     }
 
     public function getEvenements(): Collection
     {
-        if (!$this->evenements instanceof Collection) {
-            $this->evenements = new ArrayCollection();
-        }
         return $this->evenements;
     }
 
     public function addEvenement(Evenement $evenement): self
     {
-        if (!$this->getEvenements()->contains($evenement)) {
-            $this->getEvenements()->add($evenement);
+        if (!$this->evenements->contains($evenement)) {
+            $this->evenements->add($evenement);
         }
         return $this;
     }
 
     public function removeEvenement(Evenement $evenement): self
     {
-        $this->getEvenements()->removeElement($evenement);
-        return $this;
-    }
-
-    public function getPlainPassword(): ?string
-    {
-        return $this->plainPassword;
-    }
-
-    public function setPlainPassword(?string $plainPassword): self
-    {
-        $this->plainPassword = $plainPassword;
+        $this->evenements->removeElement($evenement);
         return $this;
     }
 }
