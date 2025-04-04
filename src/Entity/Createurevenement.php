@@ -6,131 +6,88 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
 use App\Repository\CreateurevenementRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CreateurevenementRepository::class)]
-#[ORM\Table(name: 'createurevenement')]
-class Createurevenement
+#[ORM\Table(name: 'createur_evenement')]
+class CreateurEvenement extends User
 {
-    // Primary Key - ID
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom de l\'organisation ne peut pas être vide')]
+    private ?string $nomOrganisation = null;
 
-    public function getId(): ?int
+    #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'La description ne peut pas être vide')]
+    private ?string $descriptionCreateur = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'L\'adresse ne peut pas être vide')]
+    private ?string $adresseCreateur = null;
+
+    #[ORM\Column(length: 8)]
+    #[Assert\NotBlank(message: 'Le numéro de téléphone ne peut pas être vide')]
+    #[Assert\Regex(
+        pattern: '/^[0-9]{8}$/',
+        message: 'Le numéro de téléphone doit contenir exactement 8 chiffres'
+    )]
+    private ?string $telephoneCreateur = null;
+
+    public function getNomOrganisation(): ?string
     {
-        return $this->id;
+        return $this->nomOrganisation;
     }
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'createurevenements')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    private ?User $user = null;
-
-    public function getUser(): ?User
+    public function setNomOrganisation(string $nomOrganisation): static
     {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
+        $this->nomOrganisation = $nomOrganisation;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Nom_organisation = null;
-
-    public function getNom_organisation(): ?string
+    public function getDescriptionCreateur(): ?string
     {
-        return $this->Nom_organisation;
+        return $this->descriptionCreateur;
     }
 
-    public function setNom_organisation(?string $Nom_organisation): self
+    public function setDescriptionCreateur(string $descriptionCreateur): static
     {
-        $this->Nom_organisation = $Nom_organisation;
+        $this->descriptionCreateur = $descriptionCreateur;
         return $this;
     }
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $Description = null;
-
-    public function getDescription(): ?string
+    public function getAdresseCreateur(): ?string
     {
-        return $this->Description;
+        return $this->adresseCreateur;
     }
 
-    public function setDescription(?string $Description): self
+    public function setAdresseCreateur(string $adresseCreateur): static
     {
-        $this->Description = $Description;
+        $this->adresseCreateur = $adresseCreateur;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Adresse = null;
-
-    public function getAdresse(): ?string
+    public function getTelephoneCreateur(): ?string
     {
-        return $this->Adresse;
+        return $this->telephoneCreateur;
     }
 
-    public function setAdresse(?string $Adresse): self
+    public function setTelephoneCreateur(string $telephoneCreateur): static
     {
-        $this->Adresse = $Adresse;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Telephone = null;
-
-    public function getTelephone(): ?string
-    {
-        return $this->Telephone;
-    }
-
-    public function setTelephone(?string $Telephone): self
-    {
-        $this->Telephone = $Telephone;
+        $this->telephoneCreateur = $telephoneCreateur;
         return $this;
     }
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $Certificat_valide = null;
-
-    public function isCertificat_valide(): ?bool
-    {
-        return $this->Certificat_valide;
-    }
-
-    public function setCertificat_valide(?bool $Certificat_valide): self
-    {
-        $this->Certificat_valide = $Certificat_valide;
-        return $this;
-    }
-
-    public function getNomOrganisation(): ?string
-    {
-        return $this->Nom_organisation;
-    }
-
-    public function setNomOrganisation(?string $Nom_organisation): static
-    {
-        $this->Nom_organisation = $Nom_organisation;
-
-        return $this;
-    }
+    private ?bool $certificatValide = null;
 
     public function isCertificatValide(): ?bool
     {
-        return $this->Certificat_valide;
+        return $this->certificatValide;
     }
 
-    public function setCertificatValide(?bool $Certificat_valide): static
+    public function setCertificatValide(?bool $certificatValide): static
     {
-        $this->Certificat_valide = $Certificat_valide;
-
+        $this->certificatValide = $certificatValide;
         return $this;
     }
-
 }

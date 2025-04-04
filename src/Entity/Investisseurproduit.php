@@ -6,106 +6,74 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Repository\InvestisseurProduitRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
-use App\Repository\InvestisseurproduitRepository;
-
-#[ORM\Entity(repositoryClass: InvestisseurproduitRepository::class)]
+#[ORM\Entity(repositoryClass: InvestisseurProduitRepository::class)]
 #[ORM\Table(name: 'investisseurproduit')]
-class Investisseurproduit
+class InvestisseurProduit extends User
 {
-    // Primary Key - ID
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom de l\'entreprise ne peut pas être vide')]
+    private ?string $nomEntreprise = null;
 
-    public function getId(): ?int
+    public function getNomEntreprise(): ?string
     {
-        return $this->id;
+        return $this->nomEntreprise;
     }
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'investisseurproduits')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    private ?User $user = null;
-
-    public function getUser(): ?User
+    public function setNomEntreprise(string $nomEntreprise): static
     {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
+        $this->nomEntreprise = $nomEntreprise;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Nom_entreprise = null;
+    #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'La description ne peut pas être vide')]
+    private ?string $descriptionInvestisseur = null;
 
-    public function getNom_entreprise(): ?string
+    public function getDescriptionInvestisseur(): ?string
     {
-        return $this->Nom_entreprise;
+        return $this->descriptionInvestisseur;
     }
 
-    public function setNom_entreprise(?string $Nom_entreprise): self
+    public function setDescriptionInvestisseur(string $descriptionInvestisseur): static
     {
-        $this->Nom_entreprise = $Nom_entreprise;
+        $this->descriptionInvestisseur = $descriptionInvestisseur;
         return $this;
     }
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $Description = null;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'L\'adresse ne peut pas être vide')]
+    private ?string $adresseInvestisseur = null;
 
-    public function getDescription(): ?string
+    public function getAdresseInvestisseur(): ?string
     {
-        return $this->Description;
+        return $this->adresseInvestisseur;
     }
 
-    public function setDescription(?string $Description): self
+    public function setAdresseInvestisseur(string $adresseInvestisseur): static
     {
-        $this->Description = $Description;
+        $this->adresseInvestisseur = $adresseInvestisseur;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Adresse = null;
+    #[ORM\Column(length: 8)]
+    #[Assert\NotBlank(message: 'Le numéro de téléphone ne peut pas être vide')]
+    #[Assert\Regex(
+        pattern: '/^[0-9]{8}$/',
+        message: 'Le numéro de téléphone doit contenir exactement 8 chiffres'
+    )]
+    private ?string $telephoneInvestisseur = null;
 
-    public function getAdresse(): ?string
+    public function getTelephoneInvestisseur(): ?string
     {
-        return $this->Adresse;
+        return $this->telephoneInvestisseur;
     }
 
-    public function setAdresse(?string $Adresse): self
+    public function setTelephoneInvestisseur(string $telephoneInvestisseur): static
     {
-        $this->Adresse = $Adresse;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Telephone = null;
-
-    public function getTelephone(): ?string
-    {
-        return $this->Telephone;
-    }
-
-    public function setTelephone(?string $Telephone): self
-    {
-        $this->Telephone = $Telephone;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $Certificat_valide = null;
-
-    public function isCertificat_valide(): ?bool
-    {
-        return $this->Certificat_valide;
-    }
-
-    public function setCertificat_valide(?bool $Certificat_valide): self
-    {
-        $this->Certificat_valide = $Certificat_valide;
+        $this->telephoneInvestisseur = $telephoneInvestisseur;
         return $this;
     }
 
@@ -141,29 +109,4 @@ class Investisseurproduit
         $this->getProduits()->removeElement($produit);
         return $this;
     }
-
-    public function getNomEntreprise(): ?string
-    {
-        return $this->Nom_entreprise;
-    }
-
-    public function setNomEntreprise(?string $Nom_entreprise): static
-    {
-        $this->Nom_entreprise = $Nom_entreprise;
-
-        return $this;
-    }
-
-    public function isCertificatValide(): ?bool
-    {
-        return $this->Certificat_valide;
-    }
-
-    public function setCertificatValide(?bool $Certificat_valide): static
-    {
-        $this->Certificat_valide = $Certificat_valide;
-
-        return $this;
-    }
-
 }

@@ -1,0 +1,68 @@
+{{ form_start(form, {'attr': {'class': 'specific-form-content'}}) }}
+    <div class="specific-form-fields">
+        {% for field in form %}
+            <div class="mb-3 field-container">
+                {{ form_label(field, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(field, {
+                    'attr': {
+                        'class': 'form-control ' ~ (field.vars.name == 'cv' ? 'file-input' : ''),
+                        'placeholder': field.vars.label
+                    }
+                }) }}
+                {{ form_errors(field) }}
+            </div>
+        {% endfor %}
+    </div>
+{{ form_end(form) }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const specificForm = document.getElementById('specific-form');
+    const mainForm = document.querySelector('form[name="registration_form"]');
+    
+    if (specificForm && mainForm) {
+        // Déplacer tous les champs du formulaire spécifique dans le formulaire principal
+        const specificFields = specificForm.querySelectorAll('input, select, textarea');
+        specificFields.forEach(field => {
+            mainForm.appendChild(field);
+        });
+        
+        // Supprimer le formulaire spécifique
+        specificForm.remove();
+    }
+});
+</script>
+
+<style>
+    .specific-form-content {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-top: 1rem;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .field-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .file-input {
+        padding: 0.5rem;
+        background: white;
+    }
+
+    .form-control::placeholder {
+        color: #999;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style> 

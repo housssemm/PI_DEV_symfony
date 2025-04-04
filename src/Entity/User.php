@@ -6,94 +6,145 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use App\Repository\UserRepository;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: 'user')]
-class User
+#[ORM\InheritanceType("JOINED")]
+#[ORM\DiscriminatorColumn(name: "discr", type: "string")]
+#[ORM\DiscriminatorMap([
+    "user" => "User",
+    "adherent" => "Adherent",
+    "coach" => "Coach",
+    "investisseur_produit" => "InvestisseurProduit",
+    "createur_evenement" => "CreateurEvenement"
+])]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: 'L\'email ne peut pas être vide')]
+    #[Assert\Email(message: 'L\'email {{ value }} n\'est pas valide')]
+    private ?string $email = null;
+
+    #[ORM\Column]
+    private array $roles = [];
+
+    #[ORM\Column(name: 'MDP')]
+    private ?string $password = null;
+
+    private ?string $plainPassword = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom ne peut pas être vide')]
+    private ?string $nom = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le prénom ne peut pas être vide')]
+    private ?string $prenom = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $userType = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function getEmail(): ?string
     {
-        $this->id = $id;
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Nom = null;
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+    }
 
     public function getNom(): ?string
     {
-        return $this->Nom;
+        return $this->nom;
     }
 
-    public function setNom(?string $Nom): self
+    public function setNom(string $nom): static
     {
-        $this->Nom = $Nom;
+        $this->nom = $nom;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Prenom = null;
 
     public function getPrenom(): ?string
     {
-        return $this->Prenom;
+        return $this->prenom;
     }
 
-    public function setPrenom(?string $Prenom): self
+    public function setPrenom(string $prenom): static
     {
-        $this->Prenom = $Prenom;
+        $this->prenom = $prenom;
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Image = null;
 
     public function getImage(): ?string
     {
-        return $this->Image;
+        return $this->image;
     }
 
-    public function setImage(?string $Image): self
+    public function setImage(?string $image): static
     {
-        $this->Image = $Image;
+        $this->image = $image;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Email = null;
-
-    public function getEmail(): ?string
+    public function getUserType(): ?string
     {
-        return $this->Email;
+        return $this->userType;
     }
 
-    public function setEmail(?string $Email): self
+    public function setUserType(string $userType): static
     {
-        $this->Email = $Email;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $MDP = null;
-
-    public function getMDP(): ?string
-    {
-        return $this->MDP;
-    }
-
-    public function setMDP(?string $MDP): self
-    {
-        $this->MDP = $MDP;
+        $this->userType = $userType;
         return $this;
     }
 
@@ -172,7 +223,7 @@ class User
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Createurevenement::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: CreateurEvenement::class, mappedBy: 'user')]
     private Collection $createurevenements;
 
     public function getCreateurevenements(): Collection
@@ -183,7 +234,7 @@ class User
         return $this->createurevenements;
     }
 
-    public function addCreateurevenement(Createurevenement $createurevenement): self
+    public function addCreateurevenement(CreateurEvenement $createurevenement): self
     {
         if (!$this->getCreateurevenements()->contains($createurevenement)) {
             $this->getCreateurevenements()->add($createurevenement);
@@ -191,13 +242,13 @@ class User
         return $this;
     }
 
-    public function removeCreateurevenement(Createurevenement $createurevenement): self
+    public function removeCreateurevenement(CreateurEvenement $createurevenement): self
     {
         $this->getCreateurevenements()->removeElement($createurevenement);
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Investisseurproduit::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: InvestisseurProduit::class, mappedBy: 'user')]
     private Collection $investisseurproduits;
 
     public function getInvestisseurproduits(): Collection
@@ -208,7 +259,7 @@ class User
         return $this->investisseurproduits;
     }
 
-    public function addInvestisseurproduit(Investisseurproduit $investisseurproduit): self
+    public function addInvestisseurproduit(InvestisseurProduit $investisseurproduit): self
     {
         if (!$this->getInvestisseurproduits()->contains($investisseurproduit)) {
             $this->getInvestisseurproduits()->add($investisseurproduit);
@@ -216,7 +267,7 @@ class User
         return $this;
     }
 
-    public function removeInvestisseurproduit(Investisseurproduit $investisseurproduit): self
+    public function removeInvestisseurproduit(InvestisseurProduit $investisseurproduit): self
     {
         $this->getInvestisseurproduits()->removeElement($investisseurproduit);
         return $this;
@@ -370,4 +421,14 @@ class User
         return $this;
     }
 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
 }
