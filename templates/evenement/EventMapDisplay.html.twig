@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    Carte des événements proches
+{% endblock %}
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="page-title">Carte des événements proches</h1>
+
+        <!-- Bouton pour localiser l'utilisateur -->
+        <button id="locate-me" class="btn btn-primary mb-3">
+            <i class="fas fa-map-marker-alt"></i> Afficher ma position
+        </button>
+
+        <!-- Carte -->
+        <div id="map" style="height: 500px; margin-bottom: 2rem;"></div>
+
+        <h2 class="text-white">Liste des événements proches</h2>
+        <div class="row">
+            {% for event in events %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="data:image/jpeg;base64,{{ event.base64Image }}" style="width: 100%; max-height: 100px; object-fit: cover; margin-bottom: 10px;" alt="{{ event.titre }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ event.titre }}</h5>
+                            <p class="card-text">{{ event.dateDebut|date('d/m/Y') }}</p>
+                            <p class="card-text">{{ event.lieu }}</p>
+                            <a href="{{ path('app_event_details', {'id': event.id}) }}" class="btn btn-primary">Voir détails</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-white">Aucun événement trouvé à proximité.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <script>
+        // Initialisation de la carte
+        var map = L.map('map').setView([48.8566, 2.3522], 10); // Centré sur Paris par défaut
+
+        // Ajout de la couche de carte (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Variable pour stocker le marqueur de l'utilisateur
+        var userMarker = null;
+
+        // Fonction pour localiser l'utilisateur
+        function locateUser() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var userLat = position.coords.latitude;
+                    var userLng = position.coords.longitude;
+
+                    // Supprimer l'ancien marqueur s'il existe
+                    if (userMarker) {
+                        map.removeLayer(userMarker);
+                    }
+
+                    // Ajouter un marqueur pour la position de l'utilisateur
+                    userMarker = L.marker([userLat, userLng], {
+                        icon: L.divIcon({
+                            className: 'user-marker',
+                            html: '<div style="background-color: #2196F3; border-radius: 50%; width: 15px; height: 15px; border: 3px solid white;"></div>',
+                            iconSize: [15, 15],
+                            iconAnchor: [7.5, 7.5],
+                        })
+                    }).addTo(map);
+                    userMarker.bindPopup('<strong>Votre position</strong>').openPopup();
+
+                    // Centrer la carte sur la position de l'utilisateur
+                    map.setView([userLat, userLng], 13);
+
+                    // Calculer et afficher la distance pour chaque événement
+                    events.forEach(function(event) {
+                        if (event.latitude && event.longitude) {
+                            var distance = calculateDistance(userLat, userLng, event.latitude, event.longitude);
+                            if (event.marker && event.marker.getPopup()) {
+                                let popupContent = event.marker.getPopup().getContent();
+                                event.marker.setPopupContent(popupContent + `<br>Distance: ${distance.toFixed(1)} km`);
+                            }
+                        }
+                    });
+
+                }, function(error) {
+                    console.error('Erreur de géolocalisation:', error);
+                    alert('Impossible de récupérer votre position. Veuillez vérifier vos paramètres de confidentialité.');
+                });
+            } else {
+                alert('La géolocalisation n\'est pas supportée par votre navigateur.');
+            }
+        }
+
+        // Calcul de la distance en kilomètres entre deux points (formule de Haversine)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            var R = 6371; // Rayon de la Terre en km
+            var dLat = (lat2 - lat1) * Math.PI / 180;
+            var dLon = (lon2 - lon1) * Math.PI / 180;
+            var a =
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            var d = R * c;
+            return d;
+        }
+
+        // Ajouter un écouteur d'événement au bouton de localisation
+        document.getElementById('locate-me').addEventListener('click', locateUser);
+
+        // Ajout des événements depuis Twig avec images personnalisées
+        var events = {{ events|json_encode|raw }};
+        events.forEach(event => {
+            if (event.latitude && event.longitude) {
+                // Créer une icône personnalisée pour le marqueur
+                var eventIcon = L.divIcon({
+                    className: 'event-marker',
+                    html: `<div style="background-image: url('data:image/jpeg;base64,${event.base64Image}');
+                             background-size: cover; width: 40px; height: 40px;
+                             border-radius: 50%; border: 3px solid #e74c3c;"></div>`,
+
+                });
+
+
+                // Correction ici pour le lien vers les détails
+                var detailsUrl = "{{ path('app_event_details', {'id': 'EVENT_ID'}) }}".replace('EVENT_ID', event.id);
+
+                var marker = L.marker([event.latitude, event.longitude], {icon: eventIcon}).addTo(map);
+                marker.bindPopup(`
+    <div style="width: 200px; text-align: center;">
+        <img src="data:image/jpeg;base64,${event.base64Image}" style="width: 100%; max-height: 100px; object-fit: cover; margin-bottom: 10px;" alt="${event.titre}">
+        <strong>${event.titre}</strong><br>
+        Date: ${event.dateDebut}<br>
+        Lieu: ${event.lieu}<br>
+        <a href="${detailsUrl}" class="btn btn-sm btn-primary mt-2" style="display: inline-block; padding: 2px 8px; background: #007bff; color: white; text-decoration: none; border-radius: 3px;">Voir détails</a>
+    </div>
+`);
+
+                // Stocker le marqueur avec l'événement pour pouvoir le mettre à jour plus tard
+                event.marker = marker;
+            }
+        });
+
+        // Recentrer la carte sur le premier événement s'il existe
+        if (events.length > 0 && events[0].latitude && events[0].longitude) {
+            map.setView([events[0].latitude, events[0].longitude], 10);
+        }
+
+        // Exécuter automatiquement la localisation au chargement de la page (optionnel)
+        // window.addEventListener('load', locateUser);
+    </script>
+
+    <style>
+        /* Styles pour la liste des événements */
+        .card {
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Style pour le bouton de localisation */
+        #locate-me {
+            z-index: 1000;
+        }
+    </style>
+{% endblock %}
+
+
+
+
+
+
+
