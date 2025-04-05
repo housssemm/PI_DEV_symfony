@@ -448,6 +448,11 @@
 				<i class="bi bi-plus-circle"></i>
 				Ajouter un événement
 			</a>
+			<div class="text-center my-4">
+				<a href="{{ path('app_nearby_events') }}" class="btn btn-primary">
+					Voir la carte des événements proches
+				</a>
+			</div>
 
 			{% for event in list %}
 				<div class="event-card">
