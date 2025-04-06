@@ -40,4 +40,9 @@ class PlanningRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findPlanningByCoach(int $coachId)
+    {
+        return $this->findOneBy(['coach' => $coachId]); // Récupérer un seul planning pour ce coach
+    }
+
 }

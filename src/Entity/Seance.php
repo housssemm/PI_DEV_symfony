@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\SeanceRepository;
 
@@ -30,6 +31,7 @@ class Seance
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "Le titre est obligatoire")]
     private ?string $Titre = null;
 
     public function getTitre(): ?string
@@ -44,6 +46,7 @@ class Seance
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: "La description est obligatoire")]
     private ?string $Description = null;
 
     public function getDescription(): ?string
@@ -58,7 +61,13 @@ class Seance
     }
 
     #[ORM\Column(type: 'date', nullable: true)]
+    #[Assert\NotBlank(message: "La date est obligatoire")]
+    #[Assert\GreaterThanOrEqual(
+        "today",
+        message: "La date ne peut pas être antérieure à aujourd'hui"
+    )]
     private ?\DateTimeInterface $Date = null;
+
 
     public function getDate(): ?\DateTimeInterface
     {
@@ -73,6 +82,8 @@ class Seance
 
     #[ORM\ManyToOne(targetEntity: Coach::class, inversedBy: 'seances')]
     #[ORM\JoinColumn(name: 'idCoach', referencedColumnName: 'id')]
+    #[Assert\NotBlank(message: "id coach est obligatoire")]
+
     private ?Coach $coach = null;
 
     public function getCoach(): ?Coach
@@ -88,6 +99,8 @@ class Seance
 
     #[ORM\ManyToOne(targetEntity: Adherent::class, inversedBy: 'seances')]
     #[ORM\JoinColumn(name: 'idAdherent', referencedColumnName: 'id')]
+    #[Assert\NotBlank(message: "id adherent est obligatoire")]
+
     private ?Adherent $adherent = null;
 
     public function getAdherent(): ?Adherent
@@ -102,6 +115,8 @@ class Seance
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "Type est obligatoire")]
+
     private ?string $Type = null;
 
     public function getType(): ?string
@@ -115,7 +130,8 @@ class Seance
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(name: 'LienVideo',type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank(message: "LienVideo est obligatoire")]
     private ?string $LienVideo = null;
 
     public function getLienVideo(): ?string
@@ -131,6 +147,7 @@ class Seance
 
     #[ORM\ManyToOne(targetEntity: Planning::class, inversedBy: 'seances')]
     #[ORM\JoinColumn(name: 'Planning_id', referencedColumnName: 'id')]
+    #[Assert\NotBlank(message: "le planning est obligatoire")]
     private ?Planning $planning = null;
 
     public function getPlanning(): ?Planning
@@ -144,30 +161,41 @@ class Seance
         return $this;
     }
 
-    #[ORM\Column(type: 'time', nullable: true)]
-    private ?string $heureDebut = null;
+    #[ORM\Column(name:'heureDebut',type: 'time', nullable: true)]
+    #[Assert\NotBlank(message: "L'heure de début est obligatoire")]
+    private ?\DateTimeInterface $heureDebut = null;
 
-    public function getHeureDebut(): ?string
+    public function getHeureDebut(): ?\DateTimeInterface
     {
         return $this->heureDebut;
     }
 
-    public function setHeureDebut(?string $heureDebut): self
+    public function setHeureDebut($heureDebut): self
     {
+        if (is_string($heureDebut)) {
+            $heureDebut = \DateTime::createFromFormat('H:i', $heureDebut);
+        }
         $this->heureDebut = $heureDebut;
         return $this;
     }
 
-    #[ORM\Column(type: 'time', nullable: true)]
-    private ?string $heureFin = null;
+    #[ORM\Column(name:'heureFin',type: 'time', nullable: true)]
+    #[Assert\Expression(
+        "this.getHeureFin() > this.getHeureDebut()",
+        message: "L'heure de fin doit être après l'heure de début"
+    )]
+    private ?\DateTimeInterface $heureFin = null;
 
-    public function getHeureFin(): ?string
+    public function getHeureFin(): ?\DateTimeInterface
     {
         return $this->heureFin;
     }
 
-    public function setHeureFin(?string $heureFin): self
+    public function setHeureFin($heureFin): self
     {
+        if (is_string($heureFin)) {
+            $heureFin = \DateTime::createFromFormat('H:i', $heureFin);
+        }
         $this->heureFin = $heureFin;
         return $this;
     }

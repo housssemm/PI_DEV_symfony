@@ -1,0 +1,247 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Planning{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Inclusion de Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- FullCalendar -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script src="{{ asset('js/exercice.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendrier');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                aspectRatio: 1.6,
+                locale: 'fr',
+                timeZone: 'Africa/Tunis',
+                headerToolbar: {
+                    start: 'prev,next today',
+                    center: 'title',
+                    end: 'dayGridMonth,timeGridWeek,addSeanceButton'
+                },
+                customButtons: {
+                    addSeanceButton: {
+                        text: '+',
+                        click: function() {
+                            window.location.href = '{{ path('addseance') }}';
+                        }
+                    }
+                },
+                dateClick: function(info) {
+                    const dateStr = info.dateStr;
+                    const container = document.getElementById('seances-list');
+
+                    container.innerHTML = '<div class="loading-spinner"></div>';
+
+                    fetch(`/planning/day-json/${dateStr}`)
+                        .then(async response => {
+                            const text = await response.text();
+                            try {
+                                return JSON.parse(text); // Double parsing pour éviter les erreurs
+                            } catch {
+                                throw new Error(text);
+                            }
+                        })
+                        .then(data => {
+                            container.innerHTML = data.map(seance => `
+        <div class="seance-card ${seance.type.toLowerCase().replace('_', '-')}" data-id="${seance.id}">
+            <div class="card-header">
+                <h3 class="title">${seance.titre}</h3>
+                <span class="badge ${seance.type === 'EN_DIRECT' ? 'live' : 'recorded'}">
+                    ${seance.type === 'EN_DIRECT' ? '🔴 EN DIRECT' : '⏺ ENREGISTRE'}
+                </span>
+            </div>
+
+            <div class="card-body">
+                <div class="meta-info">
+                    <div class="date-time">
+                        <span class="date">📅 ${seance.date}</span>
+                        <span class="time">⌚ ${seance.heureDebut} - ${seance.heureFin}</span>
+                    </div>
+                </div>
+
+                <div class="participants">
+                    <div class="coach">
+                        👨 ${seance.coach}
+                    </div>
+                    <div class="adherent">
+                        👤 ${seance.adherent?.prenom ? `${seance.adherent.prenom} ` : ''}
+                        ${seance.adherent?.nom || 'Adhérent non spécifié'}
+                    </div>
+                </div>
+
+                <!-- Nouvelle section pour les boutons -->
+               <div class="actions">
+                   <button class="btn-modify" onclick="window.location.href='${seance.editPath}'">
+                    <i class="bi bi-pencil-square"></i> Modifier
+                   </button>
+                <form action="${seance.deletePath}" method="POST" style="display: inline;">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn-delete"
+                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette séance ?')">
+                        <i class="bi bi-trash"></i> Supprimer
+                    </button>
+                </form>
+            </div>
+            </div>
+        </div>
+    `).join('');
+                        })
+                        .catch(error => {
+                            container.innerHTML = `<div class="error animate__animated animate__shakeX">⚠️ ${error.message}</div>`;
+                        });
+                }
+            });
+            calendar.render();
+
+            // Ouvrir automatiquement le modal si le formulaire est soumis mais invalide
+            {% if showModalOnLoad %}
+            const addPlanningModal = new bootstrap.Modal(document.getElementById('addPlanningModal'));
+            addPlanningModal.show();
+            {% endif%}
+
+
+            const modalElement = document.getElementById('addPlanningModal');
+            const form = modalElement.querySelector('form');
+
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                form.reset();
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link rel="stylesheet" href="{{ asset('css/plan.css') }}">
+{% endblock %}
+
+{% block Hero_Section_Begin %}
+    <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb-bg.jpg">
+        <div class="container" >
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2 style="margin-bottom: 10px;">DÉTAILS DE PLANNING</h2>
+                        <h4 style="color: white; margin-bottom: 20px;">Commencer par ajouter planning</h4>
+                        <button type="button"  class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#addPlanningModal">
+                            Ajouter un planning
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+    {% block body %}
+        {# Modal #}
+        <div class="modal fade" id="addPlanningModal" tabindex="-1" aria-labelledby="addPlanningModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addPlanningModalLabel">Ajouter un nouveau planning</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    {{ form_start(form, {'action': path('app_planning'), 'attr': {'novalidate': 'novalidate', 'class': 'modal-form'}}) }}
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <img class="img-fluid rounded w-100" src="{{ asset('img/plan.jpg') }}" alt="">
+                            </div>
+                            <div class="col-md-6">
+                                {# Champ Titre #}
+                                <div class="mb-3">
+                                    {{ form_label(form.titre, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.titre, {'attr': {'class': 'form-control',}
+                                    }) }}
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.titre) }}
+                                    </div>
+                                </div>
+                                {# Champ Tarif #}
+                                <div class="mb-3">
+                                    {{ form_label(form.tarif, 'Tarif', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.tarif, {'attr': {'class': 'form-control','min': '0'}}) }}
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.tarif) }}
+                                    </div>
+                                </div>
+                                {# Champ Coach #}
+                                <div class="mb-3">
+                                    {{ form_label(form.coach, 'Coach', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.coach, {'attr': {'class': 'form-select',}}) }}
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.coach) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary" style="background-color: #ff6600; border: 1px solid #ff6600" >ajouter</button>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+        {# affichage de table contenat les donnéés inserer dans modal avec 2 boutons a coté pour modifier et suprimer #}
+        <div id="planningTableContainer" >
+            <div class="container mt-4">
+                <h3 class="text-center mb-4" style="color: white">Votre Planning</h3>
+                {% if Planning %}
+                    <div class="table-responsive shadow-sm">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Description</th>
+                                <th>Tarif</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{ Planning.titre }}</td>
+                                <td>{{ Planning.tarif }}</td>
+                                <td>
+                                    <a href="{{ path('app_planning_update', { 'id': Planning.id }) }}"
+                                       class="btn btn-warning btn-sm me-2 text-white"
+                                       style="background-color:#ff6600">
+                                        <i class="bi bi-pencil-square"></i>
+                                        Modifier
+                                    </a>
+                                    <a href="{{ path('app_planning_delete', { 'id': Planning.id }) }}"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Voulez-vous supprimer ce planning ?');">
+                                        <i class="bi bi-trash"></i>
+                                        Supprimer
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center">Aucun planning ajouté pour ce coach.</p>
+                {% endif %}
+            </div>
+        </div>
+        {# Calendrier #}
+        <div  id='calendrier'></div>
+        <h2 style="text-align: center; color: white">listes des Séances</h2>
+        <div id="seances-list" class="mt-4"></div>
+
+        <h1 style="text-align: center; color: white">Détection d'exercice</h1>
+        <div id="video-container" style="color: white">
+            <img id="video-frame" src="" alt="Flux vidéo désactivé" width="640" height="480">
+        </div>
+        <div class="btn-container" style="text-align: center;">
+            <button onclick="startCamera()">Démarrer</button>
+            <button onclick="stopCamera()">Arrêter</button>
+        </div>
+    {% endblock %}
