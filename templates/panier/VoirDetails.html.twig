@@ -132,52 +132,51 @@
 {% block body %}
     <link rel="stylesheet" href="{{ asset('css/voirdetails.css') }}">
     <div class="breadcrumb-text" style="text-align: center; color: white;margin-top: 70px">
-        <h2 style="color:white; display: inline-flex; align-items: center;">Details de produit
-        </h2>
+        <h2 style="color:white; display: inline-flex; align-items: center;">Details de produit</h2>
     </div>
-        <div class="container-fluid min-vh-100 d-flex flex-column justify-content-center">
-            <div class="product-details-wrapper d-flex gap-4">
-                <!-- Image du produit -->
-                <div class="product-image-wrapper d-flex align-items-center justify-content-center">
-                    <img src="{{ asset('img/' ~ produit.image) }}" alt="{{ produit.nom }}"
-                         class="img-fluid product-image animate__animated animate__fadeIn">
-                </div>
-                <!-- Détails du produit -->
-                <div class="product-details">
-                    <h2 class="product-title mb-3">{{ produit.nom }}</h2>
-                    <!-- Informations produit -->
-                    <div class="product-info">
-                        <p class="product-price"><strong>Prix : {{ produit.prix }} DT</strong></p>
-                        <p class="product-stock"><strong>Disponibilité :
+
+    <div class="container-fluid min-vh-100 d-flex flex-column justify-content-center">
+        <div class="product-details-wrapper d-flex gap-4">
+            <!-- Image du produit -->
+            <div class="product-image-wrapper d-flex align-items-center justify-content-center">
+                <img src="{{ asset('img/' ~ produit.image) }}" alt="{{ produit.nom }}"
+                     class="img-fluid product-image animate__animated animate__fadeIn">
+            </div>
+            <!-- Détails du produit -->
+            <div class="product-details">
+                <h2 class="product-title mb-3">{{ produit.nom }}</h2>
+                <!-- Informations produit -->
+                <div class="product-info">
+                    <p class="product-price"><strong>Prix : {{ produit.prix }} DT</strong></p>
+                    <p class="product-stock"><strong>Disponibilité :
                             {{ produit.etat > 0 ? ' En stock' : ' Rupture de stock' }}</strong></p>
-                        <p class="product-category"><strong>Catégorie : {{ produit.categorie.nom }}</strong></p>
-                    </div>
-                    <!-- Formulaire pour ajouter au panier -->
-                    <form method="post">
-                        <div class="form-group d-flex align-items-center justify-content-center my-3"> <!-- Justifier le contenu au centre -->
-                            <label for="quantite" class="me-2" style="color: white;font-weight: bold ;margin-right: 10px;">Quantité :</label>
-                            <input type="number" id="quantite" name="quantite" min="1" value="1"
-                                   class="form-control w-25 me-3"> <!-- Espacement entre le champ et le bouton -->
-                            <button type="submit" class="btn btn-ajouter-panier">
-                                <i class="fa fa-cart-plus me-2"></i>Ajouter au panier
-                            </button>
-                        </div>
-                    </form>
-                    <!-- Séparation -->
-                    <hr style="border-top: 3px solid #777;">
-                    <!-- Description produit -->
-                    <div class="product-description-section">
-                        <p class="product-description"><strong>Description :</strong></p>
-                        <p><strong>{{ produit.description }}</strong></p>
-                    </div>
-
-                    <!-- Retour -->
-                    <a href="{{ path('app_afficher_panier') }}" class="btn btn-retour mt-4">
-                        <i class="fa fa-arrow-left me-2"></i><strong>  Retour aux produits</strong>
-                    </a>
-
+                    <p class="product-category"><strong>Catégorie : {{ produit.categorie.nom }}</strong></p>
                 </div>
+                <!-- Formulaire pour ajouter au panier -->
+                <form method="post">
+                    <div class="form-group d-flex align-items-center justify-content-center my-3">
+                        <label for="quantite" class="me-2" style="color: white;font-weight: bold ;margin-right: 10px;">Quantité :</label>
+                        <input type="number" id="quantite" name="quantite" min="1" value="1"
+                               class="form-control w-25 me-3">
+                        <button type="submit" class="btn btn-ajouter-panier">
+                            <i class="fa fa-cart-plus me-2"></i>Ajouter au panier
+                        </button>
+                    </div>
+                </form>
+                <hr style="border-top: 3px solid #777;">
+                <!-- Description produit -->
+                <div class="product-description-section">
+                    <p class="product-description"><strong>Description :</strong></p>
+                    <p><strong>{{ produit.description }}</strong></p>
+                </div>
+
+                <!-- Retour -->
+                <a href="{{ path('app_afficher_panier') }}" class="btn btn-retour mt-4">
+                    <i class="fa fa-arrow-left me-2"></i><strong>  Retour aux produits</strong>
+                </a>
             </div>
         </div>
+    </div>
 {% endblock %}
+
 

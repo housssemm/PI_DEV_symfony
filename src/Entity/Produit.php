@@ -66,7 +66,7 @@ class Produit
     #[ORM\Column(type: 'text', nullable: true)]
     #[Assert\NotBlank(message: "La description du produit est obligatoire.")]
     #[Assert\Length(
-        max: 50,
+        max: 200,
         maxMessage: "La description du produit ne peut pas dépasser {{ limit }} caractères."
     )]
     #[Assert\Regex(
