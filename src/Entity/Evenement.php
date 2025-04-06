@@ -57,9 +57,9 @@ class Evenement
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: true)]
-    private ?\DateTimeInterface $dateDebut = null;
 
+    #[ORM\Column(name: 'dateDebut', type: 'date', nullable: true)]
+    private ?\DateTimeInterface $dateDebut = null;
     public function getDateDebut(): ?\DateTimeInterface
     {
         return $this->dateDebut;
@@ -71,7 +71,7 @@ class Evenement
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: false)]
+    #[ORM\Column(name: 'dateFin', type: 'date', nullable: false)]
     private ?\DateTimeInterface $dateFin = null;
 
     public function getDateFin(): ?\DateTimeInterface
@@ -128,10 +128,16 @@ class Evenement
     }
 
     #[ORM\Column(type: 'blob', nullable: false)]
-    private ?string $image = null;
+    private $image; // Supprimer le typage ?string
 
     public function getImage(): ?string
     {
+        // Si l'image est une ressource, récupère-la sous forme de chaîne binaire
+        if (is_resource($this->image)) {
+            return stream_get_contents($this->image); // Retourne une chaîne binaire
+        }
+
+        // Sinon, retourne ce qui est stocké
         return $this->image;
     }
 
@@ -140,7 +146,6 @@ class Evenement
         $this->image = $image;
         return $this;
     }
-
     #[ORM\Column(type: 'string', nullable: false)]
     private ?string $type = null;
 
@@ -169,7 +174,7 @@ class Evenement
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(name: 'capaciteMaximale', type: 'integer', nullable: false)]
     private ?int $capaciteMaximale = null;
 
     public function getCapaciteMaximale(): ?int
@@ -183,7 +188,7 @@ class Evenement
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(name: 'idCreateurEvenement', type: 'integer', nullable: true)]
     private ?int $idCreateurEvenement = null;
 
     public function getIdCreateurEvenement(): ?int
@@ -230,17 +235,17 @@ class Evenement
         return $this;
     }
 
-//    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'evenements')]
-//    #[ORM\JoinTable(
-//        name: 'participation',
-//        joinColumns: [
-//            new ORM\JoinColumn(name: 'evenementId', referencedColumnName: 'id')
-//        ],
-//        inverseJoinColumns: [
-//            new ORM\JoinColumn(name: 'userId', referencedColumnName: 'id')
-//        ]
-//    )]
-//    private Collection $users;
+    //    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'evenements')]
+    //    #[ORM\JoinTable(
+    //        name: 'participation',
+    //        joinColumns: [
+    //            new ORM\JoinColumn(name: 'evenementId', referencedColumnName: 'id')
+    //        ],
+    //        inverseJoinColumns: [
+    //            new ORM\JoinColumn(name: 'userId', referencedColumnName: 'id')
+    //        ]
+    //    )]
+    //    private Collection $users;
 
     /**
      * @return Collection<int, User>
@@ -267,4 +272,17 @@ class Evenement
         return $this;
     }
 
+    // Virtual property for base64 image
+    private ?string $base64Image = null;
+
+    public function getBase64Image(): ?string
+    {
+        return $this->base64Image;
+    }
+
+    public function setBase64Image(?string $base64Image): self
+    {
+        $this->base64Image = $base64Image;
+        return $this;
+    }
 }

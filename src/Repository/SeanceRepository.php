@@ -15,6 +15,26 @@ class SeanceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Seance::class);
     }
+    public function findByCoach($coach)
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.coach = :coach')
+            ->setParameter('coach', $coach)
+            ->orderBy('s.date', 'ASC') // Vous pouvez trier par date, ou un autre champ si nécessaire
+            ->getQuery()
+            ->getResult();
+    }
+    public function findByDate(\DateTimeInterface $date): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.coach', 'c')
+            ->addSelect('c')
+            ->andWhere('s.Date = :date')
+            ->setParameter('date', $date->format('Y-m-d')) // Formatage explicite
+            ->getQuery()
+            ->getResult();
+    }
+
 
 //    /**
 //     * @return Seance[] Returns an array of Seance objects
