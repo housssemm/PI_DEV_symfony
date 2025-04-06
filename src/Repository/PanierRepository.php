@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Panier;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @extends ServiceEntityRepository<Panier>
@@ -15,7 +17,6 @@ class PanierRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Panier::class);
     }
-
 //    /**
 //     * @return Panier[] Returns an array of Panier objects
 //     */
@@ -40,4 +41,6 @@ class PanierRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+// src/Repository/ProduitRepository.php
+
 }

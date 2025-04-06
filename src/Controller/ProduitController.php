@@ -7,6 +7,7 @@ use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -86,6 +87,22 @@ final class ProduitController extends AbstractController
         return $this->render('produit/modifierProduit.html.twig', [
             'f' => $form->createView(),
             'produit' => $Produit
+        ]);
+    }
+    #[Route('/recherche-produits', name: 'recherche_produits',methods: ['GET'])]
+    public function search(Request $request, ProduitRepository $produitRepository)
+    {
+        $searchTerm = $request->query->get('searchTerm');
+
+        // Si la recherche est vide, on récupère tous les produits
+        if (empty($searchTerm)) {
+            $produits = $produitRepository->findAll();
+        } else {
+            $produits = $produitRepository->findBySearchTerm($searchTerm);
+        }
+
+        return $this->render('produit/_produits.html.twig', [
+            'produits' => $produits,
         ]);
     }
 }
