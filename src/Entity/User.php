@@ -18,7 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     "adherent" => "Adherent",
     "coach" => "Coach",
     "investisseur_produit" => "InvestisseurProduit",
-    "createur_evenement" => "CreateurEvenement"
+    "createur_evenement" => "CreateurEvenement",
+    "admin" => "Admin"  // Ajouter cette ligne pour le rôle admin
 ])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -27,48 +28,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 255, unique: true, nullable: true)]
     #[Assert\NotBlank(message: 'L\'email ne peut pas être vide')]
     #[Assert\Email(message: 'L\'email {{ value }} n\'est pas valide')]
     private ?string $email = null;
 
-    #[ORM\Column]
-    private array $roles = [];
-
-    #[ORM\Column(name: 'MDP')]
+    #[ORM\Column(name: 'MDP', nullable: true)]
     private ?string $password = null;
 
     private ?string $plainPassword = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 100, nullable: true)]
     #[Assert\NotBlank(message: 'Le nom ne peut pas être vide')]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 100, nullable: true)]
     #[Assert\NotBlank(message: 'Le prénom ne peut pas être vide')]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $userType = null;
+    // Propriété non mappée pour les rôles (gérée par Symfony Security)
 
-    #[ORM\OneToMany(targetEntity: Adherent::class, mappedBy: 'user')]
-    private Collection $adherents;
 
-    #[ORM\OneToMany(targetEntity: Admin::class, mappedBy: 'user')]
-    private Collection $admins;
-
-    #[ORM\OneToMany(targetEntity: Coach::class, mappedBy: 'user')]
-    private Collection $coachs;
-
-    #[ORM\OneToMany(targetEntity: CreateurEvenement::class, mappedBy: 'user')]
-    private Collection $createurevenements;
-
-    #[ORM\OneToMany(targetEntity: InvestisseurProduit::class, mappedBy: 'user')]
-    private Collection $investisseurproduits;
-
+    // Relations valides (à conserver si ces entités existent et sont pertinentes)
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user')]
     private Collection $messages;
 
@@ -91,11 +75,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->adherents = new ArrayCollection();
-        $this->admins = new ArrayCollection();
-        $this->coachs = new ArrayCollection();
-        $this->createurevenements = new ArrayCollection();
-        $this->investisseurproduits = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->paniers = new ArrayCollection();
         $this->participantevenements = new ArrayCollection();
@@ -113,7 +92,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
         return $this;
@@ -127,7 +106,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
+        $roles[] = 'ROLE_USER'; // Rôle par défaut
         return array_unique($roles);
     }
 
@@ -142,7 +121,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(?string $password): static
     {
         $this->password = $password;
         return $this;
@@ -161,7 +140,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        $this->plainPassword = null; // Efface le mot de passe en clair après utilisation
+        $this->plainPassword = null;
     }
 
     public function getNom(): ?string
@@ -169,7 +148,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
+    public function setNom(?string $nom): static
     {
         $this->nom = $nom;
         return $this;
@@ -180,7 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): static
+    public function setPrenom(?string $prenom): static
     {
         $this->prenom = $prenom;
         return $this;
@@ -197,118 +176,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUserType(): ?string
+    // Méthode pour récupérer le type d’utilisateur basé sur l’héritage
+    public function getDiscriminator(): string
     {
-        return $this->userType;
-    }
-
-    public function setUserType(string $userType): static
-    {
-        $this->userType = $userType;
-        return $this;
-    }
-
-    // Simplification des méthodes get pour les collections
-    public function getAdherents(): Collection
-    {
-        return $this->adherents;
-    }
-
-    public function addAdherent(Adherent $adherent): self
-    {
-        if (!$this->adherents->contains($adherent)) {
-            $this->adherents->add($adherent);
-            $adherent->setUser($this); // Si relation bidirectionnelle
+        if ($this instanceof Adherent) {
+            return 'adherent';
+        } elseif ($this instanceof Coach) {
+            return 'coach';
+        } elseif ($this instanceof CreateurEvenement) {
+            return 'createur_evenement';
+        } elseif ($this instanceof InvestisseurProduit) {
+            return 'investisseur_produit';
+        } elseif ($this instanceof Admin) {
+            return 'admin';
+        } else {
+            return 'user';
         }
-        return $this;
     }
 
-    public function removeAdherent(Adherent $adherent): self
-    {
-        $this->adherents->removeElement($adherent);
-        return $this;
-    }
-
-    public function getAdmins(): Collection
-    {
-        return $this->admins;
-    }
-
-    public function addAdmin(Admin $admin): self
-    {
-        if (!$this->admins->contains($admin)) {
-            $this->admins->add($admin);
-            $admin->setUser($this);
-        }
-        return $this;
-    }
-
-    public function removeAdmin(Admin $admin): self
-    {
-        $this->admins->removeElement($admin);
-        return $this;
-    }
-
-    public function getCoachs(): Collection
-    {
-        return $this->coachs;
-    }
-
-    public function addCoach(Coach $coach): self
-    {
-        if (!$this->coachs->contains($coach)) {
-            $this->coachs->add($coach);
-            $coach->setUser($this);
-        }
-        return $this;
-    }
-
-    public function removeCoach(Coach $coach): self
-    {
-        $this->coachs->removeElement($coach);
-        return $this;
-    }
-
-    public function getCreateurevenements(): Collection
-    {
-        return $this->createurevenements;
-    }
-
-    public function addCreateurevenement(CreateurEvenement $createurevenement): self
-    {
-        if (!$this->createurevenements->contains($createurevenement)) {
-            $this->createurevenements->add($createurevenement);
-            $createurevenement->setUser($this);
-        }
-        return $this;
-    }
-
-    public function removeCreateurevenement(CreateurEvenement $createurevenement): self
-    {
-        $this->createurevenements->removeElement($createurevenement);
-        return $this;
-    }
-
-    public function getInvestisseurproduits(): Collection
-    {
-        return $this->investisseurproduits;
-    }
-
-    public function addInvestisseurproduit(InvestisseurProduit $investisseurproduit): self
-    {
-        if (!$this->investisseurproduits->contains($investisseurproduit)) {
-            $this->investisseurproduits->add($investisseurproduit);
-            $investisseurproduit->setUser($this);
-        }
-        return $this;
-    }
-
-    public function removeInvestisseurproduit(InvestisseurProduit $investisseurproduit): self
-    {
-        $this->investisseurproduits->removeElement($investisseurproduit);
-        return $this;
-    }
-
+    // Méthodes pour les relations (simplifiées)
     public function getMessages(): Collection
     {
         return $this->messages;

@@ -13,7 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'investisseurproduit')]
 class InvestisseurProduit extends User
 {
-    #[ORM\Column(length: 255)]
+
+    #[ORM\Column(name: 'NomE', length: 255)]
     #[Assert\NotBlank(message: 'Le nom de l\'entreprise ne peut pas être vide')]
     private ?string $nomEntreprise = null;
 
@@ -28,7 +29,7 @@ class InvestisseurProduit extends User
         return $this;
     }
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(name: 'Description', length: 255)]
     #[Assert\NotBlank(message: 'La description ne peut pas être vide')]
     private ?string $descriptionInvestisseur = null;
 
@@ -43,7 +44,7 @@ class InvestisseurProduit extends User
         return $this;
     }
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: 'Adresse', length: 255)]
     #[Assert\NotBlank(message: 'L\'adresse ne peut pas être vide')]
     private ?string $adresseInvestisseur = null;
 
@@ -58,7 +59,7 @@ class InvestisseurProduit extends User
         return $this;
     }
 
-    #[ORM\Column(length: 8)]
+    #[ORM\Column(name: 'Telephone', length: 255)]
     #[Assert\NotBlank(message: 'Le numéro de téléphone ne peut pas être vide')]
     #[Assert\Regex(
         pattern: '/^[0-9]{8}$/',

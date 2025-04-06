@@ -81,9 +81,11 @@ class Adherent extends User
     }
 
     // Objectif Personnelle Property (Personal Goal)
-    #[ORM\Column(length: 255)]
+
+    #[ORM\Column(name: 'Objectif_personnelle', length: 255)]
     #[Assert\NotBlank(message: 'L\'objectif personnel ne peut pas être vide')]
     private ?string $objectifPersonnel = null;
+
 
     public function getObjectifPersonnel(): ?string
     {
@@ -97,7 +99,8 @@ class Adherent extends User
     }
 
     // Niveau Activites Property (Activity Level)
-    #[ORM\Column(length: 50)]
+
+    #[ORM\Column(name: 'Niveau_activites', length: 255)]
     #[Assert\NotBlank(message: 'Le niveau d\'activité ne peut pas être vide')]
     private ?string $niveauActivite = null;
 
@@ -176,67 +179,5 @@ class Adherent extends User
         return $this;
     }
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le nom de l\'entreprise ne peut pas être vide')]
-    private ?string $nomEntreprise = null;
 
-    #[ORM\Column(type: 'text')]
-    #[Assert\NotBlank(message: 'La description ne peut pas être vide')]
-    private ?string $descriptionAdherent = null;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'L\'adresse ne peut pas être vide')]
-    private ?string $adresseAdherent = null;
-
-    #[ORM\Column(length: 8)]
-    #[Assert\NotBlank(message: 'Le numéro de téléphone ne peut pas être vide')]
-    #[Assert\Regex(
-        pattern: '/^[0-9]{8}$/',
-        message: 'Le numéro de téléphone doit contenir exactement 8 chiffres'
-    )]
-    private ?string $telephoneAdherent = null;
-
-    public function getNomEntreprise(): ?string
-    {
-        return $this->nomEntreprise;
-    }
-
-    public function setNomEntreprise(string $nomEntreprise): static
-    {
-        $this->nomEntreprise = $nomEntreprise;
-        return $this;
-    }
-
-    public function getDescriptionAdherent(): ?string
-    {
-        return $this->descriptionAdherent;
-    }
-
-    public function setDescriptionAdherent(string $descriptionAdherent): static
-    {
-        $this->descriptionAdherent = $descriptionAdherent;
-        return $this;
-    }
-
-    public function getAdresseAdherent(): ?string
-    {
-        return $this->adresseAdherent;
-    }
-
-    public function setAdresseAdherent(string $adresseAdherent): static
-    {
-        $this->adresseAdherent = $adresseAdherent;
-        return $this;
-    }
-
-    public function getTelephoneAdherent(): ?string
-    {
-        return $this->telephoneAdherent;
-    }
-
-    public function setTelephoneAdherent(string $telephoneAdherent): static
-    {
-        $this->telephoneAdherent = $telephoneAdherent;
-        return $this;
-    }
 }

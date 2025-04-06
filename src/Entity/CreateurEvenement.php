@@ -10,22 +10,22 @@ use App\Repository\CreateurevenementRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CreateurevenementRepository::class)]
-#[ORM\Table(name: 'createur_evenement')]
+#[ORM\Table(name: 'createurevenement')]
 class CreateurEvenement extends User
 {
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le nom de l\'organisation ne peut pas être vide')]
     private ?string $nomOrganisation = null;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(name: 'Description', length: 255)]
     #[Assert\NotBlank(message: 'La description ne peut pas être vide')]
     private ?string $descriptionCreateur = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: 'Adresse', length: 255)]
     #[Assert\NotBlank(message: 'L\'adresse ne peut pas être vide')]
     private ?string $adresseCreateur = null;
 
-    #[ORM\Column(length: 8)]
+    #[ORM\Column(name: 'Telephone', length: 255)]
     #[Assert\NotBlank(message: 'Le numéro de téléphone ne peut pas être vide')]
     #[Assert\Regex(
         pattern: '/^[0-9]{8}$/',

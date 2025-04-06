@@ -7,7 +7,7 @@ use App\Entity\Adherent;
 use App\Entity\Coach;
 use App\Entity\CreateurEvenement;
 use App\Entity\InvestisseurProduit;
-use App\Form\RegistrationFormType;
+use App\Form\UserType; // Changé de RegistrationFormType à UserType
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,14 +21,14 @@ class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
     public function register(
-        Request $request, 
-        UserPasswordHasherInterface $userPasswordHasher, 
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
         SluggerInterface $slugger
     ): Response
     {
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(UserType::class, $user); // Changé de RegistrationFormType à UserType
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -44,11 +44,10 @@ class RegistrationController extends AbstractController
                         $this->getParameter('images_directory'),
                         $newFilename
                     );
+                    $user->setImage($newFilename);
                 } catch (FileException $e) {
-                    // Gérer l'exception si quelque chose se passe mal pendant l'upload
+                    $this->addFlash('error', 'Erreur lors de l’upload de l’image.');
                 }
-
-                $user->setImage($newFilename);
             }
 
             // Encode le mot de passe
@@ -79,7 +78,6 @@ class RegistrationController extends AbstractController
                     $specificUser = new Coach();
                     $specificUser->setAnneeExperience($form->get('anneeExperience')->getData());
                     $specificUser->setSpecialite($form->get('specialite')->getData());
-                    // Gérer l'upload du CV
                     $cvFile = $form->get('cv')->getData();
                     if ($cvFile) {
                         $originalFilename = pathinfo($cvFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -90,10 +88,10 @@ class RegistrationController extends AbstractController
                                 $this->getParameter('cv_directory'),
                                 $newFilename
                             );
+                            $specificUser->setCv($newFilename);
                         } catch (FileException $e) {
-                            // Gérer l'exception
+                            $this->addFlash('error', 'Erreur lors de l’upload du CV.');
                         }
-                        $specificUser->setCv($newFilename);
                     }
                     $specificUser->setRoles(['ROLE_COACH']);
                     break;
@@ -125,11 +123,12 @@ class RegistrationController extends AbstractController
             $entityManager->persist($specificUser);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Inscription réussie ! Vous pouvez vous connecter.');
             return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
+            'userForm' => $form->createView(), // Changé de registrationForm à userForm
         ]);
     }
-} 
+}

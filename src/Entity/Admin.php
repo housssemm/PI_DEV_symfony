@@ -7,18 +7,8 @@ use App\Repository\AdminRepository;
 
 #[ORM\Entity(repositoryClass: AdminRepository::class)]
 #[ORM\Table(name: 'admin')]
-class Admin
+class Admin extends User
 {
-    // Primary Key - ID
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     // ManyToOne relationship with User
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'admins')]
