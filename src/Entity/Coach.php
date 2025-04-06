@@ -176,16 +176,4 @@ class Coach extends User
         $this->getSeances()->removeElement($seance);
         return $this;
     }
-
-    public function isCertificatValide(): ?bool
-    {
-        return $this->Certificat_valide;
-    }
-
-    public function setCertificatValide(?bool $Certificat_valide): static
-    {
-        $this->Certificat_valide = $Certificat_valide;
-
-        return $this;
-    }
 }

@@ -1,0 +1,80 @@
+
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+    <h1>Inscription</h1>
+
+    {{ form_start(rForm) }}
+    {{ form_row(rForm.email) }}
+    {{ form_row(rForm.plainPassword) }}
+    {{ form_row(rForm.nom) }}
+    {{ form_row(rForm.prenom) }}
+    {{ form_row(rForm.type) }}
+
+    <div id="adherent-fields" style="display: none;">
+        {{ form_row(rForm.poids) }}
+        {{ form_row(rForm.taille) }}
+        {{ form_row(rForm.age) }}
+        {{ form_row(rForm.genre) }}
+        {{ form_row(rForm.objectifPersonnel) }}
+        {{ form_row(rForm.niveauActivite) }}
+    </div>
+
+    <div id="coach-fields" style="display: none;">
+        {{ form_row(rForm.anneeExperience) }}
+        {{ form_row(rForm.Certificat_valide) }}
+        {{ form_row(rForm.specialite) }}
+        {{ form_row(rForm.cv) }}
+    </div>
+
+    <div id="createur-fields" style="display: none;">
+        {{ form_row(rForm.nomOrganisation) }}
+        {{ form_row(rForm.descriptionCreateur) }}
+        {{ form_row(rForm.adresseCreateur) }}
+        {{ form_row(rForm.telephoneCreateur) }}
+        {{ form_row(rForm.certificatValide) }}
+    </div>
+
+    <div id="investisseur-fields" style="display: none;">
+        {{ form_row(rForm.nomEntreprise) }}
+        {{ form_row(rForm.descriptionInvestisseur) }}
+        {{ form_row(rForm.adresseInvestisseur) }}
+        {{ form_row(rForm.telephoneInvestisseur) }}
+        {{ form_row(rForm.certificatValideInvestisseur) }}
+    </div>
+
+    <button class="btn btn-primary">S'inscrire</button>
+    {{ form_end(rForm) }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var typeField = document.querySelector('#{{ rForm.type.vars.id }}');
+            var adherentFields = document.getElementById('adherent-fields');
+            var coachFields = document.getElementById('coach-fields');
+            var createurFields = document.getElementById('createur-fields');
+            var investisseurFields = document.getElementById('investisseur-fields');
+
+            function updateFields() {
+                var selectedType = typeField.value;
+                adherentFields.style.display = 'none';
+                coachFields.style.display = 'none';
+                createurFields.style.display = 'none';
+                investisseurFields.style.display = 'none';
+
+                if (selectedType === 'adherent') {
+                    adherentFields.style.display = 'block';
+                } else if (selectedType === 'coach') {
+                    coachFields.style.display = 'block';
+                } else if (selectedType === 'createur_evenement') {
+                    createurFields.style.display = 'block';
+                } else if (selectedType === 'investisseur_produit') {
+                    investisseurFields.style.display = 'block';
+                }
+            }
+
+            typeField.addEventListener('change', updateFields);
+            updateFields(); // appel initial
+        });
+    </script>
+{% endblock %}

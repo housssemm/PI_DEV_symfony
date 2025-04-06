@@ -77,6 +77,19 @@ class InvestisseurProduit extends User
         $this->telephoneInvestisseur = $telephoneInvestisseur;
         return $this;
     }
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $certificatValide = null;
+
+    public function isCertificatValide(): ?bool
+    {
+        return $this->certificatValide;
+    }
+
+    public function setCertificatValide(?bool $certificatValide): static
+    {
+        $this->certificatValide = $certificatValide;
+        return $this;
+    }
 
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'investisseurproduit')]
     private Collection $produits;

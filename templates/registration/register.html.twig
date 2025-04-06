@@ -5,14 +5,148 @@
     <title>Inscription</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Ton CSS reste inchangé, je le garde tel quel -->
     <style>
-        /* Ton CSS ici */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .logo {
+            width: 150px;
+            margin: 0 auto 30px;
+            display: block;
+        }
+        .header-text {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header-text h1 {
+            color: white;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .header-text p {
+            color: #888;
+            font-size: 16px;
+            margin: 0;
+        }
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            padding: 15px;
+            height: auto;
+            font-size: 16px;
+        }
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #ff6b01;
+            color: white;
+            box-shadow: none;
+        }
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .form-label {
+            color: white;
+            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .role-button {
+            background: #1a1a1a;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .role-button.active {
+            background: #2d1d09;
+            border-color: #ff6b01;
+        }
+        .role-button i {
+            font-size: 40px;
+            color: #ff6b01;
+            margin-bottom: 15px;
+        }
+        .role-button div {
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .investisseur-button {
+            grid-column: 1 / -1;
+            aspect-ratio: auto;
+            padding: 20px;
+        }
+        .form-section {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        .form-section h3 {
+            color: #ff6b01;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .file-upload {
+            background: #1a1a1a;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .file-upload:hover {
+            border-color: #ff6b01;
+        }
+        .btn-primary {
+            background: #ff6b01;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #ff8c3b;
+            transform: translateY(-2px);
+        }
+        a {
+            color: #ff6b01;
+            transition: all 0.3s ease;
+        }
+        a:hover {
+            color: #ff8c3b;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <form class="registration-form" action="{{ path('app_register') }}" method="POST" enctype="multipart/form-data">
+    <form class="registration-form" method="post" enctype="multipart/form-data" action="{{ path('app_register') }}">
         <img src="{{ asset('assets/images/logo-coachini.png') }}" alt="Coachini" class="logo">
         <div class="header-text">
             <h1>Créer un compte</h1>
@@ -22,30 +156,36 @@
         <div class="row g-4 mb-4">
             <div class="col-md-6">
                 <label class="form-label">Nom</label>
-                <input type="text" class="form-control" name="nom" placeholder="Nom">
+                <input type="text" class="form-control" placeholder="Nom" name="nom" value="{{ app.request.get('nom') }}">
             </div>
             <div class="col-md-6">
                 <label class="form-label">Prénom</label>
-                <input type="text" class="form-control" name="prenom" placeholder="Prénom">
+                <input type="text" class="form-control" placeholder="Prénom" name="prenom" value="{{ app.request.get('prenom') }}">
             </div>
             <div class="col-12">
                 <label class="form-label">Email</label>
-                <input type="email" class="form-control" name="email" placeholder="Email">
+                <input type="email" class="form-control" placeholder="Email" name="email" value="{{ app.request.get('email') }}">
             </div>
             <div class="col-12">
                 <label class="form-label">Mot de passe</label>
-                <input type="password" class="form-control" name="password" placeholder="Mot de passe">
+                <input type="password" class="form-control" placeholder="Mot de passe" name="plainPassword">
             </div>
             <div class="col-12">
                 <label class="form-label">Photo de profil</label>
                 <div class="file-upload">
-                    <input type="file" class="d-none" id="photo" name="photo">
+                    <input type="file" class="d-none" id="photo" name="image">
                     <label for="photo">
                         <div>Choose File</div>
                         <div class="text-muted">No file chosen</div>
                     </label>
                 </div>
             </div>
+            <div class="col-12">
+                <input type="checkbox" id="agreeTerms" name="agreeTerms" {{ app.request.get('agreeTerms') ? 'checked' : '' }}>
+                <label for="agreeTerms">J'accepte les conditions d'utilisation</label>
+            </div>
+            <!-- Utilisation du nom "selectedUserType" pour éviter le conflit -->
+            <input type="hidden" id="userType" name="selectedUserType" value="{{ app.request.get('selectedUserType') }}">
         </div>
 
         <div class="role-grid">
@@ -67,63 +207,58 @@
             </div>
         </div>
 
-        <!-- Champ caché pour stocker le rôle sélectionné -->
-        <input type="hidden" name="role" id="selected-role" value="coach">
-
-        <!-- Sous-formulaires -->
         <div id="adherent-form" class="form-section" style="display: none;">
             <h3>Informations Adhérent</h3>
             <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label">Poids (kg)</label>
-                    <input type="number" class="form-control" name="adherent[poids]" placeholder="Votre poids">
+                    <input type="number" class="form-control" placeholder="Votre poids" name="adherent[poids]" value="{{ app.request.get('adherent')['poids']|default('') }}">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Taille (cm)</label>
-                    <input type="number" class="form-control" name="adherent[taille]" placeholder="Votre taille">
+                    <input type="number" class="form-control" placeholder="Votre taille" name="adherent[taille]" value="{{ app.request.get('adherent')['taille']|default('') }}">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Âge</label>
-                    <input type="number" class="form-control" name="adherent[age]" placeholder="Votre âge">
+                    <input type="number" class="form-control" placeholder="Votre âge" name="adherent[age]" value="{{ app.request.get('adherent')['age']|default('') }}">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Genre</label>
                     <select class="form-control" name="adherent[genre]">
                         <option value="">Sélectionnez votre genre</option>
-                        <option value="homme">Homme</option>
-                        <option value="femme">Femme</option>
-                        <option value="autre">Autre</option>
+                        <option value="homme" {{ app.request.get('adherent')['genre']|default('') == 'homme' ? 'selected' : '' }}>Homme</option>
+                        <option value="femme" {{ app.request.get('adherent')['genre']|default('') == 'femme' ? 'selected' : '' }}>Femme</option>
                     </select>
                 </div>
                 <div class="col-12">
                     <label class="form-label">Objectif personnel</label>
                     <select class="form-control" name="adherent[objectif]">
                         <option value="">Sélectionnez votre objectif</option>
-                        <option value="perte_poids">Perte de poids</option>
-                        <option value="musculation">Musculation</option>
-                        <option value="endurance">Endurance</option>
-                        <option value="bien_etre">Bien-être</option>
+                        <option value="perte_poids" {{ app.request.get('adherent')['objectif']|default('') == 'perte_poids' ? 'selected' : '' }}>Perte de poids</option>
+                        <option value="musculation" {{ app.request.get('adherent')['objectif']|default('') == 'musculation' ? 'selected' : '' }}>Musculation</option>
+                        <option value="endurance" {{ app.request.get('adherent')['objectif']|default('') == 'endurance' ? 'selected' : '' }}>Endurance</option>
+                        <option value="bien_etre" {{ app.request.get('adherent')['objectif']|default('') == 'bien_etre' ? 'selected' : '' }}>Bien-être</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- Autres sous-formulaires similaires avec des attributs name -->
-        <div id="coach-form" class="form-section" style="display: block;">
+        <div id="coach-form" class="form-section" style="display: none;">
             <h3>Informations Coach</h3>
             <div class="row g-4">
                 <div class="col-12">
                     <label class="form-label">Années d'expérience</label>
-                    <input type="number" class="form-control" name="coach[experience]" placeholder="Années d'expérience">
+                    <input type="number" class="form-control" placeholder="Années d'expérience" name="coach[experience]" value="{{ app.request.get('coach')['experience'] ?? '' }}">
                 </div>
                 <div class="col-12">
                     <label class="form-label">Spécialité</label>
-                    <input type="text" class="form-control" name="coach[specialite]" placeholder="Musculation">
+                    <input type="text" class="form-control" placeholder="Musculation" name="coach[specialite]" value="{{ app.request.get('coach')['specialite'] ?? '' }}">
                 </div>
                 <div class="col-12">
                     <label class="form-label">CV (PDF)</label>
                     <div class="file-upload">
-                        <input type="file" class="d-none" id="cv" name="coach[cv]" accept=".pdf">
+                        <!-- Changement ici : le champ CV n'est plus imbriqué dans "coach", utilisez "coach_cv" -->
+                        <input type="file" class="d-none" id="cv" accept=".pdf" name="coach_cv">
                         <label for="cv">
                             <div>Choose File</div>
                             <div class="text-muted">No file chosen</div>
@@ -133,7 +268,49 @@
             </div>
         </div>
 
-        <!-- Ajoute les name pour createur et investisseur de la même manière -->
+        <div id="createur-form" class="form-section" style="display: none;">
+            <h3>Informations Créateur d'événement</h3>
+            <div class="row g-4">
+                <div class="col-12">
+                    <label class="form-label">Nom de l'organisation</label>
+                    <input type="text" class="form-control" placeholder="Nom de votre organisation" name="createur[organisation]" value="{{ app.request.get('createur')['organisation'] ?? '' }}">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" rows="3" placeholder="Décrivez votre organisation" name="createur[description]">{{ app.request.get('createur')['description'] ?? '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Adresse</label>
+                    <input type="text" class="form-control" placeholder="Adresse de l'organisation" name="createur[adresse]" value="{{ app.request.get('createur')['adresse'] ?? '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Téléphone</label>
+                    <input type="tel" class="form-control" placeholder="Numéro de téléphone" name="createur[telephone]" value="{{ app.request.get('createur')['telephone'] ?? '' }}">
+                </div>
+            </div>
+        </div>
+
+        <div id="investisseur-form" class="form-section" style="display: none;">
+            <h3>Informations Investisseur</h3>
+            <div class="row g-4">
+                <div class="col-12">
+                    <label class="form-label">Nom de l'entreprise</label>
+                    <input type="text" class="form-control" placeholder="Nom de votre entreprise" name="investisseur[entreprise]" value="{{ app.request.get('investisseur')['entreprise'] ?? '' }}">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" rows="3" placeholder="Décrivez votre entreprise" name="investisseur[description]">{{ app.request.get('investisseur')['description'] ?? '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Adresse</label>
+                    <input type="text" class="form-control" placeholder="Adresse de l'entreprise" name="investisseur[adresse]" value="{{ app.request.get('investisseur')['adresse'] ?? '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Téléphone</label>
+                    <input type="tel" class="form-control" placeholder="Numéro de téléphone" name="investisseur[telephone]" value="{{ app.request.get('investisseur')['telephone'] ?? '' }}">
+                </div>
+            </div>
+        </div>
 
         <div class="text-center mt-5">
             <button type="submit" class="btn btn-primary btn-lg">S'inscrire</button>
@@ -148,24 +325,95 @@
 </div>
 
 <script>
-    document.querySelectorAll('.role-button').forEach(button => {
-        button.addEventListener('click', function() {
-            document.querySelectorAll('.role-button').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('.registration-form');
 
-            document.querySelectorAll('.form-section').forEach(form => form.style.display = 'none');
+        document.querySelectorAll('.role-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.role-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
 
-            const role = this.getAttribute('data-role');
-            document.getElementById('selected-role').value = role;
-            document.getElementById(`${role}-form`).style.display = 'block';
+                document.querySelectorAll('.form-section').forEach(form => {
+                    form.style.display = 'none';
+                });
+
+                const roleText = this.querySelector('div').textContent
+                    .toLowerCase()
+                    .replace(/\n/g, ' ')
+                    .trim();
+
+                let formId;
+                if (roleText.includes('adhérent')) {
+                    formId = 'adherent-form';
+                    document.getElementById('userType').value = 'adherent';
+                } else if (roleText.includes('coach')) {
+                    formId = 'coach-form';
+                    document.getElementById('userType').value = 'coach';
+                } else if (roleText.includes('créateur')) {
+                    formId = 'createur-form';
+                    document.getElementById('userType').value = 'createur';
+                } else if (roleText.includes('investisseur')) {
+                    formId = 'investisseur-form';
+                    document.getElementById('userType').value = 'investisseur';
+                }
+
+                if (formId) {
+                    document.getElementById(formId).style.display = 'block';
+                }
+            });
         });
+
+        document.querySelectorAll('.file-upload input[type="file"]').forEach(input => {
+            input.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                if (this.files.length > 0) {
+                    label.querySelector('.text-muted').textContent = this.files[0].name;
+                } else {
+                    label.querySelector('.text-muted').textContent = 'No file chosen';
+                }
+            });
+        });
+
+        document.querySelector('.role-button.active').click();
     });
+</script>
 
-    document.querySelectorAll('.file-upload input[type="file"]').forEach(input => {
-        input.addEventListener('change', function() {
-            const label = this.nextElementSibling;
-            label.querySelector('.text-muted').textContent = this.files.length > 0 ? this.files[0].name : 'No file chosen';
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        {% for message in app.flashes('success') %}
+        Swal.fire({
+            icon: 'success',
+            title: 'Succès',
+            text: '{{ message }}',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            background: '#1a1a1a',
+            color: '#fff',
+            toast: true,
+            position: 'top-end'
+        }).then(() => {
+            window.location.href = '{{ path('app_login') }}';
         });
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+        Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: '{{ message }}',
+            timer: 5000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            background: '#1a1a1a',
+            color: '#fff',
+            toast: true,
+            position: 'top-end'
+        });
+        {% endfor %}
     });
 </script>
 </body>

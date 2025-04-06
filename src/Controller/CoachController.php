@@ -10,21 +10,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class CoachController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private CoachRepository $coachRepository;
     private UserController $userController;
+    private SluggerInterface $slugger;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         CoachRepository $coachRepository,
-        UserController $userController
+        UserController $userController,
+        SluggerInterface $slugger
     ) {
         $this->entityManager = $entityManager;
         $this->coachRepository = $coachRepository;
         $this->userController = $userController;
+        $this->slugger = $slugger;
     }
 
     #[Route('/coach/register', name: 'app_coach_register', methods: ['GET', 'POST'])]
@@ -35,22 +40,41 @@ class CoachController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Ajout de l'image par défaut si aucune n'est fournie (comme dans UserController)
+            // Gérer l'image
             $defaultImage = '/img/OIP.jpeg';
             $imageToInsert = $coach->getImage() ?: $defaultImage;
             $coach->setImage($imageToInsert);
 
+            // Gérer le fichier CV
+            $cvFile = $form->get('cv')->getData();
+            if ($cvFile) {
+                $originalFilename = pathinfo($cvFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $this->slugger->slug($originalFilename);
+                $newCvFilename = $safeFilename.'-'.uniqid().'.'.$cvFile->guessExtension();
+                try {
+                    $cvFile->move(
+                        $this->getParameter('cv_directory'),
+                        $newCvFilename
+                    );
+                    $coach->setCv($newCvFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Erreur lors de l’upload du CV : ' . $e->getMessage());
+                    return $this->render('coach/register.html.twig', [
+                        'registrationForm' => $form->createView(),
+                    ]);
+                }
+            }
+
             // Appel à UserController pour créer la partie User
             $userId = $this->userController->createAndReturnId($coach);
-            if ($userId === null) { // Vérifie si l'ID est valide
+            if ($userId === null) {
                 throw new \Exception('Erreur lors de la création de l\'utilisateur.');
             }
 
-            // Persister les données spécifiques de Coach
             $this->entityManager->persist($coach);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('app_login'); // Redirection vers login comme pour User
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('coach/register.html.twig', [
@@ -58,7 +82,7 @@ class CoachController extends AbstractController
         ]);
     }
 
-    // Méthodes CRUD brutes
+    // Méthodes CRUD brutes (inchangées)
     public function createCoach(Coach $coach): int
     {
         $defaultImage = '/img/OIP.jpeg';
@@ -84,4 +108,4 @@ class CoachController extends AbstractController
         $this->userController->deleteUser($coach);
         $this->entityManager->flush();
     }
-} 
+}

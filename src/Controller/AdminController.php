@@ -7,18 +7,23 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'admin_dashboard')]
     #[Route('/admin/requests', name: 'admin_requests')]
-    public function showRequests(EntityManagerInterface $em): Response
+    public function showRequests(EntityManagerInterface $em, CsrfTokenManagerInterface $csrfTokenManager): Response
     {
-        // Récupérer tous les utilisateurs depuis la base de données
-        $userRepository = $em->getRepository(User::class);
-        $users = $userRepository->findAll(); // Récupère tous les utilisateurs (y compris les sous-types)
+        $coachRepo = $em->getRepository('App\Entity\Coach');
+        $investisseurRepo = $em->getRepository('App\Entity\InvestisseurProduit');
+        $createurRepo = $em->getRepository('App\Entity\CreateurEvenement');
 
-        // Compter les utilisateurs par type (sous-classe)
+        $coachs = $coachRepo->findBy(['Certificat_valide' => false]);
+        $investisseurs = $investisseurRepo->findBy(['certificatValide' => false]);
+        $createurs = $createurRepo->findBy(['certificatValide' => false]);
+        $users = array_merge($coachs, $investisseurs, $createurs);
+
         $adherentCount = $em->createQueryBuilder()
             ->select('COUNT(u.id)')
             ->from('App\Entity\Adherent', 'u')
@@ -28,28 +33,40 @@ class AdminController extends AbstractController
         $coachCount = $em->createQueryBuilder()
             ->select('COUNT(u.id)')
             ->from('App\Entity\Coach', 'u')
+            ->where('u.Certificat_valide = :certificatValide')
+            ->setParameter('certificatValide', true)
             ->getQuery()
             ->getSingleScalarResult();
 
         $createurCount = $em->createQueryBuilder()
             ->select('COUNT(u.id)')
             ->from('App\Entity\CreateurEvenement', 'u')
+            ->where('u.certificatValide = :certificatValide')
+            ->setParameter('certificatValide', true)
             ->getQuery()
             ->getSingleScalarResult();
 
         $investisseurCount = $em->createQueryBuilder()
             ->select('COUNT(u.id)')
             ->from('App\Entity\InvestisseurProduit', 'u')
+            ->where('u.certificatValide = :certificatValide')
+            ->setParameter('certificatValide', true)
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Rendre la template avec les données réelles
+        $totalUsers = $adherentCount + $coachCount + $createurCount + $investisseurCount;
+
+        // Générer un jeton CSRF
+        $csrfToken = $csrfTokenManager->getToken('reject_user')->getValue();
+
         return $this->render('admin/dashboard.html.twig', [
-            'users' => $users, // Liste des utilisateurs
+            'users' => $users,
             'adherentCount' => $adherentCount,
             'coachCount' => $coachCount,
             'createurCount' => $createurCount,
             'investisseurCount' => $investisseurCount,
+            'totalUsers' => $totalUsers,
+            'csrf_token' => $csrfToken,
         ]);
     }
 
@@ -57,25 +74,53 @@ class AdminController extends AbstractController
     public function validateUser(int $id, EntityManagerInterface $em): Response
     {
         $user = $em->getRepository(User::class)->find($id);
-        if ($user) {
-            // Logique pour valider l'utilisateur (à définir selon tes besoins)
-            $this->addFlash('success', 'Utilisateur validé avec succès.');
-        } else {
+        if (!$user) {
             $this->addFlash('error', 'Utilisateur non trouvé.');
+            return $this->redirectToRoute('admin_dashboard');
         }
+
+        if ($user instanceof \App\Entity\Coach) {
+            $user->setCertificat_valide(true);
+        } elseif ($user instanceof \App\Entity\InvestisseurProduit || $user instanceof \App\Entity\CreateurEvenement) {
+            $user->setCertificatValide(true);
+        }
+
+        $em->persist($user);
+        $em->flush();
+
+        $this->addFlash('success', 'Utilisateur validé avec succès.');
         return $this->redirectToRoute('admin_dashboard');
     }
 
+//    #[Route('/admin/reject/{id}', name: 'admin_reject_user', methods: ['POST'])]
+//    public function rejectUser(int $id, EntityManagerInterface $em): Response
+//    {
+//        $user = $em->getRepository(User::class)->find($id);
+//        if (!$user) {
+//            $this->addFlash('error', 'Utilisateur non trouvé.');
+//            return $this->redirectToRoute('admin_dashboard');
+//        }
+//
+//        $em->remove($user);
+//        $em->flush();
+//
+//        $this->addFlash('success', 'Utilisateur supprimé avec succès.');
+//        return $this->redirectToRoute('admin_dashboard');
+//    }
     #[Route('/admin/reject/{id}', name: 'admin_reject_user', methods: ['POST'])]
     public function rejectUser(int $id, EntityManagerInterface $em): Response
     {
         $user = $em->getRepository(User::class)->find($id);
-        if ($user) {
-            // Logique pour rejeter l'utilisateur (à définir selon tes besoins)
-            $this->addFlash('success', 'Utilisateur rejeté avec succès.');
-        } else {
-            $this->addFlash('error', 'Utilisateur non trouvé.');
+        if (!$user) {
+            return new Response('Utilisateur non trouvé', 404);
         }
-        return $this->redirectToRoute('admin_dashboard');
+
+        try {
+            $em->remove($user);
+            $em->flush();
+            return new Response('Utilisateur supprimé avec succès', 200);
+        } catch (\Exception $e) {
+            return new Response('Erreur lors de la suppression : ' . $e->getMessage(), 500);
+        }
     }
 }

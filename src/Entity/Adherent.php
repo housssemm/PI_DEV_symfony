@@ -179,5 +179,47 @@ class Adherent extends User
         return $this;
     }
 
+    public function getNomEntreprise(): ?string
+    {
+        return $this->nomEntreprise;
+    }
 
+    public function setNomEntreprise(string $nomEntreprise): static
+    {
+        $this->nomEntreprise = $nomEntreprise;
+        return $this;
+    }
+
+    public function getDescriptionAdherent(): ?string
+    {
+        return $this->descriptionAdherent;
+    }
+
+    public function setDescriptionAdherent(string $descriptionAdherent): static
+    {
+        $this->descriptionAdherent = $descriptionAdherent;
+        return $this;
+    }
+
+    public function getAdresseAdherent(): ?string
+    {
+        return $this->adresseAdherent;
+    }
+
+    public function setAdresseAdherent(string $adresseAdherent): static
+    {
+        $this->adresseAdherent = $adresseAdherent;
+        return $this;
+    }
+
+    public function getTelephoneAdherent(): ?string
+    {
+        return $this->telephoneAdherent;
+    }
+
+    public function setTelephoneAdherent(string $telephoneAdherent): static
+    {
+        $this->telephoneAdherent = $telephoneAdherent;
+        return $this;
+    }
 }
