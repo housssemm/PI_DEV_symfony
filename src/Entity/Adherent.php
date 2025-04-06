@@ -31,7 +31,7 @@ class Adherent
 
     // Relationship with User Entity
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'adherents')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private ?User $user = null;
 
     public function getUser(): ?User

@@ -52,9 +52,9 @@ class PlanningController extends AbstractController
     #[Route('/Delete/{id}', name: 'app_planning_delete')]
     public function delete($id,PlanningRepository $repoPlan,ManagerRegistry $doctrine ):response
     {
-        $author=$repoPlan->find($id);
+        $plan=$repoPlan->find($id);
         $em=$doctrine->getManager();
-        $em->remove($author);
+        $em->remove($plan);
         $em->flush();
         return $this->redirectToRoute('app_planning');
     }
@@ -79,7 +79,12 @@ class PlanningController extends AbstractController
             'form'     => $form->createView(),
             'planning' => $planning,
         ]);
+
+
     }
+
+
+
 
 
 

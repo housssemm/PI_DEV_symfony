@@ -11,7 +11,6 @@
     <script src="{{ asset('js/exercice.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialisation FullCalendar
             const calendarEl = document.getElementById('calendrier');
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
@@ -27,12 +26,77 @@
                     addSeanceButton: {
                         text: '+',
                         click: function() {
-                            const addSeanceModal = new bootstrap.Modal(document.getElementById('addSeanceModal'));
-                            addSeanceModal.show();
+                            window.location.href = '{{ path('addseance') }}';
                         }
-                    }}
+                    }
+                },
+                dateClick: function(info) {
+                    const dateStr = info.dateStr;
+                    const container = document.getElementById('seances-list');
+
+                    container.innerHTML = '<div class="loading-spinner"></div>';
+
+                    fetch(`/planning/day-json/${dateStr}`)
+                        .then(async response => {
+                            const text = await response.text();
+                            try {
+                                return JSON.parse(text); // Double parsing pour éviter les erreurs
+                            } catch {
+                                throw new Error(text);
+                            }
+                        })
+                        .then(data => {
+                            container.innerHTML = data.map(seance => `
+        <div class="seance-card ${seance.type.toLowerCase().replace('_', '-')}" data-id="${seance.id}">
+            <div class="card-header">
+                <h3 class="title">${seance.titre}</h3>
+                <span class="badge ${seance.type === 'EN_DIRECT' ? 'live' : 'recorded'}">
+                    ${seance.type === 'EN_DIRECT' ? '🔴 EN DIRECT' : '⏺ ENREGISTRE'}
+                </span>
+            </div>
+
+            <div class="card-body">
+                <div class="meta-info">
+                    <div class="date-time">
+                        <span class="date">📅 ${seance.date}</span>
+                        <span class="time">⌚ ${seance.heureDebut} - ${seance.heureFin}</span>
+                    </div>
+                </div>
+
+                <div class="participants">
+                    <div class="coach">
+                        👨 ${seance.coach}
+                    </div>
+                    <div class="adherent">
+                        👤 ${seance.adherent?.prenom ? `${seance.adherent.prenom} ` : ''}
+                        ${seance.adherent?.nom || 'Adhérent non spécifié'}
+                    </div>
+                </div>
+
+                <!-- Nouvelle section pour les boutons -->
+               <div class="actions">
+                   <button class="btn-modify" onclick="window.location.href='${seance.editPath}'">
+                    <i class="bi bi-pencil-square"></i> Modifier
+                   </button>
+                <form action="${seance.deletePath}" method="POST" style="display: inline;">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn-delete"
+                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette séance ?')">
+                        <i class="bi bi-trash"></i> Supprimer
+                    </button>
+                </form>
+            </div>
+            </div>
+        </div>
+    `).join('');
+                        })
+                        .catch(error => {
+                            container.innerHTML = `<div class="error animate__animated animate__shakeX">⚠️ ${error.message}</div>`;
+                        });
+                }
             });
             calendar.render();
+
             // Ouvrir automatiquement le modal si le formulaire est soumis mais invalide
             {% if showModalOnLoad %}
             const addPlanningModal = new bootstrap.Modal(document.getElementById('addPlanningModal'));
@@ -53,116 +117,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <style>
-
-        .custom-btn {
-            display: inline-block;
-            background-color: #ff6600; /* Couleur de fond */
-            border: 1px solid #ff6600; /* Même couleur pour la bordure */
-            color: white;
-            font-size: 15px;
-            font-weight: bold;
-            text-transform: uppercase;
-            padding: 10px 20px; /* Agrandissement du bouton */
-            border-radius: 20px; /* Bouton plus arrondi */
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .custom-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1); /* Couleur de fond au survol */
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Même couleur pour la bordure au survol */
-
-            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Styles FullCalendar */
-
-        .fc .fc-button-primary {
-            background-color: #ff6600 !important;
-            border-color: #ff6600 !important;
-            color: white !important;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .fc .fc-button-primary:hover {
-            background-color: #cc5200 !important;
-            border-color: #cc5200 !important;
-            transform: translateY(-2px);
-        }
-
-        .fc .fc-button-primary:not(:disabled).fc-button-active {
-            background-color: #cc5200 !important;
-            border-color: #cc5200 !important;
-        }
-
-        .fc .fc-button-primary:disabled {
-            background-color: #ff9966 !important;
-            border-color: #ff9966 !important;
-            opacity: 1 !important;
-        }
-        .modal-form .form-control {
-            padding: 0.5rem 1rem;
-        }
-        .modal-body img {
-            max-height: 300px;
-            object-fit: cover;
-        }
-        #calendrier {
-            width: 70%;
-            margin: 20px auto;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.31);
-        }
-        .invalid-feedback {
-            display: block;
-            color: #dc3545;
-        }
-        body {
-            background: #151515 !important;
-        }
-        .table {
-            background-color:white !important;
-            border-radius: 8px !important;
-            border-color: #151515 !important;
-            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.31);
-        }
-        .table th {
-            background-color: white!important;
-            color: #ff6600 !important;
-            border-radius: 8px !important;
-            border-color: #151515!important;
-        }
-
-        .table td {
-            background-color: white !important;
-            border-radius: 8px !important;
-            border-color: #151515 !important;
-        }
-        #video-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        #video-frame {
-            width: 640px;
-            height: 480px;
-            border: 2px solid black;
-        }
-        .btn-container {
-            margin-top: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            font-size: 16px;
-        }
-
-
-    </style>
+<link rel="stylesheet" href="{{ asset('css/plan.css') }}">
 {% endblock %}
 
 {% block Hero_Section_Begin %}
@@ -278,6 +233,8 @@
         </div>
         {# Calendrier #}
         <div  id='calendrier'></div>
+        <h2 style="text-align: center; color: white">listes des Séances</h2>
+        <div id="seances-list" class="mt-4"></div>
 
         <h1 style="text-align: center; color: white">Détection d'exercice</h1>
         <div id="video-container" style="color: white">
@@ -287,9 +244,4 @@
             <button onclick="startCamera()">Démarrer</button>
             <button onclick="stopCamera()">Arrêter</button>
         </div>
-
-        </div>
-
-
-
     {% endblock %}
