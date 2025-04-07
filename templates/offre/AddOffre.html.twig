@@ -1,7 +1,28 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Créer une Offre{% endblock %}
-
+{% block Hero_Section_Begin %}
+    <style>
+        .erreur{
+            color: red;
+        }
+    </style>
+    <section class="breadcrumb-section set-bg" data-setbg={{ asset('img/breadcrumb-bg.jpg') }}>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2>Offre</h2>
+                        <div class="bt-option">
+                            <a href="./index.html">Home</a>
+                            <span>Offre</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
 {% block body %}
     <div class="container py-4">
         <h1 class="text-white mb-4 d-flex align-items-center gap-2">
@@ -27,13 +48,13 @@
             <div class="mb-3">
                 <label class="form-label text-light">Description</label>
                 {{ form_widget(form.description, {'attr': {'class': 'form-control bg-secondary text-white border-0', 'rows': 3}}) }}
-                {{ form_errors(form.description) }}
+               <div class="erreur">{{ form_errors(form.description) }}</div>
             </div>
 
             <div class="mb-4">
                 <label class="form-label text-light">Durée de validité</label>
                 {{ form_widget(form.duree_validite, {'attr': {'class': 'form-control bg-secondary text-white border-0'}}) }}
-                {{ form_errors(form.duree_validite) }}
+                <div class="erreur"> {{ form_errors(form.duree_validite) }}</div>
             </div>
 
             <hr class="border-secondary">
@@ -49,12 +70,12 @@
                         <div class="mb-2">
                             <label class="form-label text-white">Nouveau tarif</label>
                             {{ form_widget(coachForm.nouveauTarif, {'attr': {'class': 'form-control bg-dark text-white border-0'}}) }}
-                            {{ form_errors(coachForm.nouveauTarif) }}
+                            <div class="erreur"> {{ form_errors(coachForm.nouveauTarif) }}</div>
                         </div>
                         <div>
                             <label class="form-label text-white">Réservations max</label>
                             {{ form_widget(coachForm.reservationMax, {'attr': {'class': 'form-control bg-dark text-white border-0'}}) }}
-                            {{ form_errors(coachForm.reservationMax) }}
+                            <div class="erreur">  {{ form_errors(coachForm.reservationMax) }}</div>
                         </div>
                     </div>
                 {% endfor %}
@@ -76,12 +97,12 @@
                         <div class="mb-2">
                             <label class="form-label text-white">Nouveau prix</label>
                             {{ form_widget(produitForm.nouveauPrix, {'attr': {'class': 'form-control bg-dark text-white border-0'}}) }}
-                            {{ form_errors(produitForm.nouveauPrix) }}
+                            <div class="erreur">   {{ form_errors(produitForm.nouveauPrix) }}</div>
                         </div>
                         <div>
                             <label class="form-label text-white">Quantité max</label>
                             {{ form_widget(produitForm.quantiteMax, {'attr': {'class': 'form-control bg-dark text-white border-0'}}) }}
-                            {{ form_errors(produitForm.quantiteMax) }}
+                            <div class="erreur"> {{ form_errors(produitForm.quantiteMax) }}</div>
                         </div>
                     </div>
                 {% endfor %}
@@ -123,3 +144,4 @@
         });
     </script>
 {% endblock %}
+
