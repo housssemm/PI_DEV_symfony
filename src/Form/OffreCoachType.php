@@ -9,13 +9,17 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 class OffreCoachType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nouveauTarif')
+//            ->add('nouveauTarif')
+               ->add('nouveauPrix', NumberType::class, [
+                     'required' => true,
+                     'invalid_message' => 'Veuillez entrer un nombre valide.',
+                 ])
             ->add('reservationActuelle')
             ->add('reservationMax')
             ->add('offre', EntityType::class, [

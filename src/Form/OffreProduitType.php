@@ -7,6 +7,7 @@ use App\Entity\Offreproduit;
 use App\Entity\Produit;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -15,7 +16,11 @@ class OffreProduitType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nouveauPrix')
+//            ->add('nouveauPrix')
+            ->add('nouveauPrix', NumberType::class, [
+                'required' => true,
+                'invalid_message' => 'Veuillez entrer un nombre valide.',
+            ])
             ->add('quantiteMax')
             ->add('quantiteVendue')
 
