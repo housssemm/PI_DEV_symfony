@@ -25,7 +25,7 @@ class Coach
 
     // ManyToOne relationship with User
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'coachs')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]//////////important
     private ?User $user = null;
 
     public function getUser(): ?User

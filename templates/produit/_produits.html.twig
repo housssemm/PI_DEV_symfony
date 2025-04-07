@@ -1,0 +1,23 @@
+{# templates/product/_produits.html.twig #}
+<div class="product-container-wrapper">
+    <div class="product-container">
+        {% for produit in produits %}
+            <div class="product-item">
+                <div class="card h-100 text-center bg-dark text-light">
+                    <img src="{{ asset('img/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.nom }}">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: white;">{{ produit.nom }}</h5>
+                        <p class="card-text" style="font-size: 1.2em; color: #ffffff; font-family: 'Roboto', sans-serif;">
+                            {{ produit.etat == 1 ? 'En Rupture' : 'En Stock' }}
+                        </p>
+                        <p class="card-text" style="font-size: 1.2em; color: #ffffff; font-family: 'Roboto', sans-serif;">{{ produit.prix }} DT</p>
+                        <a href="{{ path('produit_details', { 'id': produit.id }) }}" class="btn btn-light" style="background-color: #ff7300; font-size: 14px; padding: 8px 15px;">
+                            <i class="fa fa-cart-plus" style="margin-right: 8px;"></i>Voir Details</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-center text-light">Aucun produit trouvé pour cette catégorie.</p>
+        {% endfor %}
+    </div>
+</div>

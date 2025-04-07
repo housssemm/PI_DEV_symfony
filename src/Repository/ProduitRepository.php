@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Produit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @extends ServiceEntityRepository<Produit>
@@ -15,7 +17,14 @@ class ProduitRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Produit::class);
     }
+    public function findBySearchTerm(string $searchTerm)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->where('p.nom LIKE :searchTerm')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%');
 
+        return $qb->getQuery()->getResult();
+    }
 //    /**
 //     * @return Produit[] Returns an array of Produit objects
 //     */

@@ -1,0 +1,108 @@
+.product-details-wrapper {
+    background-color: #222;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 30px rgba(255, 255, 255, 0.4);
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    width: 80%;
+    max-width: 1200px;
+    transition: transform 0.3s ease-in-out;
+    margin: 0 auto;
+}
+
+.product-image-wrapper {
+    flex: 0 0 45%;
+}
+
+.product-image {
+    max-height: 350px;
+    width: 100%;
+    object-fit: contain;
+    background-color: #414147;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.product-details {
+    flex: 0 0 55%;
+    color: #f1f1f1;
+}
+
+.product-title {
+    color: #ff6200;
+    font-size: 32px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.product-info {
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.product-info p {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.product-price strong,
+.product-stock strong,
+.product-category strong {
+    color: white;
+}
+
+.form-group input[type="number"] {
+    background-color: #1c1c1c;
+    color: #ffffff;
+    border: 1px solid #666;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-right: 120px;
+}
+
+.btn-ajouter-panier {
+    background-color: #ff7300;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 8px 18px;
+    font-size: 17px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 146, 0, 0.6);
+    transition: background-color 0.3s ease;
+}
+
+.btn-ajouter-panier:hover {
+    background-color: #fb7014;
+    color: #000;
+}
+
+.btn-retour {
+    background-color: #ff6200;
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-retour:hover {
+    background-color: #fb7014;
+}
+
+.product-description-section {
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.product-description {
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: white;
+}
