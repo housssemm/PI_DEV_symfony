@@ -29,6 +29,33 @@
 			flex: 1;
 		}
 
+		/*.filter-card {*/
+		/*	background: #1e293b;*/
+		/*	border-radius: 1rem;*/
+		/*	padding: 1.5rem;*/
+		/*	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);*/
+		/*	border: 1px solid rgba(255, 255, 255, 0.1);*/
+		/*	position: sticky;*/
+		/*	top: 2rem;*/
+
+		/*	max-height: 85vh; !* Tu peux ajuster cette valeur selon ton besoin *!*/
+		/*	overflow-y: auto;*/
+		/*	scrollbar-width: thin;*/
+		/*	scrollbar-color: #3b82f6 #0f172a;*/
+		/*}*/
+		/*.filter-card::-webkit-scrollbar {*/
+		/*	width: 6px;*/
+		/*}*/
+
+		/*.filter-card::-webkit-scrollbar-track {*/
+		/*	background: #0f172a;*/
+		/*	border-radius: 1rem;*/
+		/*}*/
+
+		/*.filter-card::-webkit-scrollbar-thumb {*/
+		/*	background-color: #3b82f6;*/
+		/*	border-radius: 1rem;*/
+		/*}*/
 		.filter-card {
 			background: #1e293b;
 			border-radius: 1rem;
@@ -37,7 +64,19 @@
 			border: 1px solid rgba(255, 255, 255, 0.1);
 			position: sticky;
 			top: 2rem;
+
+			max-height: 85vh;
+			overflow-y: auto;
+
+			/* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+			scrollbar-width: none; /* Firefox */
+			-ms-overflow-style: none;  /* IE and Edge */
 		}
+
+		.filter-card::-webkit-scrollbar {
+			display: none; /* Chrome, Safari, Opera */
+		}
+
 
 		.filter-title {
 			font-size: 1.25rem;
@@ -155,7 +194,26 @@
 			color: white;
 			background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
 		}
-
+		.map-button{background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+			color: white;
+			border: none;
+			padding: 0.75rem 1.5rem;
+			border-radius: 0.5rem;
+			font-weight: 600;
+			transition: all 0.3s ease;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-bottom: 2rem;
+			box-shadow: 0 0.25rem 0.375rem rgba(59, 130, 246, 0.2);
+			text-transform: uppercase;
+			letter-spacing: 0.025rem;}
+		.map-button:hover {
+			transform: translateY(-0.125rem);
+			box-shadow: 0 0.5rem 1.25rem rgba(59, 130, 246, 0.3);
+			color: white;
+			background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+		}
 		.event-card {
 			background: #1e293b;
 			border-radius: 1rem;
@@ -377,7 +435,23 @@
 		}
 	</style>
 {% endblock %}
-
+{% block Hero_Section_Begin %}
+<section class="breadcrumb-section set-bg" data-setbg="img/event.jpg">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 text-center">
+				<div class="breadcrumb-text">
+					<h2>Events</h2>
+					<div class="bt-option">
+						<a href="./index.html">Home</a>
+						<span>Events</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}
 {% block body %}
 	<div class="container">
 		<div class="filter-section">
@@ -444,13 +518,21 @@
 
 		<div class="events-section">
 			<h1 class="page-title">Liste des événements</h1>
-			<a href="{{ path('app_add_event') }}" class="add-button">
-				<i class="bi bi-plus-circle"></i>
-				Ajouter un événement
-			</a>
-			<div class="text-center my-4">
-				<a href="{{ path('app_nearby_events') }}" class="btn btn-primary">
-					Voir la carte des événements proches
+{#			<a href="{{ path('app_add_event') }}" class="add-button">#}
+{#				<i class="bi bi-plus-circle"></i>#}
+{#				Ajouter un événement#}
+{#			</a>#}
+{#			<div class="text-center my-4">#}
+{#				<a href="{{ path('app_nearby_events') }}" class="map-button">#}
+{#					Voir la carte des événements proches#}
+{#				</a>#}
+{#			</div>#}
+			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+				<a href="{{ path('app_add_event') }}" class="add-button">
+					<i class="bi bi-plus-circle"></i>  Ajouter un événement
+				</a>
+				<a href="{{ path('app_nearby_events') }}" class="map-button">
+					<i class="fas fa-map-marked-alt"></i> Voir la carte des événements proches
 				</a>
 			</div>
 

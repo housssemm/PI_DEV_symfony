@@ -1,73 +1,26 @@
-{#<h1>Générateur de Programme de Gym 💪</h1>#}
-
-{#<form method="post">#}
-{#    <label>Sexe:</label>#}
-{#    <select name="gender">#}
-{#        <option>Homme</option>#}
-{#        <option>Femme</option>#}
-{#    </select><br>#}
-
-{#    <label>Âge:</label>#}
-{#    <input type="number" name="age" required><br>#}
-
-{#    <label>Taille (cm):</label>#}
-{#    <input type="number" name="height" required><br>#}
-
-{#    <label>Poids (kg):</label>#}
-{#    <input type="number" name="weight" required><br>#}
-
-{#    <label>Niveau:</label>#}
-{#    <select name="level">#}
-{#        <option>Débutant</option>#}
-{#        <option>Intermédiaire</option>#}
-{#        <option>Avancé</option>#}
-{#    </select><br>#}
-
-{#    <label>Objectif:</label>#}
-{#    <select name="goal">#}
-{#        <option>Perte de poids</option>#}
-{#        <option>Prise de masse</option>#}
-{#        <option>Remise en forme</option>#}
-{#    </select><br>#}
-
-{#    <label>Équipement disponible:</label>#}
-{#    <input type="text" name="equipment" placeholder="Ex: haltères, tapis"><br>#}
-
-{#    <label>Jours d'entraînement / semaine:</label>#}
-{#    <input type="number" name="daysPerWeek" required><br><br>#}
-
-{#    <button type="submit">Générer mon programme</button>#}
-{#</form>#}
-{#{% if program %}#}
-{#    <h2>Ton programme personnalisé :</h2>#}
-{#    <div class="gym-program">#}
-{#        {{ program|raw }}#}
-{#    </div>#}
-{#{% endif %}#}
-{#{% if program %}#}
-{#    <h2>Ton programme personnalisé :</h2>#}
-{#    <pre style="background:#f8f8f8;padding:1rem;">{{ program }}</pre>#}
-{#{% endif %}#}
-
-
-
-
-
-
-
-
-
-
-
-
 
 {% extends 'base.html.twig' %}
 
-{% block title %}Programme de Gym Personnalisé{% endblock %}
-
+{% block title %}Programme de Gym Personnalisé {% endblock %}
+{% block Hero_Section_Begin %}
+    <section class="breadcrumb-section set-bg" data-setbg="img/AI-Workout-Generater.png">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2>Events</h2>
+                        <div class="bt-option">
+                            <a href="./index.html">Home</a>
+                            <span>Events</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
 {% block body %}
-    <h1>Votre Programme de Gym Personnalisé</h1>
-
+    <h1 class="page-title">Programme de Gym Personnalisé</h1>
     {% if program %}
         <div class="gym-program">
             {{ program|raw }}
@@ -78,22 +31,117 @@
     {% endif %}
 {% endblock %}
 
+{#{% block css %}#}
+{#    {{ parent() }}#}
+{#    <style>#}
+{#        .gym-program {#}
+{#            font-family: 'Segoe UI', sans-serif;#}
+{#            background: #f8f9fa;#}
+{#            padding: 20px;#}
+{#            border-radius: 15px;#}
+{#            margin-top: 20px;#}
+{#            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);#}
+{#        }#}
+
+{#        .gym-program h2.day-title {#}
+{#            color: #007bff;#}
+{#            margin-top: 25px;#}
+{#            border-bottom: 2px solid #007bff;#}
+{#            padding-bottom: 10px;#}
+{#        }#}
+
+{#        .gym-program table.exercise-table {#}
+{#            width: 100%;#}
+{#            border-collapse: collapse;#}
+{#            margin-bottom: 20px;#}
+{#            background-color: #fff;#}
+{#            border-radius: 8px;#}
+{#            overflow: hidden;#}
+{#            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);#}
+{#        }#}
+
+{#        .gym-program th, .gym-program td {#}
+{#            border: 1px solid #dee2e6;#}
+{#            padding: 12px;#}
+{#            text-align: center;#}
+{#        }#}
+
+{#        .gym-program th {#}
+{#            background-color: #e9ecef;#}
+{#            font-weight: bold;#}
+{#        }#}
+
+{#        .gym-program tr:nth-child(even) {#}
+{#            background-color: #f5f5f5;#}
+{#        }#}
+
+{#        /* Styles spécifiques pour les cellules */#}
+{#        .exercise-name {#}
+{#            font-weight: bold;#}
+{#            color: #28a745;#}
+{#        }#}
+
+{#        .exercise-sets, .exercise-repetitions, .exercise-rest {#}
+{#            color: #6c757d;#}
+{#        }#}
+
+{#        .exercise-notes {#}
+{#            font-style: italic;#}
+{#            color: #555;#}
+{#        }#}
+{#        .exercise-img {#}
+{#            max-width: 80px;#}
+{#            height: auto;#}
+{#            vertical-align: middle;#}
+{#        }#}
+{#    </style>#}
+{#{% endblock %}#}
 {% block css %}
     {{ parent() }}
     <style>
-        .gym-program {
+        body {
+            background-color: #151515;
+            color: #f1f1f1;
             font-family: 'Segoe UI', sans-serif;
-            background: #f8f9fa;
+        }
+
+        .breadcrumb-section {
+            position: relative;
+            background-color: #151515;
+        }
+
+        .breadcrumb-section::before {
+            content: "";
+            background-color: rgba(21, 21, 21, 0.6); /* Superposition sombre */
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        .breadcrumb-text {
+            position: relative;
+            z-index: 2;
+            color: #fff;
+        }
+
+        .breadcrumb-text h2,
+        .breadcrumb-text a,
+        .breadcrumb-text span {
+            color: #fff;
+        }
+
+        .gym-program {
+            background: #1e1e1e;
             padding: 20px;
             border-radius: 15px;
             margin-top: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
         }
 
         .gym-program h2.day-title {
-            color: #007bff;
+            color: #ffcc00;
             margin-top: 25px;
-            border-bottom: 2px solid #007bff;
+            border-bottom: 2px solid #ffcc00;
             padding-bottom: 10px;
         }
 
@@ -101,45 +149,96 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            background-color: #fff;
+            background-color: #1a1a1a;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            color: #f1f1f1;
         }
 
         .gym-program th, .gym-program td {
-            border: 1px solid #dee2e6;
+            border: 1px solid #444;
             padding: 12px;
             text-align: center;
         }
 
         .gym-program th {
-            background-color: #e9ecef;
+            background-color: #333;
+            color: #ffcc00;
             font-weight: bold;
         }
 
         .gym-program tr:nth-child(even) {
-            background-color: #f5f5f5;
+            background-color: #222;
         }
 
-        /* Styles spécifiques pour les cellules */
         .exercise-name {
             font-weight: bold;
-            color: #28a745;
+            color: #4caf50;
         }
 
         .exercise-sets, .exercise-repetitions, .exercise-rest {
-            color: #6c757d;
+            color: #cccccc;
         }
 
         .exercise-notes {
             font-style: italic;
-            color: #555;
+            color: #aaaaaa;
         }
+
         .exercise-img {
             max-width: 80px;
             height: auto;
             vertical-align: middle;
         }
+
+        form {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            margin-top: 30px;
+        }
+
+        form input, form select, form textarea {
+            background-color: #2c2c2c;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        form label {
+            color: #ccc;
+            font-weight: bold;
+        }
+
+        form button, form input[type="submit"] {
+            background-color: #FA8200;
+            color: #000;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        form button:hover, form input[type="submit"]:hover {
+            background-color: #e6b800;
+        }
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            color: #FA8200;
+            text-shadow: 0 2px 10px rgba(250, 130, 0, 0.3);
+        }
+
+
     </style>
 {% endblock %}
