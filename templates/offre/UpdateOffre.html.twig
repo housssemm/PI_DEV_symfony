@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'Offre - {{ offre.nom }}{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+        <h1 class="text-white mb-4 d-flex align-items-center gap-2">
+            <i class="bi bi-pencil-square text-warning"></i>
+            Modifier l'offre : {{ offre.nom }}
+        </h1>
+
+        <div class="bg-dark p-4 rounded-4 shadow-sm border border-secondary">
+            {{ form_start(form) }}
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label text-light">Nom</label>
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control bg-secondary text-white border-0'}}) }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-light">État</label>
+                    {{ form_widget(form.etat, {'attr': {'class': 'form-select bg-secondary text-white border-0'}}) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label text-light">Description</label>
+                {{ form_widget(form.description, {'attr': {'class': 'form-control bg-secondary text-white border-0', 'rows': 3}}) }}
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label text-light">Durée de validité</label>
+                {{ form_widget(form.duree_validite, {'attr': {'class': 'form-control bg-secondary text-white border-0'}}) }}
+            </div>
+
+            <hr class="border-secondary">
+
+            <h4 class="text-white mb-3"><i class="bi bi-person-fill text-primary me-2"></i>Coachs associés</h4>
+            <div class="offrecoachs" data-prototype="{{ form_widget(form.offrecoachs.vars.prototype)|e('html_attr') }}">
+                {% for coachForm in form.offrecoachs %}
+                    <div class="p-3 mb-3 bg-secondary rounded-3 position-relative">
+                        {{ form_widget(coachForm, {'attr': {'class': 'text-white'}}) }}
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm mb-4 add-collection" data-target="offrecoachs">
+                <i class="bi bi-plus-circle"></i> Ajouter un coach
+            </button>
+
+            <hr class="border-secondary">
+
+            <h4 class="text-white mb-3"><i class="bi bi-box-fill text-primary me-2"></i>Produits associés</h4>
+            <div class="offreproduits" data-prototype="{{ form_widget(form.offreproduits.vars.prototype)|e('html_attr') }}">
+                {% for produitForm in form.offreproduits %}
+                    <div class="p-3 mb-3 bg-secondary rounded-3 position-relative">
+                        {{ form_widget(produitForm, {'attr': {'class': 'text-white'}}) }}
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm mb-4 add-collection" data-target="offreproduits">
+                <i class="bi bi-plus-circle"></i> Ajouter un produit
+            </button>
+
+            <div class="d-flex justify-content-end mt-4 gap-2">
+                <button type="submit" class="btn btn-warning">
+                    <i class="bi bi-check-circle"></i> Enregistrer
+                </button>
+                <a href="{{ path('offre_index') }}" class="btn btn-outline-light">
+                    <i class="bi bi-x-circle"></i> Annuler
+                </a>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.add-collection').forEach(button => {
+                button.addEventListener('click', function () {
+                    const targetClass = this.dataset.target;
+                    const collection = document.querySelector(`.${targetClass}`);
+                    const prototype = collection.dataset.prototype;
+                    const index = collection.children.length;
+
+                    const newForm = prototype.replace(/__name__/g, index);
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'p-3 mb-3 bg-secondary rounded-3 position-relative';
+                    wrapper.innerHTML = newForm;
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'btn btn-sm btn-danger mt-2 remove-item';
+                    removeBtn.innerHTML = '<i class="bi bi-trash"></i> Supprimer';
+
+                    removeBtn.addEventListener('click', function () {
+                        wrapper.remove();
+                    });
+
+                    wrapper.appendChild(removeBtn);
+                    collection.appendChild(wrapper);
+                });
+            });
+        });
+    </script>
+{% endblock %}
