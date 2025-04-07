@@ -3,10 +3,19 @@
 {% block title %}Détails de l'Offre - {{ offre.nom }}{% endblock %}
 
 {% block body %}
+    <style>
+        body{
+            background: #151515;
+        }
+        .page-title{
+            color: #fff;
+
+        }
+    </style>
     <div class="container">
         <h1 class="page-title">{{ offre.nom }}</h1>
 
-        <div class="card mb-4">
+        <div class="card h-100 bg-dark border-secondary">
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-8">
