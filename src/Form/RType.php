@@ -11,6 +11,10 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\User;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 class R extends AbstractType
 {
@@ -18,22 +22,58 @@ class R extends AbstractType
     {
         $builder
             // Champs communs
-            ->add('email', EmailType::class)
+            ->add('email', EmailType::class, [
+                'constraints' => [
+                    new Assert\NotBlank(['message' => 'Veuillez saisir votre adresse email.']),
+                    new Assert\Email(['message' => 'Veuillez saisir une adresse email valide.']),
+                    new Assert\Length([
+                        'max' => 180,
+                        'maxMessage' => 'L\'adresse email ne peut pas dépasser {{ limit }} caractères.'
+                    ]),
+                ],
+            ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
-            ])
-            ->add('nom', TextType::class)
-            ->add('prenom', TextType::class)
-            ->add('type', ChoiceType::class, [
-                'mapped' => false,
-                'choices'  => [
-                    'Adhérent'              => 'adherent',
-                    'Coach'                 => 'coach',
-                    'Créateur d\'évènement'  => 'createur_evenement',
-                    'Investisseur Produit'  => 'investisseur_produit'
+                'constraints' => [
+                    new Assert\NotBlank(['message' => 'Veuillez saisir un mot de passe.']),
+                    new Assert\Length([
+                        'min' => 6,
+                        'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères.'
+                    ]),
                 ],
-                'placeholder' => 'Choisissez un type'
             ])
+            ->add('nom', TextType::class, [
+                'constraints' => [
+                    new Assert\NotBlank(['message' => 'Veuillez saisir votre nom.']),
+                    new Assert\Length([
+                        'min' => 2,
+                        'max' => 50,
+                        'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères.',
+                        'maxMessage' => 'Le nom ne peut pas dépasser {{ limit }} caractères.'
+
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/^[a-zA-ZÀ-ÖØ-öø-ÿ\s\'-]+$/',
+                        'message' => 'Le nom ne doit contenir que des lettres, espaces ou tirets.'
+                    ]),
+                ],
+            ])
+            ->add('prenom', TextType::class, [
+                'constraints' => [
+                    new Assert\NotBlank(['message' => 'Veuillez saisir votre prénom.']),
+                    new Assert\Length([
+                        'min' => 2,
+                        'max' => 50,
+                        'minMessage' => 'Le prénom doit contenir au moins {{ limit }} caractères.',
+                        'maxMessage' => 'Le prénom ne peut pas dépasser {{ limit }} caractères.'
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/^[a-zA-ZÀ-ÖØ-öø-ÿ\s\'-]+$/',
+                        'message' => 'Le prénom ne doit contenir que des lettres, espaces ou tirets.'
+                    ]),
+                ],
+            ])
+
             // Champs spécifiques à Adherent (sans style ici)
             ->add('poids', NumberType::class, [
                 'mapped' => false,
@@ -47,39 +87,65 @@ class R extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ])
-            ->add('genre', TextType::class, [
+            ->add('genre', ChoiceType::class, [
                 'mapped' => false,
                 'required' => false,
+                'choices' => [
+                    'Homme' => 'homme',
+                    'Femme' => 'femme'
+                ],
+                'placeholder' => 'Choisissez votre genre'
             ])
-            ->add('objectifPersonnel', TextType::class, [
+            ->add('objectifPersonnel', ChoiceType::class, [
                 'mapped' => false,
                 'required' => false,
+                'choices' => [
+                    'Perdre_Poids' => 'Perdre_Poids',
+                    'Avoir_des_muscles' => 'Avoir_des_muscles',
+                    'Relaxation' => 'Relaxation'
+                ],
+                'placeholder' => 'Choisissez un objectif'
             ])
-            ->add('niveauActivite', TextType::class, [
+            ->add('niveauActivite', ChoiceType::class, [
                 'mapped' => false,
                 'required' => false,
+                'choices' => [
+                    'Debutant' => 'Debutant',
+                    'Intermédiaire' => 'Intermédiaire',
+                    'Avancé' => 'Avancé'
+                ],
+                'placeholder' => 'Choisissez votre niveau'
             ])
             // Champs spécifiques à Coach
             ->add('anneeExperience', IntegerType::class, [
                 'mapped' => false,
                 'required' => false,
             ])
-            ->add('Certificat_valide', ChoiceType::class, [
+
+            ->add('specialite', ChoiceType::class, [
                 'mapped' => false,
                 'required' => false,
                 'choices' => [
-                    'Oui' => true,
-                    'Non' => false,
+                    'Musculation' => 'musculation',
+                    'Yoga' => 'yoga',
+                    'Gymnastique' => 'gymnastique',
+                    'Pilates' => 'pilates',
+                    'Danse' => 'danse'
                 ],
-                'placeholder' => 'Certificat valide ?'
+                'placeholder' => 'Choisissez votre spécialité'
             ])
-            ->add('specialite', TextType::class, [
-                'mapped' => false,
+            ->add('cv', FileType::class, [
+                'mapped' => false, // Le champ n'est pas mappé directement sur l'entité
                 'required' => false,
-            ])
-            ->add('cv', TextType::class, [
-                'mapped' => false,
-                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2048k',
+                        'mimeTypes' => [
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger un fichier PDF valide',
+                    ])
+                ]
             ])
             // Champs spécifiques à Créateur d'évènement
             ->add('nomOrganisation', TextType::class, [
@@ -98,15 +164,6 @@ class R extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ])
-            ->add('certificatValide', ChoiceType::class, [
-                'mapped' => false,
-                'required' => false,
-                'choices' => [
-                    'Oui' => true,
-                    'Non' => false,
-                ],
-                'placeholder' => 'Certificat valide ?'
-            ])
             // Champs spécifiques à Investisseur Produit
             ->add('nomEntreprise', TextType::class, [
                 'mapped' => false,
@@ -124,15 +181,6 @@ class R extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ])
-            ->add('certificatValideInvestisseur', ChoiceType::class, [
-                'mapped' => false,
-                'required' => false,
-                'choices' => [
-                    'Oui' => true,
-                    'Non' => false,
-                ],
-                'placeholder' => 'Certificat valide ?'
-            ])
         ;
     }
 
@@ -143,3 +191,5 @@ class R extends AbstractType
         ]);
     }
 }
+
+

@@ -97,24 +97,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->email = $email;
         return $this;
     }
+    public function getRoles(): array
+    {
+        // Return only the default role for every user
+        return ['ROLE_USER'];
+    }
 
+    public function setRoles(array $roles): self
+    {
+        // Do nothing since roles are fixed.
+        return $this;
+    }
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        $roles[] = 'ROLE_USER'; // Rôle par défaut
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-        return $this;
-    }
 
     public function getPassword(): ?string
     {

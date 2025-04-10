@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use App\Repository\CoachRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
 #[ORM\Entity(repositoryClass: CoachRepository::class)]
 #[ORM\Table(name: 'coach')]
 class Coach extends User
@@ -44,6 +45,10 @@ class Coach extends User
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'La spécialité ne peut pas être vide')]
+    #[Assert\Choice(
+        choices: ['musculation', 'yoga', 'gymnastique', 'pilates', 'danse'],
+        message: 'Choisissez une spécialité valide'
+    )]
     private ?string $specialite = null;
 
     public function getSpecialite(): ?string
@@ -73,6 +78,11 @@ class Coach extends User
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le CV ne peut pas être vide')]
+    #[Assert\File(
+        maxSize: '2048k',
+        mimeTypes: ['application/pdf'],
+        mimeTypesMessage: 'Veuillez télécharger un fichier PDF valide'
+    )]
     private ?string $cv = null;
 
     public function getCv(): ?string

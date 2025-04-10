@@ -64,11 +64,6 @@ class Adherent extends User
         return $this;
     }
 
-    // Genre Property (Gender)
-    #[ORM\Column(length: 10)]
-    #[Assert\NotBlank(message: 'Le genre ne peut pas être vide')]
-    private ?string $genre = null;
-
     public function getGenre(): ?string
     {
         return $this->genre;
@@ -80,11 +75,7 @@ class Adherent extends User
         return $this;
     }
 
-    // Objectif Personnelle Property (Personal Goal)
 
-    #[ORM\Column(name: 'Objectif_personnelle', length: 255)]
-    #[Assert\NotBlank(message: 'L\'objectif personnel ne peut pas être vide')]
-    private ?string $objectifPersonnel = null;
 
 
     public function getObjectifPersonnel(): ?string
@@ -98,11 +89,7 @@ class Adherent extends User
         return $this;
     }
 
-    // Niveau Activites Property (Activity Level)
 
-    #[ORM\Column(name: 'Niveau_activites', length: 255)]
-    #[Assert\NotBlank(message: 'Le niveau d\'activité ne peut pas être vide')]
-    private ?string $niveauActivite = null;
 
     public function getNiveauActivite(): ?string
     {
@@ -114,6 +101,29 @@ class Adherent extends User
         $this->niveauActivite = $niveauActivite;
         return $this;
     }
+    #[ORM\Column(name: 'Objectif_personnelle', length: 255)]
+    #[Assert\NotBlank(message: 'L\'objectif personnel ne peut pas être vide')]
+    #[Assert\Choice(
+        choices: ['Perdre_Poids', 'Avoir_des_muscles', 'Relaxation'],
+        message: 'Choisissez un objectif personnel valide'
+    )]
+    private ?string $objectifPersonnel = null;
+
+    #[ORM\Column(name: 'Niveau_activites', length: 255)]
+    #[Assert\NotBlank(message: 'Le niveau d\'activité ne peut pas être vide')]
+    #[Assert\Choice(
+        choices: ['Debutant', 'Intermédiaire', 'Avancé'],
+        message: 'Choisissez un niveau d\'activités valide'
+    )]
+    private ?string $niveauActivite = null;
+
+    #[ORM\Column(length: 10)]
+    #[Assert\NotBlank(message: 'Le genre ne peut pas être vide')]
+    #[Assert\Choice(
+        choices: ['homme', 'femme'],
+        message: 'Choisissez un genre valide'
+    )]
+    private ?string $genre = null;
 
     // Relationship with PaiementPlanning (Payments)
     #[ORM\OneToMany(targetEntity: PaiementPlanning::class, mappedBy: 'adherent')]

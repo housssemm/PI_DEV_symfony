@@ -82,11 +82,11 @@
                 <li><a href="{{ path('app_services') }}">Services</a></li>
                 <li><a href="{{ path('app_team') }}">Our Team</a></li>
                 {% if app.user %}
-                    <li><a href="{{ path('app_profile') }}">Mon Profil</a></li>
+{#                    <li><a href="{{ path('app_profile') }}">Mon Profil</a></li>#}
                     <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
                 {% else %}
                     <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                    <li><a href="{{ path('app_register') }}">Inscription</a></li>
+                    <li><a href="{{ path('app_r') }}">Inscription</a></li>
                 {% endif %}
                 <li><a href="#">Pages</a>
                     <ul class="dropdown">
@@ -132,11 +132,11 @@
                             <li><a href="{{ path('app_services') }}">Services</a></li>
                             <li><a href="{{ path('app_team') }}">Our Team</a></li>
                             {% if app.user %}
-                                <li><a href="{{ path('app_profile') }}">Mon Profil</a></li>
+{#                                <li><a href="{{ path('app_profile') }}">Mon Profil</a></li>#}
                                 <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
                             {% else %}
                                 <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                                <li><a href="{{ path('app_register') }}">Inscription</a></li>
+                                <li><a href="{{ path('app_r') }}">Inscription</a></li>
                             {% endif %}
                             <li><a href="#">Pages</a>
                                 <ul class="dropdown">
