@@ -1,3 +1,4 @@
+ADHERENT : 
 <?php
 
 namespace App\Entity;
@@ -5,135 +6,125 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\AdherentRepository;
 
 #[ORM\Entity(repositoryClass: AdherentRepository::class)]
 #[ORM\Table(name: 'adherent')]
-class Adherent
+class Adherent extends User
 {
-    // Primary Key - ID
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    // Relationship with User Entity
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'adherents')]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
-    private ?User $user = null;
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-        return $this;
-    }
-
     // Poids Property (Weight)
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $Poids = null;
+    #[ORM\Column]
+    #[Assert\NotBlank(message: 'Le poids ne peut pas être vide')]
+    #[Assert\Positive(message: 'Le poids doit être positif')]
+    private ?float $poids = null;
 
     public function getPoids(): ?float
     {
-        return $this->Poids;
+        return $this->poids;
     }
 
-    public function setPoids(?float $Poids): self
+    public function setPoids(float $poids): static
     {
-        $this->Poids = $Poids;
+        $this->poids = $poids;
         return $this;
     }
 
     // Taille Property (Height)
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $Taille = null;
+    #[ORM\Column]
+    #[Assert\NotBlank(message: 'La taille ne peut pas être vide')]
+    #[Assert\Positive(message: 'La taille doit être positive')]
+    private ?float $taille = null;
 
     public function getTaille(): ?float
     {
-        return $this->Taille;
+        return $this->taille;
     }
 
-    public function setTaille(?float $Taille): self
+    public function setTaille(float $taille): static
     {
-        $this->Taille = $Taille;
+        $this->taille = $taille;
         return $this;
     }
 
     // Age Property
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $Age = null;
+    #[ORM\Column]
+    #[Assert\NotBlank(message: 'L\'âge ne peut pas être vide')]
+    #[Assert\Positive(message: 'L\'âge doit être positif')]
+    private ?int $age = null;
 
     public function getAge(): ?int
     {
-        return $this->Age;
+        return $this->age;
     }
 
-    public function setAge(?int $Age): self
+    public function setAge(int $age): static
     {
-        $this->Age = $Age;
+        $this->age = $age;
         return $this;
     }
-
-    // Genre Property (Gender)
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Genre = null;
 
     public function getGenre(): ?string
     {
-        return $this->Genre;
+        return $this->genre;
     }
 
-    public function setGenre(?string $Genre): self
+    public function setGenre(string $genre): static
     {
-        $this->Genre = $Genre;
+        $this->genre = $genre;
         return $this;
     }
 
-    // Objectif Personnelle Property (Personal Goal)
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Objectif_personnelle = null;
 
-    public function getObjectif_personnelle(): ?string
+
+
+    public function getObjectifPersonnel(): ?string
     {
-        return $this->Objectif_personnelle;
+        return $this->objectifPersonnel;
     }
 
-    public function setObjectif_personnelle(?string $Objectif_personnelle): self
+    public function setObjectifPersonnel(string $objectifPersonnel): static
     {
-        $this->Objectif_personnelle = $Objectif_personnelle;
+        $this->objectifPersonnel = $objectifPersonnel;
         return $this;
     }
 
-    // Niveau Activites Property (Activity Level)
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Niveau_activites = null;
 
-    public function getNiveau_activites(): ?string
+
+    public function getNiveauActivite(): ?string
     {
-        return $this->Niveau_activites;
+        return $this->niveauActivite;
     }
 
-    public function setNiveau_activites(?string $Niveau_activites): self
+    public function setNiveauActivite(string $niveauActivite): static
     {
-        $this->Niveau_activites = $Niveau_activites;
+        $this->niveauActivite = $niveauActivite;
         return $this;
     }
+    #[ORM\Column(name: 'Objectif_personnelle', length: 255)]
+    #[Assert\NotBlank(message: 'L\'objectif personnel ne peut pas être vide')]
+    #[Assert\Choice(
+        choices: ['Perdre_Poids', 'Avoir_des_muscles', 'Relaxation'],
+        message: 'Choisissez un objectif personnel valide'
+    )]
+    private ?string $objectifPersonnel = null;
+
+    #[ORM\Column(name: 'Niveau_activites', length: 255)]
+    #[Assert\NotBlank(message: 'Le niveau d\'activité ne peut pas être vide')]
+    #[Assert\Choice(
+        choices: ['Debutant', 'Intermédiaire', 'Avancé'],
+        message: 'Choisissez un niveau d\'activités valide'
+    )]
+    private ?string $niveauActivite = null;
+
+    #[ORM\Column(length: 10)]
+    #[Assert\NotBlank(message: 'Le genre ne peut pas être vide')]
+    #[Assert\Choice(
+        choices: ['homme', 'femme'],
+        message: 'Choisissez un genre valide'
+    )]
+    private ?string $genre = null;
 
     // Relationship with PaiementPlanning (Payments)
     #[ORM\OneToMany(targetEntity: PaiementPlanning::class, mappedBy: 'adherent')]
@@ -199,27 +190,47 @@ class Adherent
         return $this;
     }
 
-    public function getObjectifPersonnelle(): ?string
+    public function getNomEntreprise(): ?string
     {
-        return $this->Objectif_personnelle;
+        return $this->nomEntreprise;
     }
 
-    public function setObjectifPersonnelle(?string $Objectif_personnelle): static
+    public function setNomEntreprise(string $nomEntreprise): static
     {
-        $this->Objectif_personnelle = $Objectif_personnelle;
-
+        $this->nomEntreprise = $nomEntreprise;
         return $this;
     }
 
-    public function getNiveauActivites(): ?string
+    public function getDescriptionAdherent(): ?string
     {
-        return $this->Niveau_activites;
+        return $this->descriptionAdherent;
     }
 
-    public function setNiveauActivites(?string $Niveau_activites): static
+    public function setDescriptionAdherent(string $descriptionAdherent): static
     {
-        $this->Niveau_activites = $Niveau_activites;
+        $this->descriptionAdherent = $descriptionAdherent;
+        return $this;
+    }
 
+    public function getAdresseAdherent(): ?string
+    {
+        return $this->adresseAdherent;
+    }
+
+    public function setAdresseAdherent(string $adresseAdherent): static
+    {
+        $this->adresseAdherent = $adresseAdherent;
+        return $this;
+    }
+
+    public function getTelephoneAdherent(): ?string
+    {
+        return $this->telephoneAdherent;
+    }
+
+    public function setTelephoneAdherent(string $telephoneAdherent): static
+    {
+        $this->telephoneAdherent = $telephoneAdherent;
         return $this;
     }
 }

@@ -2,22 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Investisseurproduit;
+use App\Entity\InvestisseurProduit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Investisseurproduit>
+ * @extends ServiceEntityRepository<InvestisseurProduit>
+ *
+ * @method InvestisseurProduit|null find($id, $lockMode = null, $lockVersion = null)
+ * @method InvestisseurProduit|null findOneBy(array $criteria, array $orderBy = null)
+ * @method InvestisseurProduit[]    findAll()
+ * @method InvestisseurProduit[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InvestisseurproduitRepository extends ServiceEntityRepository
+class InvestisseurProduitRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Investisseurproduit::class);
+        parent::__construct($registry, InvestisseurProduit::class);
     }
 
 //    /**
-//     * @return Investisseurproduit[] Returns an array of Investisseurproduit objects
+//     * @return InvestisseurProduit[] Returns an array of InvestisseurProduit objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -31,7 +36,7 @@ class InvestisseurproduitRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Investisseurproduit
+//    public function findOneBySomeField($value): ?InvestisseurProduit
 //    {
 //        return $this->createQueryBuilder('i')
 //            ->andWhere('i.exampleField = :val')

@@ -1,0 +1,384 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .logo {
+            width: 150px;
+            margin: 0 auto 30px;
+            display: block;
+        }
+        .header-text {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header-text h1 {
+            color: white;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .header-text p {
+            color: #888;
+            font-size: 16px;
+            margin: 0;
+        }
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            padding: 15px;
+            height: auto;
+            font-size: 16px;
+        }
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #ff6b01;
+            color: white;
+            box-shadow: none;
+        }
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .form-label {
+            color: white;
+            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .role-button {
+            background: #1a1a1a;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .role-button.active {
+            background: #2d1d09;
+            border-color: #ff6b01;
+        }
+        .role-button i {
+            font-size: 40px;
+            color: #ff6b01;
+            margin-bottom: 15px;
+        }
+        .role-button div {
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .investisseur-button {
+            grid-column: 1 / -1;
+            aspect-ratio: auto;
+            padding: 20px;
+        }
+        .form-section {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        .form-section h3 {
+            color: #ff6b01;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .file-upload {
+            background: #1a1a1a;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .file-upload:hover {
+            border-color: #ff6b01;
+        }
+        .btn-primary {
+            background: #ff6b01;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #ff8c3b;
+            transform: translateY(-2px);
+        }
+        a {
+            color: #ff6b01;
+            transition: all 0.3s ease;
+        }
+        a:hover {
+            color: #ff8c3b;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    {# Début du formulaire Symfony avec les attributs nécessaires #}
+    {{ form_start(rForm, {'attr': {'class': 'registration-form', 'enctype': 'multipart/form-data'}}) }}
+
+    <img src="{{ asset('img/logoo.png') }}" alt="Coachini" class="logo">
+    <div class="header-text">
+        <h1>Créer un compte</h1>
+        <p>Rejoignez la communauté Coachini</p>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            {{ form_row(rForm.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(rForm.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+        </div>
+        <div class="col-12">
+            {{ form_row(rForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+        </div>
+        <div class="col-12">
+            {{ form_row(rForm.plainPassword, {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe'}}) }}
+        </div>
+        <div class="col-12">
+            <input type="checkbox" id="agreeTerms" name="agreeTerms" {{ app.request.get('agreeTerms') ? 'checked' : '' }}>
+            <label for="agreeTerms">J'accepte les conditions d'utilisation</label>
+        </div>
+        {# Champ caché pour stocker le rôle sélectionné (utilisé dans le JS) #}
+
+        <input type="hidden" id="userType" name="selectedUserType" value="{{ app.request.get('selectedUserType') }}">
+    </div>
+
+    {# Zone de sélection du rôle (design en grille) #}
+    <div class="role-grid">
+        <div class="role-button" data-role="adherent">
+            <i class="fas fa-user"></i>
+            <div>Adhérent</div>
+        </div>
+        <div class="role-button active" data-role="coach">
+            <i class="fas fa-dumbbell"></i>
+            <div>Coach</div>
+        </div>
+        <div class="role-button" data-role="createur">
+            <i class="fas fa-calendar"></i>
+            <div>Créateur<br>d'événement</div>
+        </div>
+        <div class="role-button investisseur-button" data-role="investisseur">
+            <i class="fas fa-store"></i>
+            <div>Investisseur Produit</div>
+        </div>
+    </div>
+
+    {# Sections spécifiques selon le rôle sélectionné #}
+    <div id="adherent-form" class="form-section" style="display: none;">
+        <h3>Informations Adhérent</h3>
+        <div class="row g-4">
+            <div class="col-md-6">
+                {{ form_row(rForm.poids, {'attr': {'class': 'form-control', 'placeholder': 'Votre poids'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(rForm.taille, {'attr': {'class': 'form-control', 'placeholder': 'Votre taille'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(rForm.age, {'attr': {'class': 'form-control', 'placeholder': 'Votre âge'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(rForm.genre, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(rForm.objectifPersonnel, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(rForm.niveauActivite, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+    </div>
+
+    <div id="coach-form" class="form-section" style="display: none;">
+        <h3>Informations Coach</h3>
+        <div class="row g-4">
+            <div class="col-12">
+                {{ form_row(rForm.anneeExperience, {'attr': {'class': 'form-control', 'placeholder': "Années d'expérience"}}) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(rForm.specialite, {'attr': {'class': 'form-control', 'placeholder': 'Spécialité'}}) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(rForm.cv, {'attr': {'class': 'form-control', 'placeholder': 'CV'}}) }}
+            </div>
+
+
+        </div>
+    </div>
+
+    <div id="createur-form" class="form-section" style="display: none;">
+        <h3>Informations Créateur d'événement</h3>
+        <div class="row g-4">
+            <div class="col-12">
+                {{ form_row(rForm.nomOrganisation, {'attr': {'class': 'form-control', 'placeholder': "Nom de l'organisation"}}) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(rForm.descriptionCreateur, {'attr': {'class': 'form-control', 'placeholder': 'Description'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(rForm.adresseCreateur, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(rForm.telephoneCreateur, {'attr': {'class': 'form-control', 'placeholder': 'Téléphone'}}) }}
+            </div>
+        </div>
+    </div>
+
+    <div id="investisseur-form" class="form-section" style="display: none;">
+        <h3>Informations Investisseur</h3>
+        <div class="row g-4">
+            <div class="col-12">
+                {{ form_row(rForm.nomEntreprise, {'attr': {'class': 'form-control', 'placeholder': "Nom de l'entreprise"}}) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(rForm.descriptionInvestisseur, {'attr': {'class': 'form-control', 'placeholder': 'Description'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(rForm.adresseInvestisseur, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(rForm.telephoneInvestisseur, {'attr': {'class': 'form-control', 'placeholder': 'Téléphone'}}) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <button type="submit" class="btn btn-primary btn-lg">S'inscrire</button>
+        <div class="mt-4">
+            <a href="{{ path('app_login') }}" class="text-white text-decoration-none">
+                <i class="fas fa-arrow-left me-2"></i>
+                Déjà inscrit ? Se connecter
+            </a>
+        </div>
+    </div>
+
+    {{ form_end(rForm) }}
+{#    {{ form_end(rForm, {'render_rest': false}) }}#}
+
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Gestion de la sélection de rôle via la grille
+        document.querySelectorAll('.role-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.role-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                document.querySelectorAll('.form-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+
+                // On récupère directement le rôle depuis l'attribut data-role
+                const role = this.getAttribute('data-role');
+                document.getElementById('userType').value = role;
+
+                let formId;
+                if (role === 'adherent') {
+                    formId = 'adherent-form';
+                } else if (role === 'coach') {
+                    formId = 'coach-form';
+                } else if (role === 'createur') {
+                    formId = 'createur-form';
+                } else if (role === 'investisseur') {
+                    formId = 'investisseur-form';
+                }
+
+                if (formId) {
+                    document.getElementById(formId).style.display = 'block';
+                }
+            });
+        });
+
+        // Mise à jour du libellé de sélection de fichier
+        document.querySelectorAll('.file-upload input[type="file"]').forEach(input => {
+            input.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                if (this.files.length > 0) {
+                    label.querySelector('.text-muted').textContent = this.files[0].name;
+                } else {
+                    label.querySelector('.text-muted').textContent = 'No file chosen';
+                }
+            });
+        });
+
+        // Déclenche le clic sur le bouton de rôle actif par défaut
+        document.querySelector('.role-button.active').click();
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        {% for message in app.flashes('success') %}
+        Swal.fire({
+            icon: 'success',
+            title: 'Succès',
+            text: '{{ message }}',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            background: '#1a1a1a',
+            color: '#fff',
+            toast: true,
+            position: 'top-end'
+        }).then(() => {
+            window.location.href = '{{ path('app_login') }}';
+        });
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+        Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: '{{ message }}',
+            timer: 5000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            background: '#1a1a1a',
+            color: '#fff',
+            toast: true,
+            position: 'top-end'
+        });
+        {% endfor %}
+    });
+</script>
+</body>
+</html>

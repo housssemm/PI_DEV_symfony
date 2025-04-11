@@ -6,164 +6,87 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Repository\InvestisseurProduitRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
-use App\Repository\InvestisseurproduitRepository;
-
-#[ORM\Entity(repositoryClass: InvestisseurproduitRepository::class)]
+#[ORM\Entity(repositoryClass: InvestisseurProduitRepository::class)]
 #[ORM\Table(name: 'investisseurproduit')]
-class Investisseurproduit
+class InvestisseurProduit extends User
 {
-    // Primary Key - ID
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'investisseurproduits')]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
-    private ?User $user = null;
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Nom_entreprise = null;
-
-    public function getNom_entreprise(): ?string
-    {
-        return $this->Nom_entreprise;
-    }
-
-    public function setNom_entreprise(?string $Nom_entreprise): self
-    {
-        $this->Nom_entreprise = $Nom_entreprise;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $Description = null;
-
-    public function getDescription(): ?string
-    {
-        return $this->Description;
-    }
-
-    public function setDescription(?string $Description): self
-    {
-        $this->Description = $Description;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Adresse = null;
-
-    public function getAdresse(): ?string
-    {
-        return $this->Adresse;
-    }
-
-    public function setAdresse(?string $Adresse): self
-    {
-        $this->Adresse = $Adresse;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Telephone = null;
-
-    public function getTelephone(): ?string
-    {
-        return $this->Telephone;
-    }
-
-    public function setTelephone(?string $Telephone): self
-    {
-        $this->Telephone = $Telephone;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $Certificat_valide = null;
-
-    public function isCertificat_valide(): ?bool
-    {
-        return $this->Certificat_valide;
-    }
-
-    public function setCertificat_valide(?bool $Certificat_valide): self
-    {
-        $this->Certificat_valide = $Certificat_valide;
-        return $this;
-    }
-
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'investisseurproduit')]
-    private Collection $produits;
-
-    public function __construct()
-    {
-        $this->produits = new ArrayCollection();
-    }
-
-    /**
-     * @return Collection<int, Produit>
-     */
-    public function getProduits(): Collection
-    {
-        if (!$this->produits instanceof Collection) {
-            $this->produits = new ArrayCollection();
-        }
-        return $this->produits;
-    }
-
-    public function addProduit(Produit $produit): self
-    {
-        if (!$this->getProduits()->contains($produit)) {
-            $this->getProduits()->add($produit);
-        }
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): self
-    {
-        $this->getProduits()->removeElement($produit);
-        return $this;
-    }
+    #[ORM\Column(name: 'NomE', length: 255)]
+    #[Assert\NotBlank(message: 'Le nom de l\'entreprise ne peut pas être vide')]
+    private ?string $nomEntreprise = null;
 
     public function getNomEntreprise(): ?string
     {
-        return $this->Nom_entreprise;
+        return $this->nomEntreprise;
     }
 
-    public function setNomEntreprise(?string $Nom_entreprise): static
+    public function setNomEntreprise(string $nomEntreprise): static
     {
-        $this->Nom_entreprise = $Nom_entreprise;
-
+        $this->nomEntreprise = $nomEntreprise;
         return $this;
     }
+
+    #[ORM\Column(name: 'Description', length: 255)]
+    #[Assert\NotBlank(message: 'La description ne peut pas être vide')]
+    private ?string $descriptionInvestisseur = null;
+
+    public function getDescriptionInvestisseur(): ?string
+    {
+        return $this->descriptionInvestisseur;
+    }
+
+    public function setDescriptionInvestisseur(string $descriptionInvestisseur): static
+    {
+        $this->descriptionInvestisseur = $descriptionInvestisseur;
+        return $this;
+    }
+
+    #[ORM\Column(name: 'Adresse', length: 255)]
+    #[Assert\NotBlank(message: 'L\'adresse ne peut pas être vide')]
+    private ?string $adresseInvestisseur = null;
+
+    public function getAdresseInvestisseur(): ?string
+    {
+        return $this->adresseInvestisseur;
+    }
+
+    public function setAdresseInvestisseur(string $adresseInvestisseur): static
+    {
+        $this->adresseInvestisseur = $adresseInvestisseur;
+        return $this;
+    }
+
+    #[ORM\Column(name: 'Telephone', length: 255)]
+    #[Assert\NotBlank(message: 'Le numéro de téléphone ne peut pas être vide')]
+    #[Assert\Regex(
+        pattern: '/^[0-9]{8}$/',
+        message: 'Le numéro de téléphone doit contenir exactement 8 chiffres'
+    )]
+    private ?string $telephoneInvestisseur = null;
+
+    public function getTelephoneInvestisseur(): ?string
+    {
+        return $this->telephoneInvestisseur;
+    }
+
+    public function setTelephoneInvestisseur(string $telephoneInvestisseur): static
+    {
+        $this->telephoneInvestisseur = $telephoneInvestisseur;
+        return $this;
+    }
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $certificatValide = null;
 
     public function isCertificatValide(): ?bool
     {
-        return $this->Certificat_valide;
+        return $this->certificatValide;
     }
 
-    public function setCertificatValide(?bool $Certificat_valide): static
+    public function setCertificatValide(?bool $certificatValide): static
     {
-        $this->Certificat_valide = $Certificat_valide;
-
+        $this->certificatValide = $certificatValide;
         return $this;
     }
-
-}
