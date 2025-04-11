@@ -343,10 +343,15 @@
     <meta name="keywords" content="Gym, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
     <title>{% block title %}Home Coachini{% endblock %}</title>
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css?family=Muli:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600,700&display=swap" rel="stylesheet">
+    {% block stylesheets %}
+        <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.css" rel="stylesheet">
+    {% endblock %}
+
 
     <!-- Css Styles -->
     {% block css %}
@@ -392,6 +397,7 @@
 </style>
 
 <body>
+
 {% block header %}
 
     <!-- Page Preloder -->
@@ -410,6 +416,7 @@
         </div>
         <nav class="canvas-menu mobile-menu">
             <ul>
+
                 <li><a href="{{ path('app_home') }}">Home</a></li>
                 <li><a href="{{ path('app_about') }}">About Us</a></li>
                 <li><a href="{{ path('app_classes') }}">Classes</a></li>
@@ -434,6 +441,14 @@
                     </ul>
                 </li>
                 <li><a href="{{ path('app_contact') }}">Contact</a></li>
+
+                <li><a href="./index.html">Home</a></li>
+                <li><a href="./about-us.html">Planning</a></li>
+                <li><a href="./classes.html">Produit</a></li>
+                <li><a href="./services.html">Evenement</a></li>
+                <li><a href="./team.html">Réclamation</a></li>
+                <li><a href="./contact.html">Offre</a></li>
+
             </ul>
         </nav>
         <div id="mobile-menu-wrap"></div>
@@ -460,6 +475,7 @@
                 <div class="col-lg-6">
                     <nav class="nav-menu">
                         <ul>
+
                             <li class="active"><a href="{{ path('app_home') }}">Home</a></li>
                             <li><a href="{{ path('app_about') }}">About Us</a></li>
                             <li><a href="{{ path('app_classes') }}">Classes</a></li>
@@ -484,6 +500,14 @@
                                 </ul>
                             </li>
                             <li><a href="./contact.html">Contact</a></li>
+
+                            <li class="active"><a href="./index.html">Home</a></li>
+                            <li><a href="./about-us.html">Planning</a></li>
+                            <li><a href="./class-details.html">Produit</a></li>
+                            <li><a href="./services.html">Evénement</a></li>
+                            <li><a href="./team.html">Offre</a></li>
+                            <li><a href="./contact.html">Réclamation</a></li>
+
                         </ul>
                     </nav>
                 </div>
@@ -560,6 +584,10 @@
     <!-- Hero Section End -->
 {% endblock %}
 
+
+{% block body %}{% endblock %}
+
+
 {% block footer %}
     <!-- Footer Section Begin -->
     <section class="footer-section">
@@ -568,7 +596,11 @@
                 <div class="col-lg-4">
                     <div class="fs-about">
                         <div class="fa-logo">
+
                             <a href="#"><img src="{{ asset('img/logoo1.png') }}" alt=""></a>
+
+                            <a href="#"><img src="{{asset('img/logoo.png')}}" alt=""></a>
+
                         </div>
                         <p>Coachini est une plateforme innovante dédiée aux coachs et aux adhérents, offrant des séances personnalisées, un suivi efficace et une gestion simplifiée des entraînements. </p>
                         <div class="fa-social">
@@ -638,6 +670,7 @@
 
 <!-- Js Plugins -->
 {% block js %}
+
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
@@ -688,6 +721,23 @@
             }
         }
 
+    <script src="{{asset('js/jquery-3.3.1.min.js')}}"></script>
+    <script src="{{asset('js/bootstrap.min.js')}}"></script>
+    <script src="{{asset('js/jquery.magnific-popup.min.js')}}"></script>
+    <script src="{{asset('js/masonry.pkgd.min.js')}}"></script>
+    <script src="{{asset('js/jquery.barfiller.js')}}"></script>
+    <script src="{{asset('js/jquery.slicknav.js')}}"></script>
+    <script src="{{asset('js/owl.carousel.min.js')}}"></script>
+    <script src="{{asset('js/main.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.js"></script>
+
+{% endblock %}
+
+{% block javascripts %}
+    <!-- Les scripts JavaScript sont inclus ici -->
+{% endblock %}
+
+
         attachLogoutHandler(logoutBtn);
         attachLogoutHandler(logoutBtnMobile);
     });
@@ -696,3 +746,6 @@
 </body>
 
 </html>
+
+
+

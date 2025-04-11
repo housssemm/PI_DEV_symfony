@@ -90,37 +90,3 @@ class InvestisseurProduit extends User
         $this->certificatValide = $certificatValide;
         return $this;
     }
-
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'investisseurproduit')]
-    private Collection $produits;
-
-    public function __construct()
-    {
-        $this->produits = new ArrayCollection();
-    }
-
-    /**
-     * @return Collection<int, Produit>
-     */
-    public function getProduits(): Collection
-    {
-        if (!$this->produits instanceof Collection) {
-            $this->produits = new ArrayCollection();
-        }
-        return $this->produits;
-    }
-
-    public function addProduit(Produit $produit): self
-    {
-        if (!$this->getProduits()->contains($produit)) {
-            $this->getProduits()->add($produit);
-        }
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): self
-    {
-        $this->getProduits()->removeElement($produit);
-        return $this;
-    }
-}

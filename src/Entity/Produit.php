@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\ProduitRepository;
 
@@ -45,6 +45,11 @@ class Produit
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "Le nom du produit est obligatoire.")]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-Zàâäéèêôùç\s]+$/",
+        message: "Le nom de produit doit contenir uniquement des lettres et des espaces."
+    )]
     private ?string $nom = null;
 
     public function getNom(): ?string
@@ -59,6 +64,15 @@ class Produit
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: "La description du produit est obligatoire.")]
+    #[Assert\Length(
+        max: 200,
+        maxMessage: "La description du produit ne peut pas dépasser {{ limit }} caractères."
+    )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-Zàâäéèêôùç\s]+$/",
+        message: "Le nom de produit doit contenir uniquement des lettres et des espaces."
+    )]
     private ?string $description = null;
 
     public function getDescription(): ?string
@@ -73,6 +87,7 @@ class Produit
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "L'image est obligatoire.")]
     private ?string $image = null;
 
     public function getImage(): ?string
@@ -87,6 +102,8 @@ class Produit
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "L'etat est obligatoire.")]
+
     private ?string $etat = null;
 
     public function getEtat(): ?string
@@ -102,6 +119,7 @@ class Produit
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits')]
     #[ORM\JoinColumn(name: 'categorieId', referencedColumnName: 'id')]
+    #[Assert\NotBlank(message: "L' id est obligatoire.")]
     private ?Categorie $categorie = null;
 
     public function getCategorie(): ?Categorie
@@ -116,6 +134,11 @@ class Produit
     }
 
     #[ORM\Column(type: 'integer', nullable: false)]
+    #[Assert\NotBlank(message: "La quantite est obligatoire.")]
+    #[Assert\GreaterThan(
+        value: 0,
+        message: "La quantité ne peut pas être inférieure à 1."
+    )]
     private ?int $quantite = null;
 
     public function getQuantite(): ?int
@@ -130,6 +153,15 @@ class Produit
     }
 
     #[ORM\Column(type: 'float', nullable: false)]
+    #[Assert\NotBlank(message: "Le prix est obligatoire.")]
+    #[Assert\GreaterThan(
+        value: 0,
+        message: "Le prix ne peut pas être inférieure à 1."
+    )]
+    #[Assert\Type(
+        type: "numeric",
+        message: "Le prix doit être un nombre valide."
+    )]
     private ?float $prix = null;
 
     public function getPrix(): ?float

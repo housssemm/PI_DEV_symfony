@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use App\Repository\OffreRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: OffreRepository::class)]
 #[ORM\Table(name: 'offre')]
@@ -17,6 +19,7 @@ class Offre
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
+
 
     public function getId(): ?int
     {
@@ -30,7 +33,10 @@ class Offre
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 4, minMessage: "Le nom doit contenir au moins 4 caractères.")]
     private ?string $nom = null;
+
 
     public function getNom(): ?string
     {
@@ -44,7 +50,10 @@ class Offre
     }
 
     #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 10, minMessage: "La description doit contenir au moins 10 caractères.")]
     private ?string $description = null;
+
 
     public function getDescription(): ?string
     {
@@ -58,7 +67,10 @@ class Offre
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\GreaterThan("today", message: "La date de validité doit être postérieure à aujourd'hui.")]
     private ?\DateTimeInterface $duree_validite = null;
+
 
     public function getDuree_validite(): ?\DateTimeInterface
     {
@@ -85,7 +97,10 @@ class Offre
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Offrecoach::class, mappedBy: 'offre')]
+    #[ORM\OneToMany(targetEntity: Offrecoach::class,
+        mappedBy: 'offre',
+        cascade: ['persist'],
+        orphanRemoval: true)]
     private Collection $offrecoachs;
 
     /**
@@ -113,7 +128,10 @@ class Offre
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Offreproduit::class, mappedBy: 'offre')]
+    #[ORM\OneToMany(targetEntity: Offreproduit::class,
+        mappedBy: 'offre',
+        cascade: ['persist'],
+        orphanRemoval: true)]
     private Collection $offreproduits;
 
     public function __construct()
