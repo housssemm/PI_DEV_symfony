@@ -500,7 +500,12 @@
             background: '#1a1a1a',
             color: '#fff',
             willClose: () => {
+                // Redirection conditionnelle
+                {% if user_role == 'admin' %}
+                window.location.href = '{{ path('admin_dashboard') }}'; // Changé de app_dashboard à admin_dashboard
+                {% else %}
                 window.location.href = '{{ path('app_home') }}';
+                {% endif %}
             }
         });
         {% endif %}
