@@ -77,6 +77,7 @@ class InvestisseurProduit extends User
         $this->telephoneInvestisseur = $telephoneInvestisseur;
         return $this;
     }
+
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $certificatValide = null;
 
@@ -90,3 +91,4 @@ class InvestisseurProduit extends User
         $this->certificatValide = $certificatValide;
         return $this;
     }
+}
