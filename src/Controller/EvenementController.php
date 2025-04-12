@@ -86,47 +86,6 @@ final class EvenementController extends AbstractController
 
 
 
-//    #[Route('/events/map', name: 'app_nearby_events')]
-//    public function map(EntityManagerInterface $em, HttpClientInterface $httpClient): Response
-//    {
-//        $events = $em->getRepository(Evenement::class)->findAll();
-//        $eventsArray = [];
-//        foreach ($events as $event) {
-//            $lieu = $event->getLieu();
-//            // Utilisation de Nominatim (OpenStreetMap) pour géocoder le lieu
-//            $response = $httpClient->request('GET', 'https://nominatim.openstreetmap.org/search', [
-//                'query' => [
-//                    'q' => $lieu,
-//                    'format' => 'json',
-//                    'limit' => 1
-//                ],
-//                'headers' => [
-//                    'User-Agent' => 'CoachiniMap/1.0' // Important pour éviter d'être bloqué
-//                ]
-//            ]);
-//            $data = $response->toArray();
-//            if (!empty($data)) {
-//                $latitude = $data[0]['lat'];
-//                $longitude = $data[0]['lon'];
-//                $image = $event->getImage();
-//                if ($image) {
-//                    $event->setBase64Image(base64_encode($image));
-//                }
-//                $eventsArray[] = [
-//                    'id' => $event->getId(), // Ajout de l'ID pour le lien vers les détails
-//                    'titre' => $event->getTitre(),
-//                    'dateDebut' => $event->getDateDebut()->format('Y-m-d'),
-//                    'lieu' => $lieu,
-//                    'latitude' => $latitude,
-//                    'longitude' => $longitude,
-//                    'image' => $image
-//                ];
-//            }
-//        }
-//        return $this->render('evenement/EventMapDisplay.html.twig', [
-//            'events' => $eventsArray
-//        ]);
-//    }
     #[Route('/events/map', name: 'app_nearby_events')]
     public function map(EntityManagerInterface $em, HttpClientInterface $httpClient): Response
     {
@@ -152,7 +111,7 @@ final class EvenementController extends AbstractController
                 $image = $event->getImage();
                 if ($image) {
                     $base64Image = base64_encode($image);
-                    $event->setBase64Image($base64Image); // Keep this if you need it elsewhere
+                    $event->setBase64Image($base64Image);
                 }
                 $eventsArray[] = [
                     'id' => $event->getId(),
