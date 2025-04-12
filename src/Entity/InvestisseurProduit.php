@@ -89,4 +89,4 @@ class InvestisseurProduit extends User
     {
         $this->certificatValide = $certificatValide;
         return $this;
-    }
+    }}
