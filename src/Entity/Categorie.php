@@ -49,7 +49,7 @@ class Categorie
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: "L'image est obligatoire.")]
+
 
     private ?string $image = null;
 

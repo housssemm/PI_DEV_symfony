@@ -87,7 +87,6 @@ class Produit
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Assert\NotBlank(message: "L'image est obligatoire.")]
     private ?string $image = null;
 
     public function getImage(): ?string
