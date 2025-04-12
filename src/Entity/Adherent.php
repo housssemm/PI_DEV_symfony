@@ -1,4 +1,3 @@
-ADHERENT : 
 <?php
 
 namespace App\Entity;
