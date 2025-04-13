@@ -1,132 +1,195 @@
 {% block body %}
-    <link rel="stylesheet" href="{{ asset('css/style123.css') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <section class="form-section" style="background-image: url('{{ asset('img/image4.png') }}');">
-        <div style="background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 30px; max-width: 600px; width: 90%; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
-            <h2>Modifier un produit</h2>
-            {{ form_start(f, {'attr': {'novalidate': 'novalidate'}}) }}
+    <section class="form-section">
+        <div class="container d-flex justify-content-center align-items-center min-vh-100">
+            <div class="row justify-content-center w-100">
+                <div class="col-12 col-lg-10 col-xl-8">
+                    <div class="card card-hover border-0 shadow-lg overflow-hidden custom-gradient-bg form-center">
+                        <div class="card-body card-content form-container">
+                            <!-- En-tête -->
+                            <h2 class="card-title text-primary mb-5 display-6 fw-bold text-primary">
+                                <i class="bi bi-pencil-square me-2"></i>Modifier Un Produit
+                            </h2>
+                            <!-- Début du formulaire -->
+                            <div class="container">
+                                {{ form_start(f, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
 
-            <div class="form-group">
-                {{ form_label(f.nom, 'Nom du produit :') }}
-                {{ form_widget(f.nom, {'attr': {'class': 'form-control'}}) }}
-                <div style="color: red; font-size: 14px; font-weight: bold;">
-                {{ form_errors(f.nom) }}
-                </div>
-            </div>
+                                <!-- Champ Nom du produit -->
+                                <div class="mb-5">
+                                    <div class="form-floating">
+                                        {{ form_label(f.nom, 'Nom du produit :', {'label_attr': {'class': 'fw-bold text-muted small'}}) }}
+                                        {{ form_widget(f.nom, {'attr': {'class': 'form-control form-control-custom form-control-lg border-3 py-3','placeholder': ' ',
+                                            'id': 'nomInput',
+                                            'style': 'width: 528px; margin-left: 20px;'
+                                        }}) }}
+                                    </div>
+                                    <div style="color: red">
+                                        {{ form_errors(f.nom) }}
+                                    </div>
+                                </div>
 
-            <div class="form-group">
-                {{ form_label(f.description, 'Description :') }}
-                {{ form_widget(f.description, {'attr': {'class': 'form-control'}}) }}
-                <div style="color: red; font-size: 14px; font-weight: bold;">
-                {{ form_errors(f.description) }}
-                </div>
-            </div>
+                                <!-- Champ Description -->
+                                <div class="mb-5">
+                                    <div class="form-floating">
+                                        {{ form_label(f.description, 'Description :', {'label_attr': {'class': 'fw-bold text-muted small'}}) }}
+                                        {{ form_widget(f.description, {'attr': {'class': 'form-control form-control-custom form-control-lg border-3 py-3','placeholder': ' ',
+                                            'id': 'descriptionInput',
+                                            'style': 'width: 528px; margin-left: 50px;'
+                                        }}) }}
+                                    </div>
+                                    <div style="color: red">
+                                        {{ form_errors(f.description) }}
+                                    </div>
+                                </div>
 
-            <div class="form-group">
-                {{ form_label(f.image, 'Image :') }}
-                <div style="display: none;">
-                    {{ form_widget(f.image, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <input type="text" id="imageFilename" name="imageName" class="form-control" readonly value="{{ produit.image ? produit.image : '' }}" />
-                <div style="color: red; font-size: 14px; font-weight: bold;">
-                {{ form_errors(f.image) }}
-                </div>
-                <button type="button" class="btn-orange" onclick="document.getElementById('imageInput').click();" style="display: block; margin-top: 10px; margin-left: auto; margin-right: auto;">Charger Image</button>
-                <input type="file" id="imageInput" class="form-control" style="display: none;" />
-            </div>
+                                <!-- Champ Image du produit -->
+                                <div class="mb-5">
+                                    <div class="form-floating">
+                                        {{ form_label(f.imageFile, 'Image Produit :', {'label_attr': {'class': 'fw-bold text-muted small'}}) }}
+                                        <div class="input-group">
+                                            {{ form_widget(f.imageFile, {'attr': {'class': 'form-control form-control-custom form-control-lg border-3 py-3',
+                                                'id': 'imageInput','placeholder': ' ',
+                                                'style': 'width: 528px; margin-left: 155px;'
+                                            }}) }}
+                                            <span class="input-group-text bg-primary text-white border-primary px-4">
+                                                <i class="bi bi-cloud-arrow-up fs-5"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style="color: red">
+                                        {{ form_errors(f.imageFile) }}
+                                    </div>
+                                </div>
 
-            <div class="form-group">
-                <img id="imagePreview" src="{{ produit.image ? asset('img/' ~ produit.image) : '#' }}" alt="Image prévisualisée" style="max-width: 100%; border: 1px solid #ccc; border-radius: 10px; margin-top: 10px; display: {{ produit.image ? 'block' : 'none' }};">
-                <p id="imageMessage" style="display: {{ produit.image ? 'none' : 'block' }};">Aucune image sélectionnée</p>
-            </div>
+                                <!-- Prévisualisation de l'image -->
+                                <div class="mb-5 text-center position-relative" id="imagePreviewContainer">
+                                    {% if produit.image %}
+                                        <div class="image-wrapper position-relative mx-auto" style="max-width: 400px;">
+                                            <p class="text-muted mb-3 fst-italic">Image actuelle :</p>
+                                            <div class="ratio ratio-16x9 border-3 rounded-4 overflow-hidden shadow">
+                                                <img src="{{ asset('img/' ~ produit.image) }}"
+                                                     class="object-fit-cover"
+                                                     alt="Image actuelle" />
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="placeholder-image bg-light rounded-4 p-5 mx-auto" style="max-width: 400px;">
+                                            <i class="bi bi-image text-muted fs-1 opacity-50"></i>
+                                            <p class="text-muted mt-3 mb-0 small">Aucune image sélectionnée</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
 
-            <div class="form-group mb-4">
-                <label for="{{ f.etat.vars.id }}" class="form-label fw-bold text-dark">
-                    {{ form_label(f.etat, 'État du produit :') }}
-                </label>
-                <div class="input-group">
-                    {{ form_widget(f.etat, {'attr': {'class': 'form-select custom-select'}}) }}
-                </div>
-                <div class="text-danger mt-1">
-                    <div style="color: red; font-size: 14px; font-weight: bold;">
-                    {{ form_errors(f.etat) }}
+                                <!-- Champ État du produit -->
+                                <div class="mb-5">
+                                    <div class="form-floating">
+                                        {{ form_label(f.etat, 'État du produit :', {'label_attr': {'class': 'fw-bold text-muted small'}}) }}
+                                        {{ form_widget(f.etat, {'attr': {
+                                            'class': 'form-control form-control-custom form-control-lg border-3 py-3',
+                                            'style': 'width: 528px; margin-left: 25px;'
+                                        }}) }}
+                                    </div>
+                                    <div style="color: red">
+                                        {{ form_errors(f.etat) }}
+                                    </div>
+                                </div>
+
+                                <!-- Champ Quantité -->
+                                <div class="mb-5">
+                                    <div class="form-floating">
+                                        {{ form_label(f.quantite, 'Quantité :', {'label_attr': {'class': 'fw-bold text-muted small'}}) }}
+                                        {{ form_widget(f.quantite, {'attr': {'class': 'form-control form-control-custom form-control-lg border-3 py-3','placeholder': ' ',
+                                            'id': 'quantiteInput',
+                                            'style': 'width: 528px; margin-left: 70px;'
+                                        }}) }}
+                                    </div>
+                                    <div style="color: red">
+                                        {{ form_errors(f.quantite) }}
+                                    </div>
+                                </div>
+
+                                <!-- Champ Prix -->
+                                <div class="mb-5">
+                                    <div class="form-floating">
+                                        {{ form_label(f.prix, 'Prix :', {'label_attr': {'class': 'fw-bold text-muted small'}}) }}
+                                        {{ form_widget(f.prix, {'attr': {'class': 'form-control form-control-custom form-control-lg border-3 py-3','placeholder': ' ',
+                                            'id': 'prixInput',
+                                            'style': 'width: 528px; margin-left: 101px;'
+                                        }}) }}
+                                    </div>
+                                    <div style="color: red">
+                                        {{ form_errors(f.prix) }}
+                                    </div>
+                                </div>
+
+                                <!-- Champ Investisseur -->
+                                <div class="mb-5">
+                                    <div class="form-floating">
+                                        {{ form_label(f.investisseurproduit, 'Investisseur :', {'label_attr': {'class': 'fw-bold text-muted small'}}) }}
+                                        {{ form_widget(f.investisseurproduit, {'attr': {'class': 'form-control form-control-custom form-control-lg border-3 py-3',
+                                            'style': 'width: 528px; margin-left: 50px;'
+                                        }}) }}
+                                    </div>
+                                    <div style="color: red">
+                                        {{ form_errors(f.investisseurproduit) }}
+                                    </div>
+                                </div>
+
+                                <!-- Champ Catégorie -->
+                                <div class="mb-5">
+                                    <div class="form-floating">
+                                        {{ form_label(f.categorie, 'Catégorie :', {'label_attr': {'class': 'fw-bold text-muted small'}}) }}
+                                        {{ form_widget(f.categorie, {'attr': {'class': 'form-control form-control-custom form-control-lg border-3 py-3',
+                                            'style': 'width: 528px; margin-left: 65px;'
+                                        }}) }}
+                                    </div>
+                                    <div style="color: red">
+                                        {{ form_errors(f.categorie) }}
+                                    </div>
+                                </div>
+
+                                <!-- Bouton de soumission -->
+                                <div class="text-center mt-5 d-flex justify-content-center align-items-center">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold text-uppercase shadow-sm hover-effect">
+                                        <i class="bi bi-check2-circle me-2"></i>Modifier
+                                    </button>
+                                </div>
+
+                                {{ form_end(f) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="form-group">
-                {{ form_label(f.quantite, 'Quantité :') }}
-                {{ form_widget(f.quantite, {'attr': {'class': 'form-control'}}) }}
-                <div style="color: red; font-size: 14px; font-weight: bold;">
-                {{ form_errors(f.quantite) }}
-                </div>
-            </div>
-
-            <div class="form-group">
-                {{ form_label(f.prix, 'Prix :') }}
-                {{ form_widget(f.prix, {'attr': {'class': 'form-control'}}) }}
-                <div style="color: red; font-size: 14px; font-weight: bold;">
-                {{ form_errors(f.prix) }}
-                </div>
-            </div>
-
-            <div class="form-group">
-                {{ form_label(f.investisseurproduit, 'Choisir un investisseur produit :') }}
-                {{ form_widget(f.investisseurproduit, {'attr': {'class': 'form-select'}}) }}
-                <div style="color: red; font-size: 14px; font-weight: bold;">
-                {{ form_errors(f.investisseurproduit) }}
-                </div>
-            </div>
-
-            <div class="form-group">
-                {{ form_label(f.categorie, 'Choisir une catégorie :') }}
-                {{ form_widget(f.categorie, {'attr': {'class': 'form-select'}}) }}
-                <div style="color: red; font-size: 14px; font-weight: bold;">
-                {{ form_errors(f.categorie) }}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="btn-container" style="text-align: center;">
-                    <button type="submit" class="btn btn-orange mt-3">
-                        <i class="fas fa-edit"></i> Modifier
-                    </button>
-                </div>
-            </div>
-
-            {{ form_end(f) }}
         </div>
     </section>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const imageInput = document.getElementById("imageInput");
-            const imagePreview = document.getElementById("imagePreview");
-            const imageMessage = document.getElementById("imageMessage");
-            const imageFilename = document.getElementById("imageFilename");
-
-            if (imageFilename.value) {
-                imageMessage.style.display = "none";
-                imagePreview.style.display = "block";
-            }
+            const imageInput = document.querySelector("input[type='file']");
+            const imagePreviewContainer = document.getElementById("imagePreviewContainer");
 
             imageInput.addEventListener("change", function(event) {
                 const file = event.target.files[0];
-                const reader = new FileReader();
-
                 if (file && file.type.includes('image')) {
+                    const reader = new FileReader();
                     reader.onload = function(e) {
-                        imagePreview.src = e.target.result;
-                        imagePreview.style.display = "block";
-                        imageMessage.style.display = "none";
+                        imagePreviewContainer.innerHTML = `
+                            <div class="image-wrapper position-relative mx-auto" style="max-width: 400px;">
+                                <p class="text-success mb-3 fst-italic">Nouvelle image sélectionnée :</p>
+                                <div class="ratio ratio-16x9 border-3 rounded-4 overflow-hidden shadow">
+                                    <img src="${e.target.result}"
+                                         class="object-fit-cover"
+                                         alt="Prévisualisation" />
+                                </div>
+                            </div>`;
                     };
                     reader.readAsDataURL(file);
-                    imageFilename.value = file.name;
                 } else {
-                    imagePreview.style.display = "none";
-                    imageMessage.textContent = "Fichier non valide. Veuillez sélectionner une image.";
-                    imageMessage.style.display = "block";
-                    imageFilename.value = '';
+                    imagePreviewContainer.innerHTML = `
+                        <div class="alert alert-danger py-2 px-3 rounded-3 d-inline-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Format de fichier non supporté
+                        </div>`;
                 }
             });
         });
@@ -135,51 +198,148 @@
 
 
 
+
+
     <style>
-        /* Styles pour les champs ChoiceType et EntityType */
-        .form-select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
-            font-size: 16px;
-            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        /* -- Styles généraux du formulaire -- */
+        .form-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('{{ asset('img/image4.png') }}') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;  /* Prendre toute la hauteur de la fenêtre */
+        }
+        .card-title.text-primary {
+            color: #ff6503; /* Couleur orangée */
+            text-align: center; /* Centrer le titre */
+            font-size: 2rem; /* Taille du texte */
+            font-weight: bold; /* Gras */
+        }
+        /* Appliquer flexbox à .form-center pour s'assurer qu'il est centré correctement */
+        .form-center {
+            display: flex;
+            justify-content: center; /* Centrage horizontal */
+            align-items: center;     /* Centrage vertical */
+            flex-direction: column;  /* Aligner les éléments en colonne */
+            max-width: 900px;        /* Largeur maximale du formulaire */
+            margin: 0 auto;          /* Centrer horizontalement */
         }
 
-        .form-select:focus {
-            border-color: #ffa500;
-            box-shadow: 0 0 5px rgba(255, 165, 0, 0.7);
-            outline: none;
+        .card-content {
+            padding: 2.5rem;
         }
 
-        /* Style pour les labels des champs */
-        .form-label {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-            display: block;
+        /* Container du formulaire */
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        /* Style pour les erreurs de validation */
-        .text-danger {
-            font-size: 14px;
-            margin-top: 5px;
+        /* -- Styles des champs de formulaire -- */
+        .form-control-custom {
+            border-radius: 0.375rem; /* Ajouter un rayon de bordure arrondi */
+            border: 2px solid #ccc;
+            transition: all 0.3s ease-in-out;
+            font-size: 0.9rem;
+            padding: 0.6rem;
+            height: auto;
         }
 
-        /* Style spécifique pour le champ d'état avec icône */
-        .input-group .form-select {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
+        .form-floating .form-control-custom {
+            padding-left: 1.5rem;
         }
 
-        .input-group-text {
-            background-color: #ffa500;
+        /* -- Label flottant -- */
+        .form-floating label {
+            font-size: 1rem; /* Augmentation de la taille de la police du label */
+            font-weight: 600;
+            color: #000000; /* Changement de la couleur en noir */
+            padding: 0.5rem;
+            border-radius: 0; /* Pas de bordures arrondies */
+            transition: transform 0.3s ease;
+        }
+
+        /* -- Styles du bouton de soumission -- */
+        .btn-primary {
+            background-color: #ff6503;
             color: white;
+            border-radius: 10px; /* Garder les bords du bouton arrondis */
+            transition: background-color 0.3s ease;
+            padding: 0.6rem 1.1rem; /* Réduire un peu le padding */
+            font-size: 1.1rem; /* Réduire légèrement la taille de la police */
+            min-width: 180px; /* Vous pouvez aussi réduire la largeur minimale */
             font-weight: bold;
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
-            padding: 10px;
+            margin-top: 2rem; /* Ajouter la marge en haut */
         }
+
+        .btn-primary:hover {
+            background-color: #ff7820;
+        }
+
+        /* -- Styles de prévisualisation d'image -- */
+        .image-wrapper img {
+            max-width: 80%; /* Réduction de la taille de l'image actuelle à 80% de la largeur de son conteneur */
+            height: auto; /* Ajustement automatique de la hauteur pour maintenir les proportions */
+            object-fit: cover; /* Assurez-vous que l'image couvre bien son conteneur */
+            margin: 0 auto; /* Centrage de l'image */
+        }
+
+        .placeholder-image {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 0; /* Angles droits pour le conteneur d'image */
+        }
+
+        .image-preview {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .image-preview img {
+            max-width: 300px;
+            max-height: 200px;
+            object-fit: contain;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Animation de la prévisualisation de l'image */
+        .animated-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .input-group input[type="file"] {
+            background-color: #fff; /* Fond blanc */
+            border-radius: 0.375rem; /* Coins arrondis */
+        }
+
+        /* Centrer la section avec le fond d'image */
+        .form-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('{{ asset('img/image4.png') }}') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        /* Centrer le bouton de soumission */
+        .text-center.mt-5 {
+            display: flex;
+            justify-content: center;  /* Centrage horizontal */
+            align-items: center;      /* Centrage vertical */
+            width: 100%;              /* S'assurer que le conteneur prend toute la largeur */
+            height: 100%;             /* S'assurer que le conteneur prend toute la hauteur disponible */
+        }
+
     </style>
 {% endblock %}

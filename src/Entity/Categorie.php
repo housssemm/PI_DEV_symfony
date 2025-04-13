@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\CategorieRepository;
@@ -30,10 +31,12 @@ class Categorie
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Assert\NotBlank(message: "Le nom de la catégorie est obligatoire.")]
+    #[Assert\NotBlank(message: "Le nom de la catégorie est obligatoire.",
+        groups: ["creation", "Update"])]
     #[Assert\Regex(
         pattern: "/^[a-zA-Zàâäéèêôùç\s]+$/",
-        message: "Le nom de la catégorie doit contenir uniquement des lettres et des espaces."
+        message: "Le nom de la catégorie doit contenir uniquement des lettres et des espaces.",
+        groups: ["creation", "Update"]
     )]
     private ?string $nom = null;
 
@@ -48,9 +51,7 @@ class Categorie
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    #[Assert\NotBlank(message: "L'image est obligatoire.")]
-
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $image = null;
 
     public function getImage(): ?string
@@ -61,6 +62,25 @@ class Categorie
     public function setImage(string $image): self
     {
         $this->image = $image;
+        return $this;
+    }
+    #[Assert\NotBlank(message: "L'image est obligatoire.",groups: ["creation"])]
+    #[Assert\File(
+        mimeTypes: ["image/png", "image/jpeg", "image/jpg"],
+        mimeTypesMessage: "Veuillez choisir une image au format PNG,JPEG ou JPG.",
+        groups: ["creation", "Update"]
+    )]
+
+
+    private ?UploadedFile $imageFile = null;
+    public function getImageFile(): ?UploadedFile
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageFile(?UploadedFile $imageFile): self
+    {
+        $this->imageFile = $imageFile;
         return $this;
     }
 

@@ -1,99 +1,90 @@
-.btn-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.btn-orange {
-    background-color: #F58400;
-    border-color: #FF9900;
-    color: white;
-    padding: 8px 13px;
-    font-size: 16px;
-    border-radius: 6px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s ease;
-    font-weight: bold;
-    width: 150px;
-}
-
-/* Effet de survol */
-.btn-orange:hover {
-    background-color: #e57200;
-    border-color: #cc6a00;
-    color: white;
-}
+/* -- Styles généraux du formulaire -- */
 .form-section {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    background-size: cover;
     min-height: 100vh;
-    background-color: black;
-    background-size: 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
 }
-/* Titre */
-h2 {
+
+.card-title.text-primary {
+    color: #ff6503;
     text-align: center;
-    font-size: 24px;
-    color: #f58400;
-    margin-bottom: 20px;
-}
-
-/* Champs de formulaire */
-.form-group {
-    margin-bottom: 20px;
-    text-align: left;
-  }
-
-label {
-    display: block;
-    font-size: 16px;
+    font-size: 2rem;
     font-weight: bold;
-    color: #555;
-    margin-bottom: 8px;
 }
 
-input.form-control,
-select.form-control,
-textarea.form-control {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    transition: border-color 0.3s ease;
+.form-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-/* Focus sur les champs */
-input.form-control:focus,
-select.form-control:focus,
-textarea.form-control:focus {
-    border-color: #f58400;
-    outline: none;
-    box-shadow: 0 0 5px rgba(245, 132, 0, 0.3);
+.card-content {
+    padding: 2.5rem;
 }
-#imagePreview {
-    width: 230px;
-    height: 210px;
-    margin: 20px auto;
-    display: block;
-    object-fit: contain;
-    border: 4px solid #f58400;
+
+.form-container {
+    background-color: rgba(255, 255, 255, 0.8);
     border-radius: 12px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-#imageMessage {
-    color: #f58400;
-    text-align: center;
-    margin-top: 15px;
-    display: block;
+    padding: 2rem;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-#imagePreview:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+.form-control-custom {
+    border-radius: 0.375rem;
+    border: 2px solid #ccc;
+    transition: all 0.3s ease-in-out;
+    font-size: 0.9rem;
+    padding: 0.6rem;
+    height: auto;
+}
+
+.form-floating label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000000;
+    padding: 0.5rem;
+}
+
+.btn-primary {
+    background-color: #ff6503;
+    color: white;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+    padding: 0.6rem 1.1rem;
+    font-size: 1.1rem;
+    min-width: 180px;
+    font-weight: bold;
+    margin-top: 2rem;
+}
+
+.btn-primary:hover {
+    background-color: #ff7820;
+}
+
+/* Animation de la prévisualisation de l'image */
+.animated-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.input-group input[type="file"] {
+    background-color: #fff;
+    border-radius: 0.375rem;
+}
+
+.text-center.mt-5 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 5px;
 }

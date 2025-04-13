@@ -9,6 +9,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,20 +25,21 @@ class ProduitType extends AbstractType
                 'label' => 'Description',
                 'attr' => ['placeholder' => 'Entrez une courte description...']
             ])
-            ->add('image', FileType::class, [
-                'mapped' => false,
+            ->add('imageFile', FileType::class, [
             ])
             ->add('etat', ChoiceType::class, [
                 'choices' => [
                     'En Stock' => 'Stock',
-                    'En Rupture' => 'Rupture',
+                    //'En Rupture' => 'Rupture',
                 ],
-//                'expanded' => false, // false pour un menu déroulant, true pour des boutons radio
-//                'multiple' => false, // false pour une seule sélection
                 'label' => 'État du produit',
             ])
-            ->add('quantite')
-            ->add('prix')
+            ->add('quantite', IntegerType::class, [
+                'empty_data' => 1,
+            ])
+            ->add('prix', NumberType::class, [
+                'empty_data' => 1.0,
+            ])
             ->add('investisseurproduit', EntityType::class, [
                 'class' => Investisseurproduit::class,
                 'choice_label' => function(Investisseurproduit $Investisseurproduit) {
@@ -52,6 +55,7 @@ class ProduitType extends AbstractType
                 'label' => 'Choisir une Categorie',
             ])
         ;
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

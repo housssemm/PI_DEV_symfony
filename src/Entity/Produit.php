@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\ProduitRepository;
@@ -45,10 +46,12 @@ class Produit
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Assert\NotBlank(message: "Le nom du produit est obligatoire.")]
+    #[Assert\NotBlank(message: "Le nom du produit est obligatoire.",
+        groups: ["creation", "Update"])]
     #[Assert\Regex(
         pattern: "/^[a-zA-Zàâäéèêôùç\s]+$/",
-        message: "Le nom de produit doit contenir uniquement des lettres et des espaces."
+        message: "Le nom de produit doit contenir uniquement des lettres et des espaces.",
+        groups: ["creation", "Update"]
     )]
     private ?string $nom = null;
 
@@ -64,14 +67,17 @@ class Produit
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Assert\NotBlank(message: "La description du produit est obligatoire.")]
+    #[Assert\NotBlank(message: "La description du produit est obligatoire.",
+        groups: ["creation", "Update"])]
     #[Assert\Length(
         max: 200,
-        maxMessage: "La description du produit ne peut pas dépasser {{ limit }} caractères."
+        maxMessage: "La description du produit ne peut pas dépasser {{ limit }} caractères.",
+        groups: ["creation", "Update"]
     )]
     #[Assert\Regex(
-        pattern: "/^[a-zA-Zàâäéèêôùç\s]+$/",
-        message: "Le nom de produit doit contenir uniquement des lettres et des espaces."
+        pattern: "/^[a-zA-ZéèêëàâäôùûüîïçÇ\s,'-.]+$/u",
+        message: "La description doit contenir uniquement des lettres, des espaces, des virgules, des apostrophes ou des traits d'union.",
+        groups: ["creation", "Update"]
     )]
     private ?string $description = null;
 
@@ -87,7 +93,6 @@ class Produit
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Assert\NotBlank(message: "L'image est obligatoire.")]
     private ?string $image = null;
 
     public function getImage(): ?string
@@ -100,9 +105,27 @@ class Produit
         $this->image = $image;
         return $this;
     }
+    #[Assert\NotBlank(message: "L'image est obligatoire.",
+        groups: ["creation"])]
+    #[Assert\File(
+        mimeTypes: ["image/png", "image/jpeg", "image/jpg"],
+        mimeTypesMessage: "Veuillez choisir une image au format PNG,JPEG ou JPG.",
+        groups: ["creation", "Update"]
+    )]
+    private ?UploadedFile $imageFile = null;
+    public function getImageFile(): ?UploadedFile
+    {
+        return $this->imageFile;
+    }
 
+    public function setImageFile(?UploadedFile $imageFile): self
+    {
+        $this->imageFile = $imageFile;
+        return $this;
+    }
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Assert\NotBlank(message: "L'etat est obligatoire.")]
+    #[Assert\NotBlank(message: "L'etat est obligatoire.",
+        groups: ["creation", "Update"])]
 
     private ?string $etat = null;
 
@@ -119,7 +142,7 @@ class Produit
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits')]
     #[ORM\JoinColumn(name: 'categorieId', referencedColumnName: 'id')]
-    #[Assert\NotBlank(message: "L' id est obligatoire.")]
+    #[Assert\NotBlank(message: "L' id est obligatoire.",groups: ["creation", "Update"])]
     private ?Categorie $categorie = null;
 
     public function getCategorie(): ?Categorie
@@ -134,14 +157,16 @@ class Produit
     }
 
     #[ORM\Column(type: 'integer', nullable: false)]
-    #[Assert\NotBlank(message: "La quantite est obligatoire.")]
+    #[Assert\NotBlank(message: "La quantite est obligatoire.",
+        groups: ["creation", "Update"])]
     #[Assert\GreaterThan(
         value: 0,
-        message: "La quantité ne peut pas être inférieure à 1."
+        message: "La quantité doit être strictement supérieure à zéro.",
+        groups: ["creation", "Update"]
     )]
-    private ?int $quantite = null;
+    private int $quantite = 1;
 
-    public function getQuantite(): ?int
+    public function getQuantite(): int
     {
         return $this->quantite;
     }
@@ -153,16 +178,19 @@ class Produit
     }
 
     #[ORM\Column(type: 'float', nullable: false)]
-    #[Assert\NotBlank(message: "Le prix est obligatoire.")]
+    #[Assert\NotBlank(message: "Le prix est obligatoire.",
+        groups: ["creation", "Update"])]
     #[Assert\GreaterThan(
         value: 0,
-        message: "Le prix ne peut pas être inférieure à 1."
+        message: "Le prix ne peut pas être inférieure à 1.",
+        groups: ["creation", "Update"]
     )]
     #[Assert\Type(
         type: "numeric",
-        message: "Le prix doit être un nombre valide."
+        message: "Le prix doit être un nombre valide.",
+        groups: ["creation", "Update"]
     )]
-    private ?float $prix = null;
+    private float $prix = 1.0;
 
     public function getPrix(): ?float
     {
@@ -174,6 +202,7 @@ class Produit
         $this->prix = $prix;
         return $this;
     }
+
 
     #[ORM\OneToMany(targetEntity: Offreproduit::class, mappedBy: 'produit')]
     private Collection $offreproduits;

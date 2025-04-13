@@ -5,10 +5,8 @@ namespace App\Controller;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -33,14 +31,14 @@ final class ProduitController extends AbstractController
     public function AjouterProduit(ManagerRegistry $doctrine, Request $request): Response
     {
         $produit = new Produit();
-        $form = $this->createForm(ProduitType::class, $produit);
+        $form = $this->createForm(ProduitType::class, $produit, [
+            'validation_groups' => ['creation']
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Récupération du nom de l'image depuis le champ personnalisé "imageName"
-            $imageName = $request->request->get('imageName');
-            if ($imageName)
-                $produit->setImage($imageName);
+            $produit->setImage($form->get('imageFile')->getData()->getClientOriginalName());
 
             $em = $doctrine->getManager();
             $em->persist($produit);
@@ -65,16 +63,19 @@ final class ProduitController extends AbstractController
     public function ModifierProduit(ManagerRegistry $doctrine, Request $request, $id, ProduitRepository $repoproduit): Response
     {
         $Produit = $repoproduit->find($id);
-        $oldImage = $Produit->getImage(); // Récupérer l'ancienne image
-        $form = $this->createForm(ProduitType::class, $Produit );
+        if (!$Produit) {
+            throw $this->createNotFoundException('Produit non trouvée.');
+        }
+        $oldImage = $Produit->getImage();
+        $form = $this->createForm(ProduitType::class, $Produit,[
+        'validation_groups' => ['Update']]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer la valeur du champ personnalisé "imageName" depuis la requête
-            $newImageName = $request->request->get('imageName', '');
+            $imageFile = $form->get('imageFile')->getData();
 
-            if ($newImageName) {
-                $Produit->setImage($newImageName);
+            if ($imageFile) {
+                $Produit->setImage($imageFile->getClientOriginalName());
             } else {
                 $Produit->setImage($oldImage);
             }
@@ -90,6 +91,8 @@ final class ProduitController extends AbstractController
             'produit' => $Produit
         ]);
     }
+
+
     #[Route('/recherche-produits', name: 'recherche_produits',methods: ['GET'])]
     public function search(Request $request, ProduitRepository $produitRepository)
     {
