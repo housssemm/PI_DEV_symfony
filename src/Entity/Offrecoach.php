@@ -6,6 +6,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 use App\Repository\OffrecoachRepository;
 
@@ -30,8 +32,9 @@ class Offrecoach
     }
 
     #[ORM\ManyToOne(targetEntity: Offre::class, inversedBy: 'offrecoachs')]
-    #[ORM\JoinColumn(name: 'offre_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'offre_id', referencedColumnName: 'id', nullable: false)]
     private ?Offre $offre = null;
+
 
     public function getOffre(): ?Offre
     {
@@ -59,8 +62,11 @@ class Offrecoach
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', precision: 10, scale: 2, nullable: false)]
+    #[ORM\Column(name: 'nouveauTarif' , type: 'decimal', precision: 10, scale: 2, nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Positive(message: "Le tarif doit être strictement positif.")]
     private ?float $nouveauTarif = null;
+
 
     public function getNouveauTarif(): ?float
     {
@@ -73,7 +79,7 @@ class Offrecoach
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(name: 'reservationActuelle' , type: 'integer', nullable: false)]
     private ?int $reservationActuelle = null;
 
     public function getReservationActuelle(): ?int
@@ -87,8 +93,11 @@ class Offrecoach
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(name:'reservationMax' , type: 'integer', nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Positive(message: "Les réservations max doivent être strictement positives.")]
     private ?int $reservationMax = null;
+
 
     public function getReservationMax(): ?int
     {

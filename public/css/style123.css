@@ -1,0 +1,99 @@
+.btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn-orange {
+    background-color: #F58400;
+    border-color: #FF9900;
+    color: white;
+    padding: 8px 13px;
+    font-size: 16px;
+    border-radius: 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    width: 150px;
+}
+
+/* Effet de survol */
+.btn-orange:hover {
+    background-color: #e57200;
+    border-color: #cc6a00;
+    color: white;
+}
+.form-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: black;
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+/* Titre */
+h2 {
+    text-align: center;
+    font-size: 24px;
+    color: #f58400;
+    margin-bottom: 20px;
+}
+
+/* Champs de formulaire */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+input.form-control,
+select.form-control,
+textarea.form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+}
+
+/* Focus sur les champs */
+input.form-control:focus,
+select.form-control:focus,
+textarea.form-control:focus {
+    border-color: #f58400;
+    outline: none;
+    box-shadow: 0 0 5px rgba(245, 132, 0, 0.3);
+}
+#imagePreview {
+    width: 230px;
+    height: 210px;
+    margin: 20px auto;
+    display: block;
+    object-fit: contain;
+    border: 4px solid #f58400;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#imageMessage {
+    color: #f58400;
+    text-align: center;
+    margin-top: 15px;
+    display: block;
+}
+
+#imagePreview:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+}

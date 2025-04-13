@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Entity;
-
-use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -30,10 +29,13 @@ class Planning
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "titre est obligatoire")]
+    #[Assert\Regex( pattern: "/^[a-zA-Z0-9]+$/", message: "titre contient uniquement lettres et chiffres" )]
     private ?string $titre = null;
 
     public function getTitre(): ?string
     {
+
         return $this->titre;
     }
 
@@ -44,6 +46,9 @@ class Planning
     }
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2, nullable: false)]
+    #[Assert\NotBlank(message: "Le tarif est obligatoire.")]
+    #[Assert\Type(type:'numeric', message: "Le tarif doit être un nombre.")]
+    #[Assert\Positive(message: "Le tarif doit être un nombre positif.")]
     private ?float $tarif = null;
 
     public function getTarif(): ?float
@@ -59,6 +64,7 @@ class Planning
 
     #[ORM\ManyToOne(targetEntity: Coach::class, inversedBy: 'plannings')]
     #[ORM\JoinColumn(name: 'idCoach', referencedColumnName: 'id')]
+    #[Assert\NotBlank(message: "Le coach est obligatoire.")]
     private ?Coach $coach = null;
 
     public function getCoach(): ?Coach

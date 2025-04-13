@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\CategorieRepository;
 
@@ -29,6 +30,11 @@ class Categorie
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: "Le nom de la catégorie est obligatoire.")]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-Zàâäéèêôùç\s]+$/",
+        message: "Le nom de la catégorie doit contenir uniquement des lettres et des espaces."
+    )]
     private ?string $nom = null;
 
     public function getNom(): ?string
@@ -43,6 +49,8 @@ class Categorie
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+
+
     private ?string $image = null;
 
     public function getImage(): ?string

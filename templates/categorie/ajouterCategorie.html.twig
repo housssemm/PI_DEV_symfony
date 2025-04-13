@@ -1,0 +1,81 @@
+{% block body %}
+    <link rel="stylesheet" href="{{ asset('css/style123.css') }}">
+    <section class="form-section" style="background-image: url('{{ asset('img/image4.png') }}');">
+        <div style="background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 30px; max-width: 600px; width: 90%; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
+            <h2>Ajouter une catégorie</h2>
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            <div class="form-group">
+                {{ form_label(form.nom, 'Nom Catégorie :') }}
+                {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                <div style="color: red; font-size: 14px; font-weight: bold;">
+                    {{ form_errors(form.nom) }}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.image, 'Image :') }}
+                {# On masque le widget file de Symfony #}
+                <div style="display: none;">
+                    {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <!-- Champ texte personnalisé pour stocker le nom de l'image sélectionnée -->
+                <input type="text" id="imageFilename" name="imageName" class="form-control" readonly value="" />
+                <div style="color: red; font-size: 14px; font-weight: bold;">{{ form_errors(form.image) }}</div>
+                <!-- Bouton personnalisé pour ouvrir le sélecteur de fichier (placé sous le champ texte) -->
+                <button type="button" class="btn-orange" onclick="document.getElementById('imageInput').click();" style="display: block; margin-top: 10px; margin-left: auto; margin-right: auto;">Charger Image</button>
+                <!-- Champ file masqué -->
+                <input type="file" id="imageInput" class="form-control" style="display: none;" />
+            </div>
+            <!-- Zone de prévisualisation de l'image avec message par défaut -->
+            <div class="form-group">
+                <img id="imagePreview" src="#" alt="Image prévisualisée" style="max-width: 100%; border: 1px solid #ccc; border-radius: 10px; margin-top: 10px; display: none;">
+                <p id="imageMessage" style="margin-top: 10px;">Aucune image sélectionnée</p>
+            </div>
+
+            <div class="form-group">
+                <div class="btn-container" style="text-align: center;">
+                    <button type="submit" class="btn btn-orange mt-3">
+                        <i class="fa fa-plus"></i> Ajouter
+                    </button>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </section>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const imageInput = document.getElementById("imageInput");
+            const imagePreview = document.getElementById("imagePreview");
+            const imageMessage = document.getElementById("imageMessage");
+            const imageFilename = document.getElementById("imageFilename");
+
+            imageInput.addEventListener("change", function(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                if (file && file.type.includes('image')) {
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = "block";
+                        imageMessage.style.display = "none";
+                    };
+                    reader.onerror = function() {
+                        imagePreview.style.display = "none";
+                        imageMessage.textContent = "Erreur de chargement de l'image";
+                        imageMessage.style.display = "block";
+                    };
+                    reader.readAsDataURL(file);
+                    // Mettre à jour le champ texte avec le nom du fichier sélectionné
+                    imageFilename.value = file.name;
+                } else {
+                    imagePreview.style.display = "none";
+                    imageMessage.textContent = "Fichier non valide. Veuillez sélectionner une image.";
+                    imageMessage.style.display = "block";
+                    imageFilename.value = "";
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+
