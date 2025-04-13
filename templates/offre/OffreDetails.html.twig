@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'Offre - {{ offre.nom }}{% endblock %}
+
+{% block body %}
+    <style>
+        body{
+            background: #151515;
+        }
+        .page-title{
+            color: #fff;
+
+        }
+    </style>
+    <div class="container">
+        <h1 class="page-title">{{ offre.nom }}</h1>
+
+        <div class="card h-100 bg-dark border-secondary">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="lead">{{ offre.description }}</p>
+                        <dl class="row">
+                            <dt class="col-sm-4">Date de validité :</dt>
+                            <dd class="col-sm-8">{{ offre.duree_validite|date('d/m/Y') }}</dd>
+
+                            <dt class="col-sm-4">État :</dt>
+                            <dd class="col-sm-8">
+                            <span class="badge bg-{{ offre.etat == 'ACTIVE' ? 'success' : 'danger' }}">
+                                {{ offre.etat }}
+                            </span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <h4 class="mt-4">Coachs associés</h4>
+                <ul class="list-group">
+                    {% for coach in offre.offrecoachs %}
+                        <li class="list-group-item">
+                            {{ coach.coach.nom }} -
+                            Tarif : {{ coach.nouveauTarif }} € -
+                            Réservations : {{ coach.reservationActuelle }}/{{ coach.reservationMax }}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <h4 class="mt-4">Produits associés</h4>
+                <ul class="list-group">
+                    {% for produit in offre.offreproduits %}
+                        <li class="list-group-item">
+                            {{ produit.produit.nom }} -
+                            Prix : {{ produit.nouveauPrix }} € -
+                            Stock : {{ produit.quantiteVendue }}/{{ produit.quantiteMax }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="{{ path('offre_edit', {'id': offre.id}) }}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Modifier
+                </a>
+                <form method="post" action="{{ path('offre_delete', {'id': offre.id}) }}" class="d-inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id) }}">
+                    <button class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?')">
+                        <i class="bi bi-trash"></i> Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

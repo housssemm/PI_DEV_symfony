@@ -6,6 +6,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 use App\Repository\OffreproduitRepository;
 
@@ -30,8 +32,9 @@ class Offreproduit
     }
 
     #[ORM\ManyToOne(targetEntity: Offre::class, inversedBy: 'offreproduits')]
-    #[ORM\JoinColumn(name: 'offre_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'offre_id', referencedColumnName: 'id', nullable: false)]
     private ?Offre $offre = null;
+
 
     public function getOffre(): ?Offre
     {
@@ -59,8 +62,11 @@ class Offreproduit
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', precision: 10, scale: 2, nullable: false)]
+    #[ORM\Column(name:'nouveauPrix' , type: 'decimal', precision: 10, scale: 2, nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Positive(message: "Le prix doit être strictement positif.")]
     private ?float $nouveauPrix = null;
+
 
     public function getNouveauPrix(): ?float
     {
@@ -73,8 +79,11 @@ class Offreproduit
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(name:'quantiteMax' , type: 'integer', nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Positive(message: "La quantité max doit être strictement positive.")]
     private ?int $quantiteMax = null;
+
 
     public function getQuantiteMax(): ?int
     {
@@ -87,7 +96,7 @@ class Offreproduit
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(name:'quantiteVendue' , type: 'integer', nullable: false)]
     private ?int $quantiteVendue = null;
 
     public function getQuantiteVendue(): ?int
@@ -102,3 +111,4 @@ class Offreproduit
     }
 
 }
+

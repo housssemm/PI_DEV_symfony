@@ -30,16 +30,16 @@ class Produit
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: Investisseurproduit::class, inversedBy: 'produits')]
+    #[ORM\ManyToOne(targetEntity: InvestisseurProduit::class, inversedBy: 'produits')]
     #[ORM\JoinColumn(name: 'idInvestisseur', referencedColumnName: 'id')]
-    private ?Investisseurproduit $investisseurproduit = null;
+    private ?InvestisseurProduit $investisseurproduit = null;
 
-    public function getInvestisseurproduit(): ?Investisseurproduit
+    public function getInvestisseurproduit(): ?InvestisseurProduit
     {
         return $this->investisseurproduit;
     }
 
-    public function setInvestisseurproduit(?Investisseurproduit $investisseurproduit): self
+    public function setInvestisseurproduit(?InvestisseurProduit $investisseurproduit): self
     {
         $this->investisseurproduit = $investisseurproduit;
         return $this;
