@@ -27,13 +27,13 @@ final class ProduitController extends AbstractController
         return $this->render("produit/index.html.twig",
             ["produits"=>$produits]);
     }
-//    #[Route('/afficherProduitAdmin', name : 'app_afficher_produitAdmin' )]
-//    public function afficherProduitAdmin(ProduitRepository $rep) : Response
-//    {
-//        $produits = $rep->findAll();
-//        return $this->render("produit/AdminProduit.html.twig",
-//            ["produits"=>$produits]);
-//    }
+    #[Route('/afficherProduitAdmin', name : 'app_afficher_produitAdmin' )]
+    public function afficherProduitAdmin(ProduitRepository $rep) : Response
+    {
+        $produits = $rep->findAll();
+        return $this->render("produit/AdminProduit.html.twig",
+            ["produits"=>$produits]);
+    }
     #[Route('/ajouterProduit', name: 'app_ajouter_produit')]
     public function AjouterProduit(ManagerRegistry $doctrine, Request $request): Response
     {
@@ -73,17 +73,17 @@ final class ProduitController extends AbstractController
         $this->addFlash('success', 'Produit supprimé avec succès.');
         return $this->redirectToRoute('app_afficher_produit');
     }
-//    #[Route('/supprimerProduitAdmin/{id}',name:'app_supprimer_produitAdmin')]
-//    public function SupprimerProduitAdmin($id,ProduitRepository $repoproduit,ManagerRegistry $doctrine): Response
-//    {
-//        $categorie=$repoproduit->find($id);
-//        $em=$doctrine->getManager();
-//        $em->remove($categorie);
-//        $em->flush();
-//
-//        $this->addFlash('success', 'Produit supprimé avec succès.');
-//        return $this->redirectToRoute('app_afficher_produitAdmin');
-//    }
+    #[Route('/supprimerProduitAdmin/{id}',name:'app_supprimer_produitAdmin')]
+    public function SupprimerProduitAdmin($id,ProduitRepository $repoproduit,ManagerRegistry $doctrine): Response
+    {
+        $categorie=$repoproduit->find($id);
+        $em=$doctrine->getManager();
+        $em->remove($categorie);
+        $em->flush();
+
+        $this->addFlash('success', 'Produit supprimé avec succès.');
+        return $this->redirectToRoute('app_afficher_produitAdmin');
+    }
     #[Route('/modifierProduit/{id}', name: 'app_modifier_produit')]
     public function ModifierProduit(ManagerRegistry $doctrine, Request $request, $id, ProduitRepository $repoproduit): Response
     {
