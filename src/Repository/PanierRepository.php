@@ -17,6 +17,10 @@ class PanierRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Panier::class);
     }
+    public function findPanierByUser($user)
+    {
+        return $this->findOneBy(['user' => $user]);
+    }
 //    /**
 //     * @return Panier[] Returns an array of Panier objects
 //     */
