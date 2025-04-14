@@ -5,11 +5,13 @@ namespace App\Controller;
 use App\Entity\Offre;
 use App\Form\OffreType;
 use App\Repository\OffreRepository;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+
 
 #[Route('/offre')]
 final class OffreController extends AbstractController
@@ -100,6 +102,58 @@ final class OffreController extends AbstractController
         ]);
     }
 
+    #[Route('/new/produit', name: 'offre_new_produit', methods: ['GET', 'POST'])]
+    public function newProduit(Request $request, EntityManagerInterface $em): Response
+    {
+        $offre = new Offre();
+        $form = $this->createForm(OffreType::class, $offre, [
+            'exclude_coachs' => true
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($offre->getOffreproduits() as $offreProduit) {
+                $offreProduit->setOffre($offre);
+            }
+
+            $em->persist($offre);
+            $em->flush();
+
+            return $this->redirectToRoute('offre_list');
+        }
+
+        return $this->render('offre/AddOffreProduit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/new/coach', name: 'offre_new_coach', methods: ['GET', 'POST'])]
+    public function newCoach(Request $request, EntityManagerInterface $em): Response
+    {
+        $offre = new Offre();
+        $form = $this->createForm(OffreType::class, $offre, [
+            'exclude_produits' => true
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($offre->getOffrecoachs() as $offreCoach) {
+                $offreCoach->setOffre($offre);
+            }
+
+            $em->persist($offre);
+            $em->flush();
+
+            return $this->redirectToRoute('offre_list');
+        }
+
+        return $this->render('offre/AddOffreCoach.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
     #[Route('/{id}', name: 'offre_show', methods: ['GET'])]
     public function show(Offre $offre): Response
     {
@@ -135,6 +189,23 @@ final class OffreController extends AbstractController
 
         return $this->redirectToRoute('offre_list');
     }
+
+    #[Route('/offre/admin', name: 'offre_admin_list')]
+    public function listOffresAdmin(OffreRepository $offreRepository): Response
+    {
+        $offres = $offreRepository->findAll(); // ou applique des filtres selon tes besoins
+
+        return $this->render('offre/ListOffreAdmin.html.twig', [
+            'offres' => $offres,
+            'offres_json' => json_encode(array_map(function ($offre) {
+                return [
+                    'title' => $offre->getNom(),
+                    'start' => $offre->getDureeValidite()->format('Y-m-d'),
+                ];
+            }, $offres)),
+        ]);
+    }
+
 
 
 }
