@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Page Produit{% endblock %}
-
+{% block title %}Panier{% endblock %}
 {% block header %}
     <style>
         body{
@@ -110,10 +109,8 @@
                             </li>
                             <li><a href="./contact.html">Contact</a></li>
 
-
                             <li><a href="./about-us.html">Planning</a></li>
-                            <li><a href="/afficher">Categorie</a></li>
-                            <li class="active"><a href="/afficherProduit">Produit</a></li>
+                            <li class="active"><a href="/pageAdherent">Articles Achétés</a></li>
                             <li><a href="./services.html">Evénement</a></li>
                             <li><a href="./team.html">Offre</a></li>
                             <li><a href="./contact.html">Réclamation</a></li>
@@ -145,43 +142,15 @@
 
 {% block Hero_Section_Begin %}
     <!-- Hero Section Begin -->
-
-    <section class="hero-section">
-        <div class="hs-slider owl-carousel">
-            <div class="hs-item set-bg" data-setbg="{{asset('img/image4.png')}}" >
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12 text-center">
-                            <div class="breadcrumb-text" style="text-align: left; margin-left: 18px;">
-                                <div class="hi-text">
-                                    <span>Ajoutez Une Nouvelle <strong>Produit</strong></span>
-                                    <h1>Boostez votre</h1>
-                                    <h1 style="margin-bottom: 10px"><strong> Inventaire</strong></h1>
-                                </div>
-                                <div class="bt-option" style="text-align: left; margin-top: 10px;">
-                                    <a href="/" style="text-align: left; margin-top: 10px;"><i class="fa fa-home"></i>&nbsp; Home</a>
-                                    <span><i class="fa fa-tags" style="margin-right: 5px;"></i> Produit</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hs-item set-bg" data-setbg="{{asset('img/image6.png')}}" >
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12 text-center">
-                            <div class="breadcrumb-text" style="text-align: left; margin-left: 18px;">
-                                <div class="hi-text">
-                                    <span>Ajoutez Une Nouvelle <strong>Produit</strong></span>
-                                    <h1>Boostez votre</h1>
-                                    <h1 style="margin-bottom: 10px"><strong> Inventaire</strong></h1>
-                                </div>
-                                <div class="bt-option" style="text-align: left; margin-top: 10px;">
-                                    <a href="/" style="text-align: left; margin-top: 10px;">Home</a>
-                                    <span><i class="fa fa-tags" style="margin-right: 5px;"></i> Produit</span>
-                                </div>
-                            </div>
+    <section class="breadcrumb-section" style="background-image: url('{{ asset('img/image7.png') }}');">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2>Details Produit</h2>
+                        <div class="bt-option">
+                            <a href="./index.html"><i class="fa fa-home"></i>&nbsp;Home</a>
+                            <span><i class="fa fa-shopping-cart" style="margin-right: 5px;"></i> Details Produit </span>
                         </div>
                     </div>
                 </div>
@@ -189,79 +158,59 @@
         </div>
     </section>
 {% endblock %}
-{% block stylesheets %}
+
+{% block body %}
     <style>
         body {
-            background: #151515;
+            font-family: Arial, sans-serif;
+            margin: 20px;
         }
     </style>
-{% endblock %}
-{% block body %}
-    <section>
-        <div class="container my-5">
-            <h1 class="text-center mb-4 fs-4 text-light">Liste des Produits</h1>
-            <div class="mb-3" style="text-align: right;">
-                <a href="{{ path('app_ajouter_produit') }}" class="btn btn-orange">
-                    <i class="fa fa-plus"></i> Ajouter Produit
-                </a>
+    <link rel="stylesheet" href="{{ asset('css/voirpanier.css') }}">
+    <h1 style="text-align: center;margin-top: 90px">Details Panier</h1>
+    <div class="panier-container">
+        <!-- Liste des produits -->
+        <div class="produits-list">
+            <!-- Header -->
+            <div class="produit-header">
+                <div class="produit-image">Image</div>
+                <div class="produit-info">Nom</div>
+                <div class="quantite-control">Quantité</div>
+                <div class="produit-prix">Sous-total</div>
             </div>
-            <div class="row row-cols-1 row-cols-md-4 g-4" id="produitList" style="row-gap: 30px;">
-                {% for produit in produits %}
-                    <div class="col">
-                        <div class="card h-100 text-center bg-dark text-light"
-                             style="min-height: 350px; width: 109%; margin: auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
-                            <img src="{{ asset('img/' ~ produit.image) }}"
-                                 class="card-img-top" alt="{{ produit.nom }}"
-                                 style="height: 120px; width: 100%; object-fit: contain; padding-top: 10px;">
-
-                            <div class="card-body d-flex flex-column justify-content-center align-items-center" style="flex-grow: 1;">
-                                <h5 class="card-title text-white">{{ produit.nom }}</h5>
-                                <p class="text-light small"><strong>Description :</strong> {{ produit.description }}</p>
-                                <p class="text-light small"><strong>Quantité :</strong> {{ produit.quantite }}</p>
-                                <p class="text-light small"><strong>Prix :</strong> {{ produit.prix }} TND</p>
-                                <p class="text-light small"><strong>État :</strong> {{ produit.etat }}</p>
-                                <p class="text-light small"><strong>Catégorie :</strong> {{ produit.categorie ? produit.categorie.nom : 'Aucune catégorie' }}</p>
-                            </div>
-
-                            <div class="d-flex justify-content-center align-items-center w-100" style="gap: 10px; margin-top: 7px;">
-                                <a href="{{ path('app_modifier_produit', { id: produit.id }) }}" class="btn btn-sm btn-orange">
-                                    <i class="fa fa-edit"></i> Modifier
-                                </a>
-                                <a href="{{ path('app_supprimer_produit', { id: produit.id }) }}" class="btn btn-sm btn-danger">
-                                    <i class="fa fa-trash"></i> Supprimer
-                                </a>
-                            </div>
-                        </div>
+            <!-- Produits -->
+            {% for produitPanier in produitsPanier %}
+                <div class="produit-item">
+                    <div class="produit-image">
+                        <img src="{{ asset('img/' ~ produitPanier.produit.image) }}" alt="{{ produitPanier.produit.nom }}">
                     </div>
-                {% else %}
-                    <p class="text-center text-light">Aucun produit trouvé.</p>
-                {% endfor %}
-            </div>
+                    <div class="produit-info">
+                        <p><strong>{{ produitPanier.produit.nom }}</strong></p>
+                    </div>
+                    <div class="quantite-control">
+                        <button>-</button>
+                        <input type="text" value="{{ produitPanier.quantite }}" readonly>
+                        <button>+</button>
+                    </div>
+                    <div class="produit-prix">
+                        {{ produitPanier.quantite * produitPanier.produit.prix }} DT
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    </section>
 
-    <style>
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
-        }
-        .btn-orange {
-            background-color: #f36100;
-            color: white;
-        }
-        .btn-orange:hover {
-            background-color: #d95400;
-        }
-    </style>
+        <!-- Résumé -->
+        <div class="resume">
+            <h3>Résumé du Panier</h3>
+            <p><span>Nombre d'articles :</span> <span>{{ produitsPanier|length }}</span></p>
+            <div class="total">
+                <span>Total :</span> <span>{{ montantTotal }} DT</span>
+            </div>
+            <a href="#" class="btn-commander">Proceder au Paiement</a>
+            <a  href="{{ path('afficher_produit_au_panier') }}" class="btn-commander">Continuer Vos Achats</a>
+        </div>
+    </div>
 {% endblock %}
-
-
-
-
-
-
-
-
 
 
 

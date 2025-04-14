@@ -16,6 +16,11 @@ class PanierproduitRepository extends ServiceEntityRepository
         parent::__construct($registry, Panierproduit::class);
     }
 
+    public function findByPanier($panier)
+    {
+        return $this->findBy(['panier' => $panier]);
+    }
+
 //    /**
 //     * @return Panierproduit[] Returns an array of Panierproduit objects
 //     */

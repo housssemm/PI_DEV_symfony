@@ -14,9 +14,9 @@ class CategorieType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('image', FileType::class, [
-                'mapped' => false,
-        ])
+            ->add('imageFile', FileType::class, [
+                'attr' => ['class' => 'form-control'],
+            ])
         ;
     }
 

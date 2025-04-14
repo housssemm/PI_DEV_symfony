@@ -96,6 +96,8 @@
                 <li><a href="#">Pages</a>
                     <ul class="dropdown">
                         <li><a href="{{ path('app_about') }}">About us</a></li>
+                        <li><a href="{{ path('app_gym') }}">My Gym Partner</a></li>
+
                         <li><a href="{{ path('app_timetable') }}">Classes timetable</a></li>
                         <li><a href="{{ path('bmi_calculator') }}">Bmi calculate</a></li>
                         <li><a href="{{ path('app_team') }}">Mon Profile</a></li>
@@ -141,7 +143,7 @@
                     <nav class="nav-menu">
                         <ul>
 
-                            <li class="active"><a href="{{ path('app_home') }}">Home</a></li>
+                            <li class="active"><a href="{{ path('app_homee') }}">Home</a></li>
                             <li><a href="{{ path('app_about') }}">About Us</a></li>
                             <li><a href="{{ path('app_classes') }}">Classes</a></li>
                             <li><a href="{{ path('app_services') }}">Services</a></li>
@@ -156,10 +158,11 @@
                             <li><a href="#">Pages</a>
                                 <ul class="dropdown">
                                     <li><a href="./about-us.html">About us</a></li>
+                                    <li><a href="{{ path('app_gym') }}">My Gym Partner</a></li>
                                     <li><a href="./class-timetable.html">Classes timetable</a></li>
                                     <li><a href="{{ path('bmi_calculator') }}">Bmi calculate</a></li>
                                     <li><a href="{{ path('app_profile') }}">Mon Profile</a></li>
-
+                                    <li><a href="./team.html">App Guide</a></li>
                                     <li><a href="./team.html">Our team</a></li>
                                     <li><a href="./gallery.html">Gallery</a></li>
                                     <li><a href="./blog.html">Our blog</a></li>
@@ -175,10 +178,23 @@
                                 <li><a href="{{ path('app_afficher_planAdr') }}">Planning</a></li>
                             {% endif %}
 
+
                             <li><a href="./class-details.html">Produit</a></li>
+
+                            <li><a href="./about-us.html">Planning</a></li>
+{#                            <li><a href="./class-details.html">Produit</a></li>#}
+                            {% if is_granted('ROLE_INVESTISSEUR') %}
+                                <li><a href="{{ path('app_afficher_produit') }}">Produit</a></li>
+                                {% if app.request.attributes.get('_route') == 'app_afficher_produit' %}
+                                    <li><a href="{{ path('app_afficher_categorie') }}">Categorie</a></li>
+                                {% endif %}
+                            {% elseif is_granted('ROLE_ADHERENT') %}
+                                <li><a href="{{ path('app_afficher_panier') }}">Produit</a></li>
+                            {% endif %}
+
                             <li><a href="./services.html">Evénement</a></li>
                             <li><a href="./team.html">Offre</a></li>
-                            <li><a href="./contact.html">Réclamation</a></li>
+                            <li><a href={{ path('app_reclamation_index') }}>Réclamation</a></li>
 
                         </ul>
                     </nav>
