@@ -5,7 +5,7 @@
 
     <style>
         body {
-            background: #151515;
+            background: #1a1a1a;
             color: #e2e8f0;
         }
 
@@ -62,7 +62,7 @@
             position: sticky;
             top: 2rem;
 
-            max-height: 85vh;
+            max-height: 100vh;
             overflow-y: auto;
 
             /* Hide scrollbar for Webkit browsers (Chrome, Safari) */
@@ -530,9 +530,7 @@
             {#				</a>#}
             {#			</div>#}
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                <a href="{{ path('app_add_event') }}" class="add-button">
-                    <i class="bi bi-plus-circle"></i>  Ajouter un événement
-                </a>
+
                 <a href="{{ path('app_nearby_events') }}" class="map-button">
                     <i class="fas fa-map-marked-alt"></i> Voir la carte des événements proches
                 </a>
@@ -583,10 +581,7 @@
                                 <i class="bi bi-eye"></i>
                                 Voir
                             </a>
-                            <a href="{{ path('app_update_event', {'id': event.id}) }}" class="btn btn-edit">
-                                <i class="bi bi-pencil"></i>
-                                Modifier
-                            </a>
+
                             <form method="post" action="{{ path('app_delete', {'id': event.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?');" style="display: inline;">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
                                 <button type="submit" class="btn btn-delete">
