@@ -3,76 +3,366 @@
 {% block title %}Mon Profil - Coachini{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
+<div class="container py-5">
     <div class="row">
+        <!-- Côté gauche - Photo de profil et informations principales -->
         <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <div class="mb-4">
-                        <img src="{{ asset('img/default-avatar.png') }}" alt="Avatar" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+            <div class="card shadow-sm border-0 rounded-lg mb-4" style="min-height: 500px;">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <div>
+                        <div class="position-relative d-inline-block mb-4">
+                            {% if app.user.image %}
+                                <img src="{{ asset('uploads/user_images/' ~ app.user.image) }}" alt="Photo de profil" 
+                                     class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                            {% else %}
+                                <img src="{{ asset('uploads/user_images/pdp.png') }}" alt="Photo de profil" 
+                                     class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                            {% endif %}
+                            <button class="btn btn-sm btn-orange position-absolute bottom-0 end-0 rounded-circle" 
+                                    data-bs-toggle="modal" data-bs-target="#uploadImageModal">
+                                <i class="fa fa-camera"></i>
+                            </button>
+                        </div>
+                        <h4 class="mb-2">{{ app.user.prenom }} {{ app.user.nom }}</h4>
+                        <p class="text-muted mb-3">{{ app.user.email }}</p>
+                        
+                        <!-- Position avec style amélioré -->
+                        <div class="position-badge mb-4">
+                            <span class="badge bg-orange text-white p-2 px-3 rounded-pill">
+                                <i class="fa fa-user-tie me-2"></i>
+                                {{ app.user.discriminator|capitalize }}
+                            </span>
+                        </div>
                     </div>
-                    <h4 class="mb-1">{{ app.user.prenom }} {{ app.user.nom }}</h4>
-                    <p class="text-muted mb-4">{{ app.user.email }}</p>
-                    <button class="btn btn-outline-primary btn-sm">Changer la photo</button>
                 </div>
             </div>
         </div>
+
+        <!-- Côté droit - Détails et activités -->
         <div class="col-md-8">
-            <div class="card shadow-sm">
+            <!-- Informations personnelles -->
+            <div class="card shadow-sm border-0 rounded-lg mb-4">
                 <div class="card-body">
-                    <h5 class="card-title mb-4">Informations personnelles</h5>
-                    <form>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Prénom</label>
-                                <input type="text" class="form-control" value="{{ app.user.prenom }}" readonly>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Nom</label>
-                                <input type="text" class="form-control" value="{{ app.user.nom }}" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" value="{{ app.user.email }}" readonly>
-                        </div>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                            Modifier le profil
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">Informations personnelles</h5>
+                        <button type="button" class="btn btn-sm btn-outline-orange edit-section" data-section="personal">
+                            <i class="fa fa-edit me-2"></i>Modifier
                         </button>
+                    </div>
+                    <form id="personalInfoForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted">Prénom</label>
+                                <input type="text" class="form-control" name="prenom" value="{{ app.user.prenom }}" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted">Nom</label>
+                                <input type="text" class="form-control" name="nom" value="{{ app.user.nom }}" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted">Email</label>
+                                <input type="email" class="form-control" name="email" value="{{ app.user.email }}" readonly>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
 
-            <div class="card shadow-sm mt-4">
+            <!-- Informations spécifiques -->
+            <div class="card shadow-sm border-0 rounded-lg mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">Informations spécifiques</h5>
+                        <button type="button" class="btn btn-sm btn-outline-orange edit-section" data-section="specific">
+                            <i class="fa fa-edit me-2"></i>Modifier
+                        </button>
+                    </div>
+                    <form id="specificInfoForm">
+                        {% if app.user.discriminator == 'adherent' %}
+                            <div class="row">
+                                <!-- Informations de base -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Âge</label>
+                                    <input type="number" class="form-control" name="age" value="{{ app.user.age }}" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Genre</label>
+                                    <div class="specialite-display">
+                                        <select class="form-control" name="genre" readonly>
+                                            <option value="homme" {% if app.user.genre == 'homme' %}selected{% endif %}>
+                                                <i class="fa fa-male me-2"></i>Homme
+                                            </option>
+                                            <option value="femme" {% if app.user.genre == 'femme' %}selected{% endif %}>
+                                                <i class="fa fa-female me-2"></i>Femme
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Mesures physiques -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Taille (cm)</label>
+                                    <input type="number" class="form-control" name="taille" value="{{ app.user.taille }}" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Poids (kg)</label>
+                                    <input type="number" class="form-control" name="poids" value="{{ app.user.poids }}" readonly>
+                                </div>
+                                <!-- Objectifs et niveau -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Objectif personnel</label>
+                                    <div class="specialite-display">
+                                        <select class="form-control" name="objectifPersonnel" readonly>
+                                            <option value="Perdre_Poids" {% if app.user.objectifPersonnel == 'Perdre_Poids' %}selected{% endif %}>
+                                                <i class="fa fa-weight me-2"></i>Perdre du poids
+                                            </option>
+                                            <option value="Avoir_des_muscles" {% if app.user.objectifPersonnel == 'Avoir_des_muscles' %}selected{% endif %}>
+                                                <i class="fa fa-dumbbell me-2"></i>Avoir des muscles
+                                            </option>
+                                            <option value="Relaxation" {% if app.user.objectifPersonnel == 'Relaxation' %}selected{% endif %}>
+                                                <i class="fa fa-spa me-2"></i>Relaxation
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Niveau d'activité</label>
+                                    <div class="specialite-display">
+                                        <select class="form-control" name="niveauActivite" readonly>
+                                            <option value="Debutant" {% if app.user.niveauActivite == 'Debutant' %}selected{% endif %}>
+                                                <i class="fa fa-seedling me-2"></i>Débutant
+                                            </option>
+                                            <option value="Intermediaire" {% if app.user.niveauActivite == 'Intermediaire' %}selected{% endif %}>
+                                                <i class="fa fa-running me-2"></i>Intermédiaire
+                                            </option>
+                                            <option value="Avance" {% if app.user.niveauActivite == 'Avance' %}selected{% endif %}>
+                                                <i class="fa fa-medal me-2"></i>Avancé
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elseif app.user.discriminator == 'coach' %}
+                            <div class="row">
+                                <!-- Informations professionnelles -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Spécialité</label>
+                                    <div class="specialite-display">
+                                        <select class="form-control" name="specialite" readonly>
+                                            <option value="musculation" {% if app.user.specialite == 'musculation' %}selected{% endif %}>
+                                                <i class="fa fa-dumbbell me-2"></i>Musculation
+                                            </option>
+                                            <option value="yoga" {% if app.user.specialite == 'yoga' %}selected{% endif %}>
+                                                <i class="fa fa-spa me-2"></i>Yoga
+                                            </option>
+                                            <option value="gymnastique" {% if app.user.specialite == 'gymnastique' %}selected{% endif %}>
+                                                <i class="fa fa-running me-2"></i>Gymnastique
+                                            </option>
+                                            <option value="pilates" {% if app.user.specialite == 'pilates' %}selected{% endif %}>
+                                                <i class="fa fa-heartbeat me-2"></i>Pilates
+                                            </option>
+                                            <option value="danse" {% if app.user.specialite == 'danse' %}selected{% endif %}>
+                                                <i class="fa fa-music me-2"></i>Danse
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Années d'expérience</label>
+                                    <input type="number" class="form-control" name="anneeExperience" value="{{ app.user.anneeExperience }}" readonly>
+                                </div>
+                                <!-- Évaluation et documents -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Note</label>
+                                    <div class="note-display">
+                                        <span class="badge bg-orange p-2">
+                                            <i class="fa fa-star me-2"></i>{{ app.user.note }}/5
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <label class="text-muted me-4 mb-0">Statut du certificat :</label>
+                                        <div class="certificate-status">
+                                            {% if app.user.certificat_valide %}
+                                                <span class="badge bg-success p-2">
+                                                    <i class="fa fa-check-circle me-2"></i>Validé
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark p-2">
+                                                    <i class="fa fa-clock me-2"></i>En attente
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="text-muted">CV</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        {% if app.user.cv %}
+                                            <a href="{{ asset('uploads/cv/' ~ app.user.cv) }}" target="_blank" class="btn btn-primary">
+                                                <i class="fa fa-eye me-2"></i>Voir le CV
+                                            </a>
+                                        {% else %}
+                                            <p class="text-muted mb-0">Aucun CV disponible</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% elseif app.user.discriminator == 'createur_evenement' %}
+                            <div class="row">
+                                <!-- Informations de l'organisation -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Nom de l'organisation</label>
+                                    <input type="text" class="form-control" name="nomOrganisation" value="{{ app.user.nomOrganisation }}" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <label class="text-muted me-4 mb-0">Statut du certificat :</label>
+                                        <div class="certificate-status">
+                                            {% if app.user.certificatValide %}
+                                                <span class="badge bg-success p-2">
+                                                    <i class="fa fa-check-circle me-2"></i>Validé
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark p-2">
+                                                    <i class="fa fa-clock me-2"></i>En attente
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Description -->
+                                <div class="col-12 mb-3">
+                                    <label class="text-muted">Description</label>
+                                    <textarea class="form-control" name="descriptionCreateur" rows="3" readonly>{{ app.user.descriptionCreateur }}</textarea>
+                                </div>
+                                <!-- Coordonnées -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Adresse</label>
+                                    <input type="text" class="form-control" name="adresseCreateur" value="{{ app.user.adresseCreateur }}" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Téléphone</label>
+                                    <input type="tel" class="form-control" name="telephoneCreateur" value="{{ app.user.telephoneCreateur }}" readonly pattern="[0-9]{8}">
+                                    <small class="text-muted">8 chiffres requis</small>
+                                </div>
+                            </div>
+                        {% elseif app.user.discriminator == 'investisseur_produit' %}
+                            <div class="row">
+                                <!-- Informations de l'entreprise -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Nom de l'entreprise</label>
+                                    <input type="text" class="form-control" name="nomEntreprise" value="{{ app.user.nomEntreprise }}" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <label class="text-muted me-4 mb-0">Statut du certificat :</label>
+                                        <div class="certificate-status">
+                                            {% if app.user.certificatValide %}
+                                                <span class="badge bg-success p-2">
+                                                    <i class="fa fa-check-circle me-2"></i>Validé
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark p-2">
+                                                    <i class="fa fa-clock me-2"></i>En attente
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Description -->
+                                <div class="col-12 mb-3">
+                                    <label class="text-muted">Description</label>
+                                    <textarea class="form-control" name="descriptionInvestisseur" rows="3" readonly>{{ app.user.descriptionInvestisseur }}</textarea>
+                                </div>
+                                <!-- Coordonnées -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Adresse</label>
+                                    <input type="text" class="form-control" name="adresseInvestisseur" value="{{ app.user.adresseInvestisseur }}" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted">Téléphone</label>
+                                    <input type="tel" class="form-control" name="telephoneInvestisseur" value="{{ app.user.telephoneInvestisseur }}" readonly pattern="[0-9]{8}">
+                                    <small class="text-muted">8 chiffres requis</small>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+
+            <!-- Objectifs et progrès (uniquement pour les adhérents) -->
+            {% if app.user.discriminator == 'adherent' %}
+                <div class="card shadow-sm border-0 rounded-lg mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Objectifs et progrès</h5>
+                        <div class="progress mb-3" style="height: 10px;">
+                            <div class="progress-bar bg-orange" role="progressbar" style="width: 75%;" 
+                                 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <h6 class="text-orange mb-1">Poids</h6>
+                                    <p class="mb-0">{{ app.user.poids }} kg</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <h6 class="text-orange mb-1">IMC</h6>
+                                    <p class="mb-0">{{ (app.user.poids / ((app.user.taille/100) * (app.user.taille/100)))|number_format(1) }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <h6 class="text-orange mb-1">Objectif</h6>
+                                    <p class="mb-0">{{ app.user.objectifPersonnel }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Sécurité -->
+            <div class="card shadow-sm border-0 rounded-lg">
                 <div class="card-body">
                     <h5 class="card-title mb-4">Sécurité</h5>
-                    <form>
-                        <div class="mb-3">
-                            <label class="form-label">Mot de passe actuel</label>
-                            <input type="password" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Nouveau mot de passe</label>
-                            <input type="password" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Confirmer le nouveau mot de passe</label>
-                            <input type="password" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
-                    </form>
+                    <button id="showPasswordForm" class="btn btn-outline-orange mb-3">
+                        <i class="fa fa-lock me-2"></i>Changer le mot de passe
+                    </button>
+                    <div id="passwordForm" style="display: none;">
+                        <form>
+                            <div class="mb-3">
+                                <label class="text-muted">Mot de passe actuel</label>
+                                <input type="password" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted">Nouveau mot de passe</label>
+                                <input type="password" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted">Confirmer le nouveau mot de passe</label>
+                                <input type="password" class="form-control">
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-orange">Enregistrer</button>
+                                <button type="button" id="cancelPasswordChange" class="btn btn-outline-secondary">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal de modification du profil -->
-<div class="modal fade" id="editProfileModal" tabindex="-1">
+<!-- Modal de modification des informations personnelles -->
+<div class="modal fade" id="editPersonalInfoModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Modifier le profil</h5>
+                <h5 class="modal-title">Modifier les informations personnelles</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -89,20 +379,205 @@
                         <label class="form-label">Email</label>
                         <input type="email" class="form-control" value="{{ app.user.email }}">
                     </div>
+                    {% if app.user.discriminator == 'adherent' %}
+                        <div class="mb-3">
+                            <label class="form-label">Âge</label>
+                            <input type="number" class="form-control" value="{{ app.user.age }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Genre</label>
+                            <select class="form-control">
+                                <option value="homme" {% if app.user.genre == 'homme' %}selected{% endif %}>Homme</option>
+                                <option value="femme" {% if app.user.genre == 'femme' %}selected{% endif %}>Femme</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Taille (cm)</label>
+                            <input type="number" class="form-control" value="{{ app.user.taille }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Poids (kg)</label>
+                            <input type="number" class="form-control" value="{{ app.user.poids }}">
+                        </div>
+                    {% elseif app.user.discriminator == 'coach' %}
+                        <div class="mb-3">
+                            <label class="form-label">Spécialité</label>
+                            <select class="form-control" name="specialite">
+                                <option value="musculation" {% if app.user.specialite == 'musculation' %}selected{% endif %}>Musculation</option>
+                                <option value="yoga" {% if app.user.specialite == 'yoga' %}selected{% endif %}>Yoga</option>
+                                <option value="gymnastique" {% if app.user.specialite == 'gymnastique' %}selected{% endif %}>Gymnastique</option>
+                                <option value="pilates" {% if app.user.specialite == 'pilates' %}selected{% endif %}>Pilates</option>
+                                <option value="danse" {% if app.user.specialite == 'danse' %}selected{% endif %}>Danse</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Années d'expérience</label>
+                            <input type="number" class="form-control" name="anneeExperience" value="{{ app.user.anneeExperience }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Statut du certificat</label>
+                            <div class="certificate-status">
+                                {% if app.user.certificat_valide %}
+                                    <span class="badge bg-success p-2">
+                                        <i class="fa fa-check-circle me-2"></i>Validé
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark p-2">
+                                        <i class="fa fa-clock me-2"></i>En attente
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Note</label>
+                            <input type="number" class="form-control" name="note" value="{{ app.user.note }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">CV</label>
+                            {% if app.user.cv %}
+                                <a href="{{ asset('uploads/cv/' ~ app.user.cv) }}" target="_blank" class="btn btn-primary">Voir le CV</a>
+                            {% else %}
+                                <p class="text-muted">Aucun CV téléchargé</p>
+                            {% endif %}
+                        </div>
+                    {% elseif app.user.discriminator == 'createur_evenement' %}
+                        <div class="mb-3">
+                            <label class="form-label">Nom de l'organisation</label>
+                            <input type="text" class="form-control" name="nomOrganisation" value="{{ app.user.nomOrganisation }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="descriptionCreateur" rows="3">{{ app.user.descriptionCreateur }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Adresse</label>
+                            <input type="text" class="form-control" name="adresseCreateur" value="{{ app.user.adresseCreateur }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Téléphone</label>
+                            <input type="tel" class="form-control" name="telephoneCreateur" value="{{ app.user.telephoneCreateur }}" pattern="[0-9]{8}">
+                            <small class="text-muted">8 chiffres requis</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Statut du certificat</label>
+                            <div class="certificate-status">
+                                {% if app.user.certificatValide %}
+                                    <span class="badge bg-success p-2">
+                                        <i class="fa fa-check-circle me-2"></i>Validé
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark p-2">
+                                        <i class="fa fa-clock me-2"></i>En attente
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% elseif app.user.discriminator == 'investisseur_produit' %}
+                        <div class="mb-3">
+                            <label class="form-label">Nom de l'entreprise</label>
+                            <input type="text" class="form-control" name="nomEntreprise" value="{{ app.user.nomEntreprise }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="descriptionInvestisseur" rows="3">{{ app.user.descriptionInvestisseur }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Adresse</label>
+                            <input type="text" class="form-control" name="adresseInvestisseur" value="{{ app.user.adresseInvestisseur }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Téléphone</label>
+                            <input type="tel" class="form-control" name="telephoneInvestisseur" value="{{ app.user.telephoneInvestisseur }}" pattern="[0-9]{8}">
+                            <small class="text-muted">8 chiffres requis</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Statut du certificat</label>
+                            <div class="certificate-status">
+                                {% if app.user.certificatValide %}
+                                    <span class="badge bg-success p-2">
+                                        <i class="fa fa-check-circle me-2"></i>Validé
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark p-2">
+                                        <i class="fa fa-clock me-2"></i>En attente
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-primary">Enregistrer</button>
+                <button type="button" class="btn btn-orange">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'upload d'image -->
+<div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadImageModalLabel">Changer la photo de profil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadImageForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="profileImage" class="form-label">Sélectionner une image</label>
+                        <input type="file" class="form-control" id="profileImage" name="profileImage" accept="image/*">
+                    </div>
+                    <div class="text-center">
+                        <img id="imagePreview" src="#" alt="Aperçu" style="max-width: 200px; display: none;" class="img-fluid rounded">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-orange" id="saveImage">Enregistrer</button>
             </div>
         </div>
     </div>
 </div>
 
 <style>
+.text-orange {
+    color: #FF6B00 !important;
+}
+
+.btn-orange {
+    background-color: #FF6B00;
+    border-color: #FF6B00;
+    color: white;
+}
+
+.btn-outline-orange {
+    color: #FF6B00;
+    border-color: #FF6B00;
+}
+
+.btn-outline-orange:hover {
+    background-color: #FF6B00;
+    color: white;
+}
+
+.bg-orange {
+    background-color: #FF6B00 !important;
+}
+
 .card {
+    transition: transform 0.2s;
     border: none;
-    border-radius: 15px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.rounded-lg {
+    border-radius: 1rem !important;
 }
 
 .form-control {
@@ -112,34 +587,447 @@
 }
 
 .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #FF6B00;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 0, 0.25);
 }
 
-.btn-primary {
-    background: linear-gradient(45deg, #007bff, #0056b3);
-    border: none;
-    border-radius: 10px;
-    padding: 10px 20px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
-}
-
+/* Styles pour la modal d'upload d'image */
 .modal-content {
     border-radius: 15px;
+    padding: 20px;
 }
 
 .modal-header {
     border-bottom: 1px solid #e0e0e0;
+    padding: 20px;
+}
+
+.modal-body {
+    padding: 30px;
 }
 
 .modal-footer {
     border-top: 1px solid #e0e0e0;
+    padding: 20px;
+}
+
+#imagePreview {
+    margin: 20px auto;
+    max-width: 250px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.modal-dialog {
+    max-width: 500px;
+    margin: 1.75rem auto;
+}
+
+.modal-backdrop {
+    background-color: rgba(0,0,0,0.5);
+}
+
+.position-badge {
+    margin: 20px 0;
+}
+
+.position-badge .badge {
+    font-size: 1.1rem;
+    box-shadow: 0 4px 8px rgba(255, 107, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.position-badge .badge:hover {
+    transform: translateY(-2px);
+}
+
+/* Styles pour les alertes */
+.alert {
+    z-index: 1000;
+    min-width: 300px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.certificate-status {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
+}
+
+.specialite-display {
+    display: flex;
+    align-items: center;
+    height: 38px;
+}
+
+.specialite-display .badge {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.specialite-display .badge:hover {
+    transform: translateY(-2px);
+}
+
+.specialite-display .badge i {
+    font-size: 1.1rem;
+}
+
+.specialite-display select {
+    border: none;
+    background-color: transparent;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: 100%;
+    height: 38px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.specialite-display select[readonly] {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+.specialite-display select:not([readonly]) {
+    background-color: white;
+}
+
+.specialite-display select option {
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.specialite-display select option[value="musculation"] {
+    color: #007bff;
+}
+
+.specialite-display select option[value="yoga"] {
+    color: #17a2b8;
+}
+
+.specialite-display select option[value="gymnastique"] {
+    color: #28a745;
+}
+
+.specialite-display select option[value="pilates"] {
+    color: #ffc107;
+}
+
+.specialite-display select option[value="danse"] {
+    color: #dc3545;
+}
+
+.specialite-display select option[value="homme"] {
+    color: #007bff;
+}
+
+.specialite-display select option[value="femme"] {
+    color: #e83e8c;
+}
+
+.specialite-display select option[value="Perdre_Poids"] {
+    color: #28a745;
+}
+
+.specialite-display select option[value="Avoir_des_muscles"] {
+    color: #dc3545;
+}
+
+.specialite-display select option[value="Relaxation"] {
+    color: #17a2b8;
+}
+
+.specialite-display select option[value="Debutant"] {
+    color: #28a745;
+}
+
+.specialite-display select option[value="Intermediaire"] {
+    color: #ffc107;
+}
+
+.specialite-display select option[value="Avance"] {
+    color: #dc3545;
+}
+
+.note-display {
+    display: flex;
+    align-items: center;
+    height: 38px;
+}
+
+.note-display .badge {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.note-display .badge:hover {
+    transform: translateY(-2px);
+}
+
+.note-display .badge i {
+    font-size: 1.1rem;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+.bg-warning {
+    background-color: #ffc107 !important;
 }
 </style>
-{% endblock %} 
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de l'upload d'image
+    const imageInput = document.getElementById('profileImage');
+    const imagePreview = document.getElementById('imagePreview');
+    const saveImageButton = document.getElementById('saveImage');
+    const uploadImageForm = document.getElementById('uploadImageForm');
+    const uploadImageModal = document.getElementById('uploadImageModal');
+    const modal = new bootstrap.Modal(uploadImageModal);
+
+    // Gestion du bouton de modification de la photo de profil
+    const uploadButton = document.querySelector('.btn-orange.position-absolute');
+    if (uploadButton) {
+        uploadButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.show();
+        });
+    }
+
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    if (saveImageButton) {
+        saveImageButton.addEventListener('click', function() {
+            const formData = new FormData(uploadImageForm);
+            
+            if (!formData.get('profileImage')) {
+                Swal.fire({
+                    title: 'Erreur',
+                    text: 'Veuillez sélectionner une image',
+                    icon: 'error',
+                    confirmButtonColor: '#FF6B00'
+                });
+                return;
+            }
+
+            // Afficher un indicateur de chargement
+            Swal.fire({
+                title: 'Upload en cours...',
+                text: 'Veuillez patienter pendant le téléchargement de l\'image',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            fetch('{{ path("app_profile_update_image") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur lors de l\'upload');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Mettre à jour l'image de profil
+                    const profileImages = document.querySelectorAll('.rounded-circle');
+                    const newImagePath = '{{ asset('uploads/user_images/') }}/' + data.filename;
+                    
+                    profileImages.forEach(img => {
+                        img.src = newImagePath + '?v=' + new Date().getTime();
+                    });
+
+                    // Fermer la modal
+                    modal.hide();
+
+                    // Réinitialiser le formulaire et la prévisualisation
+                    uploadImageForm.reset();
+                    imagePreview.style.display = 'none';
+                    imagePreview.src = '';
+
+                    // Fermer l'indicateur de chargement sans afficher de message
+                    Swal.close();
+                } else {
+                    throw new Error(data.message || 'Erreur lors de l\'upload');
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Erreur',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonColor: '#FF6B00'
+                });
+            });
+        });
+    }
+
+    // Réinitialiser la prévisualisation lors de la fermeture de la modal
+    if (uploadImageModal) {
+        uploadImageModal.addEventListener('hidden.bs.modal', function () {
+            uploadImageForm.reset();
+            imagePreview.style.display = 'none';
+        });
+    }
+
+    // Gestion de la modification par section
+    const editButtons = document.querySelectorAll('.edit-section');
+    
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const section = this.dataset.section;
+            let inputs;
+            
+            if (section === 'personal') {
+                inputs = document.querySelectorAll('#personalInfoForm input, #personalInfoForm select');
+            } else if (section === 'specific') {
+                inputs = document.querySelectorAll('#specificInfoForm input, #specificInfoForm select, #specificInfoForm textarea');
+            }
+            
+            if (this.innerHTML.includes('Modifier')) {
+                this.innerHTML = '<i class="fa fa-save me-2"></i>Enregistrer';
+                this.classList.remove('btn-outline-orange');
+                this.classList.add('btn-orange');
+                
+                inputs.forEach(input => {
+                    if (!input.hasAttribute('disabled')) {
+                        input.readOnly = false;
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Confirmer la modification',
+                    text: 'Êtes-vous sûr de vouloir enregistrer ces modifications ?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#FF6B00',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Oui, enregistrer',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.innerHTML = '<i class="fa fa-edit me-2"></i>Modifier';
+                        this.classList.remove('btn-orange');
+                        this.classList.add('btn-outline-orange');
+                        
+                        inputs.forEach(input => {
+                            if (!input.hasAttribute('disabled')) {
+                                input.readOnly = true;
+                            }
+                        });
+                        
+                        const form = section === 'personal' ? 
+                            document.getElementById('personalInfoForm') : 
+                            document.getElementById('specificInfoForm');
+                        
+                        const formData = new FormData(form);
+                        
+                        // S'assurer que les valeurs des select sont incluses
+                        form.querySelectorAll('select').forEach(select => {
+                            formData.append(select.name, select.value);
+                        });
+                        
+                        formData.append('section', section);
+                        
+                        fetch('{{ path("app_profile_update_info") }}', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Mise à jour des informations dans le côté gauche
+                                const nomElement = document.querySelector('.card-body h4');
+                                if (nomElement && section === 'personal') {
+                                    nomElement.textContent = `${formData.get('prenom')} ${formData.get('nom')}`;
+                                }
+
+                                // Mise à jour des valeurs affichées
+                                inputs.forEach(input => {
+                                    if (input.tagName === 'SELECT') {
+                                        const selectedOption = input.options[input.selectedIndex];
+                                        const displayElement = input.closest('.specialite-display');
+                                        if (displayElement) {
+                                            displayElement.querySelector('.form-control').value = input.value;
+                                        }
+                                    }
+                                });
+
+                                Swal.fire({
+                                    title: 'Succès !',
+                                    text: 'Les informations ont été mises à jour avec succès.',
+                                    icon: 'success',
+                                    confirmButtonColor: '#FF6B00',
+                                    timer: 3000,
+                                    timerProgressBar: true
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Erreur !',
+                                    text: data.message || 'Une erreur est survenue lors de la mise à jour.',
+                                    icon: 'error',
+                                    confirmButtonColor: '#FF6B00'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            Swal.fire({
+                                title: 'Erreur !',
+                                text: 'Une erreur est survenue lors de la mise à jour.',
+                                icon: 'error',
+                                confirmButtonColor: '#FF6B00'
+                            });
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
