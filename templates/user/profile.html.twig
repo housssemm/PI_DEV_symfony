@@ -1,7 +1,35 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Mon Profil - Coachini{% endblock %}
+{% block Hero_Section_Begin %}
 
+
+    <section class="breadcrumb-section" style="
+            background-image: url('{{ asset('uploads/user_images/backP.png') }}');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            height: 900px;
+            margin-top: -450px;
+            padding: 0;
+            ">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2>Events</h2>
+                        <div class="bt-option">
+                            <a href="./index.html">Home</a>
+                            <span>Map</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}
 {% block body %}
 <div class="container py-5">
     <div class="row">
