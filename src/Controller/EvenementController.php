@@ -459,7 +459,7 @@ final class EvenementController extends AbstractController
             'message' => $message
         ]);
     }
-    #[Route('/bmi', name: 'bmi_calculator')]
+    #[Route('/bmii', name: 'bmi_calculator')]
     public function calculateBmi(Request $request)
     {
         $height = $request->get('height');
