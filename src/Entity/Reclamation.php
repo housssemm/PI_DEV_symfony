@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use App\Repository\ReclamationRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 #[ORM\Table(name: 'reclamation')]
@@ -14,8 +15,11 @@ class Reclamation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: 'IdReclamation', type: 'integer')]
     private ?int $IdReclamation = null;
+
+    #[ORM\Column(name: 'statut', type: 'boolean', nullable: false, options: ['default' => false])]
+    private bool $statut = false;
 
     public function getIdReclamation(): ?int
     {
@@ -28,7 +32,25 @@ class Reclamation
         return $this;
     }
 
+    public function getStatut(): bool
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(bool $statut): self
+    {
+        $this->statut = $statut;
+        return $this;
+    }
+
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'La description ne peut pas être vide.')]
+    #[Assert\Length(
+        min: 10,
+        max: 2000,
+        minMessage: 'La description doit comporter au moins {{ limit }} caractères.',
+        maxMessage: 'La description ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $description = null;
 
     public function getDescription(): ?string
@@ -42,7 +64,8 @@ class Reclamation
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(name: 'typeR', type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: 'Le type de réclamation doit être spécifié.')]
     private ?string $typeR = null;
 
     public function getTypeR(): ?string
@@ -56,7 +79,7 @@ class Reclamation
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'reclamations')]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ["persist"])]
     #[ORM\JoinColumn(name: 'Id_coach', referencedColumnName: 'id')]
     private ?User $coach = null;
 
@@ -72,6 +95,8 @@ class Reclamation
     }
 
     #[ORM\Column(type: 'date', nullable: false)]
+    #[Assert\NotNull(message: 'La date est requise.')]
+    #[Assert\Type("\DateTimeInterface", message: 'La date doit être valide.')]
     private ?\DateTimeInterface $date = null;
 
     public function getDate(): ?\DateTimeInterface
@@ -85,8 +110,9 @@ class Reclamation
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'reclamations')]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ["persist"])]
     #[ORM\JoinColumn(name: 'Id_adherent', referencedColumnName: 'id')]
+    #[Assert\NotNull(message: 'L\'adhérent doit être spécifié.')]
     private ?User $adherent = null;
 
     public function getAdherent(): ?User
