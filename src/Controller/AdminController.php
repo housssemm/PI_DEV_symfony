@@ -188,7 +188,7 @@ class AdminController extends AbstractController
         // Générer un jeton CSRF
         $csrfToken = $csrfTokenManager->getToken('reject_user')->getValue();
 
-        return $this->render('admin/dashboard.html.twig', [
+        return $this->render('admin/users.html.twig', [
             'users' => $users,
             'adherentCount' => $adherentCount,
             'coachCount' => $coachCount,

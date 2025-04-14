@@ -26,7 +26,16 @@
             padding: 10px;
             z-index: 100;
             transition: all 0.3s;
+
+            overflow-y: auto; /* Scroll vertical */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE 10+ */
         }
+
+        .sidebar::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
 
         .brand-wrapper {
             padding: 20px 15px;
@@ -93,7 +102,7 @@
         /* Header */
         .content-header {
             padding: 15px;
-            background: #fff;
+            background: #151515;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             border-radius: 5px;
             margin-bottom: 20px;
@@ -103,7 +112,7 @@
             margin: 0;
             font-size: 24px;
             font-weight: 600;
-            color: #333;
+            color: #fff;
         }
 
         .breadcrumb {
@@ -115,14 +124,14 @@
         /* Content */
         .content {
             padding: 15px;
-            background: #fff;
+            background: #151515;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         /* Navbar */
         .navbar {
-            background: #fff;
+            background: #151515;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             padding: 10px 20px;
             margin-bottom: 20px;
@@ -188,13 +197,13 @@
 
         /* Footer */
         .footer {
-            background: #fff;
+            background: #151515;
             padding: 15px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             text-align: center;
             margin-top: 20px;
-            color: #6c757d;
+            color: orange;
         }
     </style>
     {% endblock %}
