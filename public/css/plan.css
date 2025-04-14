@@ -41,23 +41,26 @@
 }
 .custom-btn {
     display: inline-block;
-    background-color: #ff6600; /* Couleur de fond */
-    border: 1px solid #ff6600; /* Même couleur pour la bordure */
-    color: white;
-    font-size: 15px;
+    background-color: #ff6600;
+    border: 2px solid #ff6600;
+    color: white !important; /* Force la couleur du texte */
+    font-size: 17px;
     font-weight: bold;
     text-transform: uppercase;
-    padding: 10px 20px; /* Agrandissement du bouton */
-    border-radius: 20px; /* Bouton plus arrondi */
+    padding: 10px 20px;
+    border-radius: 20px;
     transition: all 0.3s ease-in-out;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    opacity: 1 !important; /* Garantit que le bouton n'est jamais transparent */
+    position: relative;
+    overflow: hidden;
 }
 
 .custom-btn:hover {
-    background-color: rgb(205, 87, 24); /* Couleur de fond au survol */
-    border: 1px solid rgb(205, 87, 24); /* Même couleur pour la bordure au survol */
-
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+    background-color: #e65c00;
+    border-color: #e65c00;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
 }
 /* Styles FullCalendar */
 .fc .fc-button-primary {
@@ -86,6 +89,7 @@
     border-color: #ff9966 !important;
     opacity: 1 !important;
 }
+
 .modal-form .form-control {
     padding: 0.5rem 1rem;
 }
@@ -102,8 +106,8 @@
     box-shadow: 0 2px 10px rgba(255, 255, 255, 0.31);
 }
 .invalid-feedback {
-    display: block;
-    color: #dc3545;
+    display: block !important;
+    color: #dc3545 !important;
 }
 body {
     background: #151515 !important;

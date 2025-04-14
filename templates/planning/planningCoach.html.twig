@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Planning{% endblock %}
+{% block title %}PlanningCoach{% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
@@ -117,20 +117,27 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-<link rel="stylesheet" href="{{ asset('css/plan.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/plan.css') }}">
 {% endblock %}
+
 
 {% block Hero_Section_Begin %}
     <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb-bg.jpg">
-        <div class="container" >
+        <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb-text">
                         <h2 style="margin-bottom: 10px;">DÉTAILS DE PLANNING</h2>
                         <h4 style="color: white; margin-bottom: 20px;">Commencer par ajouter planning</h4>
-                        <button type="button"  class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#addPlanningModal">
-                            Ajouter un planning
-                        </button>
+
+                        {% if planning %}
+                               <p>Vous avez déjà un Planning</p>
+                        {% else %}
+                            <button type="button" class="custom-btn" data-bs-toggle="modal" data-bs-target="#addPlanningModal">
+                                Ajouter un planning
+                            </button>
+                        {% endif %}
+
                     </div>
                 </div>
             </div>
@@ -139,62 +146,60 @@
 {% endblock %}
 
     {% block body %}
-        {# Modal #}
-        <div class="modal fade" id="addPlanningModal" tabindex="-1" aria-labelledby="addPlanningModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addPlanningModalLabel">Ajouter un nouveau planning</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    {{ form_start(form, {'action': path('app_planning'), 'attr': {'novalidate': 'novalidate', 'class': 'modal-form'}}) }}
-                    <div class="modal-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <img class="img-fluid rounded w-100" src="{{ asset('img/plan.jpg') }}" alt="">
-                            </div>
-                            <div class="col-md-6">
-                                {# Champ Titre #}
-                                <div class="mb-3">
-                                    {{ form_label(form.titre, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.titre, {'attr': {'class': 'form-control',}
-                                    }) }}
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.titre) }}
-                                    </div>
-                                </div>
-                                {# Champ Tarif #}
-                                <div class="mb-3">
-                                    {{ form_label(form.tarif, 'Tarif', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.tarif, {'attr': {'class': 'form-control','min': '0'}}) }}
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.tarif) }}
-                                    </div>
-                                </div>
-                                {# Champ Coach #}
-                                <div class="mb-3">
-                                    {{ form_label(form.coach, 'Coach', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.coach, {'attr': {'class': 'form-select',}}) }}
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.coach) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary" style="background-color: #ff6600; border: 1px solid #ff6600" >ajouter</button>
-                    </div>
-                    {{ form_end(form) }}
-                </div>
-            </div>
-        </div>
+        {# popup #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success" role="alert">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger" role="alert">{{ message }}</div>
+        {% endfor %}
+
+           <div class="modal fade" id="addPlanningModal" tabindex="-1" aria-labelledby="addPlanningModalLabel" aria-hidden="true">
+               <div class="modal-dialog modal-lg">
+                   <div class="modal-content">
+                       <div class="modal-header">
+                           <h5 class="modal-title" id="addPlanningModalLabel">Ajouter un nouveau planning</h5>
+                       </div>
+                       {{ form_start(form, {'action': path('app_afficher_plan'), 'attr': {'class': 'modal-form','novalidate': 'novalidate'}}) }}
+                       <div class="modal-body">
+                           <div class="row g-2"> <!-- Changé de g-3 à g-2 pour réduire l'espace -->
+                               <div class="col-md-6">
+                                   <img class="img-fluid rounded w-100 mb-2" src="{{ asset('img/plan.jpg') }}" alt="">
+                               </div>
+                               <div class="col-md-6">
+                                   <div class="mb-3">
+                                       {{ form_label(form.titre, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
+                                       {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+                                       {# Affichage des erreurs #}
+                                       <div class="invalid-feedback" style="display: block;">
+                                           {{ form_errors(form.titre) }}
+                                       </div>
+                                   </div>
+
+                                   <div class="mb-3">
+                                       {{ form_label(form.tarif, 'Tarif', {'label_attr': {'class': 'form-label'}}) }}
+                                       {{ form_widget(form.tarif, {'attr': {'class': 'form-control'}}) }}
+                                       {# Affichage des erreurs #}
+                                       <div class="invalid-feedback" style="display: block;">
+                                           {{ form_errors(form.tarif) }}
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="modal-footer">
+                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                           <button type="submit" class="btn btn-primary" style="background-color: #ff6600; border: 1px solid #ff6600">Ajouter</button>
+                       </div>
+                       {{ form_end(form) }}
+                   </div>
+               </div>
+           </div>
         {# affichage de table contenat les donnéés inserer dans modal avec 2 boutons a coté pour modifier et suprimer #}
-        <div id="planningTableContainer" >
+        <div id="planningTableContainer">
             <div class="container mt-4">
                 <h3 class="text-center mb-4" style="color: white">Votre Planning</h3>
-                {% if Planning %}
+                {% if planning and planning.id %}
                     <div class="table-responsive shadow-sm">
                         <table class="table table-bordered align-middle text-center">
                             <thead class="table-dark">
@@ -206,20 +211,18 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td>{{ Planning.titre }}</td>
-                                <td>{{ Planning.tarif }}</td>
+                                <td>{{ planning.titre }}</td>
+                                <td>{{ planning.tarif }}</td>
                                 <td>
-                                    <a href="{{ path('app_planning_update', { 'id': Planning.id }) }}"
+                                    <a href="{{ path('app_planning_update', { 'id': planning.id }) }}"
                                        class="btn btn-warning btn-sm me-2 text-white"
                                        style="background-color:#ff6600">
-                                        <i class="bi bi-pencil-square"></i>
-                                        Modifier
+                                        <i class="bi bi-pencil-square"></i> Modifier
                                     </a>
-                                    <a href="{{ path('app_planning_delete', { 'id': Planning.id }) }}"
+                                    <a href="{{ path('app_planning_delete', { 'id': planning.id }) }}"
                                        class="btn btn-danger btn-sm"
                                        onclick="return confirm('Voulez-vous supprimer ce planning ?');">
-                                        <i class="bi bi-trash"></i>
-                                        Supprimer
+                                        <i class="bi bi-trash"></i> Supprimer
                                     </a>
                                 </td>
                             </tr>
@@ -227,10 +230,12 @@
                         </table>
                     </div>
                 {% else %}
-                    <p class="text-center">Aucun planning ajouté pour ce coach.</p>
+                    <p class="text-center" style="color: white">Vous n'avez pas encore ajouté un planning.</p>
                 {% endif %}
             </div>
         </div>
+
+
         {# Calendrier #}
         <div  id='calendrier'></div>
         <h2 style="text-align: center; color: white">listes des Séances</h2>

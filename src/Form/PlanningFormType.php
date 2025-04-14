@@ -6,6 +6,7 @@ use App\Entity\Coach;
 use App\Entity\Planning;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,15 +23,6 @@ class PlanningFormType extends AbstractType
             ->add('tarif', NumberType::class, [
                 'attr' => ['class' => 'form-control']
             ])
-            ->add('coach', EntityType::class, [
-                'class' => Coach::class,
-                'choice_label' => function(Coach $coach) {
-                    return $coach->getUser()->getPrenom() . ' ' . $coach->getUser()->getNom();
-                },
-                'label' => 'Choisir un coach',
-                'attr' => ['class' => 'form-select']
-            ])
-
         ;
     }
 

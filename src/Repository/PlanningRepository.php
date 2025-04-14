@@ -40,9 +40,14 @@ class PlanningRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-    public function findPlanningByCoach(int $coachId)
+    public function findPlanningByCoach(int $id): ?Planning
     {
-        return $this->findOneBy(['coach' => $coachId]); // Récupérer un seul planning pour ce coach
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.coach = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
+
 
 }
