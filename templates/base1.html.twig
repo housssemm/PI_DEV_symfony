@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap">
-    {% block stylesheets %}{% endblock %}
+    {% block stylesheets %}
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -197,8 +197,10 @@
             color: #6c757d;
         }
     </style>
+    {% endblock %}
 </head>
 <body>
+{% block sidebar %}
 <div class="sidebar">
     <div class="brand-wrapper">
 {#        <a href="{{ path('app_admin_reclamation_index') }}">#}
@@ -208,10 +210,10 @@
     </div>
 
     <ul class="sidebar-menu">
-        <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="{{ path('app_home') }}" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
         <li><a href="{{ path('admin_dashboard') }}"><i class="fas fa-users"></i> Utilisateurs</a></li>
         <li><a href="#"><i class="fas fa-dumbbell"></i> Séances et Planning</a></li>
-        <li><a href="#"><i class="fas fa-calendar-alt"></i> Événements</a></li>
+        <li><a href="{{ path('app_events_admiin') }}"><i class="fas fa-calendar-alt"></i> Événements</a></li>
         <li><a href="#"><i class="fas fa-shopping-cart"></i> Produits</a></li>
         <li><a href="#"><i class="fas fa-percent"></i> Offres</a></li>
         <li><a href="#"><i class="fas fa-exclamation-circle"></i> Réclamations</a></li>
@@ -219,7 +221,8 @@
         <li><a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
     </ul>
 </div>
-
+{% endblock %}
+{% block wrapper %}
 <div class="content-wrapper">
     <nav class="navbar">
         <button class="btn btn-link" id="menu-toggle">
@@ -253,13 +256,13 @@
             </div>
         </div>
     </div>
-
+    {% endblock %}
     <div class="content">
         {% block body %}{% endblock %}
     </div>
 
     <footer class="footer">
-        <p>&copy; 2024 Coachini Administration. Tous droits réservés.</p>
+        <p>&copy; 2025 Coachini Administration. Tous droits réservés.</p>
     </footer>
 </div>
 
