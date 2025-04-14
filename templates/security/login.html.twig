@@ -317,7 +317,7 @@
         align-items: center;
         margin: 0;
         padding: 0;
-        overflow: hidden;
+        overflow: auto;
     }
 
     .particles {
@@ -502,9 +502,9 @@
             willClose: () => {
                 // Redirection conditionnelle
                 {% if user_role == 'admin' %}
-                window.location.href = '{{ path('admin_dashboard') }}'; // Changé de app_dashboard à admin_dashboard
+                window.location.href = '{{ path('app_home') }}'; // Changé de app_dashboard à admin_dashboard
                 {% else %}
-                window.location.href = '{{ path('app_home') }}';
+                window.location.href = '{{ path('app_homee') }}';
                 {% endif %}
             }
         });
