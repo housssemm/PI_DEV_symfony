@@ -165,8 +165,13 @@
                             </li>
                             <li><a href="./contact.html">Contact</a></li>
 
+{#                            <li><a href="./class-details.html">Planning</a></li>#}
+                            {% if is_granted('ROLE_COACH') %}
+                                <li><a href="{{ path('app_afficher_plan') }}">Planning</a></li>
+                            {% elseif is_granted('ROLE_ADHERENT') %}
+                                <li><a href="{{ path('app_afficher_planAdr') }}">Planning</a></li>
+                            {% endif %}
 
-                            <li><a href="./about-us.html">Planning</a></li>
                             <li><a href="./class-details.html">Produit</a></li>
                             <li><a href="./services.html">Evénement</a></li>
                             <li><a href="./team.html">Offre</a></li>
@@ -429,8 +434,8 @@
     // Fermer automatiquement les messages flash après 5 secondes
     document.addEventListener('DOMContentLoaded', function() {
         const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
-            setTimeout(function() {
+        alerts.forEach(function (alert) {
+            setTimeout(function () {
                 const bsAlert = new bootstrap.Alert(alert);
                 bsAlert.close();
             }, 5000);
@@ -442,7 +447,7 @@
 
         function attachLogoutHandler(btn) {
             if (btn) {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', function (e) {
                     e.preventDefault();
                     Swal.fire({
                         title: 'Voulez-vous vraiment vous déconnecter ?',
@@ -463,7 +468,7 @@
             }
         }
 
-    <script src="{{asset('js/jquery-3.3.1.min.js')}}"></script>
+    <script src="{{asset('js/jquery-3.3.1.min.js')}}"> </script>
     <script src="{{asset('js/bootstrap.min.js')}}"></script>
     <script src="{{asset('js/jquery.magnific-popup.min.js')}}"></script>
     <script src="{{asset('js/masonry.pkgd.min.js')}}"></script>

@@ -4,11 +4,9 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
-
 use App\Repository\SeanceRepository;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: SeanceRepository::class)]
 #[ORM\Table(name: 'seance')]
@@ -199,5 +197,48 @@ class Seance
         $this->heureFin = $heureFin;
         return $this;
     }
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        $type = $this->getType();
+        $lien = $this->getLienVideo();
+        $date = $this->getDate();
+        $heureDebut = $this->getHeureDebut();
+        $now = new \DateTime();
+
+        if ($type === 'ENREGISTRE') {
+            if (!$lien || !preg_match('/\.(mp4|mov|avi|webm)$/i', $lien)) {
+                $context->buildViolation("Extension video valide est .mp4, .mov, .avi..")
+                    ->atPath('LienVideo')
+                    ->addViolation();
+            }
+        }
+
+        if ($type === 'EN_DIRECT') {
+            if (!$lien || !filter_var($lien, FILTER_VALIDATE_URL)) {
+                $context->buildViolation("Le lien doit être une URL valide pour une séance en livestream.")
+                    ->atPath('LienVideo')
+                    ->addViolation();
+            }
+        }
+        if ($date && $heureDebut) {
+            // Fusionne date + heureDebut pour comparer avec maintenant
+            $dateTimeDebut = (clone $date)->setTime(
+                (int)$heureDebut->format('H'),
+                (int)$heureDebut->format('i')
+            );
+
+            if ($dateTimeDebut < $now) {
+                $context->buildViolation("La date et l'heure de début ({$dateTimeDebut->format('d/m/Y H:i')}) sont antérieures à la date et l'heure actuelles")
+                    ->atPath('Date')
+                    ->addViolation();
+            }
+
+        }
+    }
+
+
+
+
 
 }

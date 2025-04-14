@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Adherent;
 use App\Entity\Seance;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,16 +16,7 @@ class SeanceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Seance::class);
     }
-    public function findByCoach($coach)
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.coach = :coach')
-            ->setParameter('coach', $coach)
-            ->orderBy('s.date', 'ASC') // Vous pouvez trier par date, ou un autre champ si nécessaire
-            ->getQuery()
-            ->getResult();
-    }
-    public function findByDate(\DateTimeInterface $date): array
+    public function findByDateCoach(\DateTimeInterface $date): array
     {
         return $this->createQueryBuilder('s')
             ->leftJoin('s.coach', 'c')
@@ -34,6 +26,17 @@ class SeanceRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findByDateAndAdherent(\DateTimeInterface $date, Adherent $adherent): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.Date = :date')
+            ->andWhere('s.adherent = :adherent')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->setParameter('adherent', $adherent)
+            ->getQuery()
+            ->getResult();
+    }
+
 
 
 //    /**
