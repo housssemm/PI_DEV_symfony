@@ -32,10 +32,11 @@ class Coach extends User
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $Certificat_valide = null;
 
-    public function isCertificat_valide(): ?bool
+    public function getCertificat_valide(): ?bool
     {
         return $this->Certificat_valide;
     }
+
 
     public function setCertificat_valide(?bool $Certificat_valide): self
     {
@@ -70,19 +71,13 @@ class Coach extends User
         return $this->Note;
     }
 
-    public function setNote(?int $Note): self
+    public function setNote(?int $Note): static
     {
         $this->Note = $Note;
         return $this;
     }
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le CV ne peut pas être vide')]
-    #[Assert\File(
-        maxSize: '2048k',
-        mimeTypes: ['application/pdf'],
-        mimeTypesMessage: 'Veuillez télécharger un fichier PDF valide'
-    )]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $cv = null;
 
     public function getCv(): ?string
@@ -90,7 +85,7 @@ class Coach extends User
         return $this->cv;
     }
 
-    public function setCv(string $cv): static
+    public function setCv(?string $cv): static
     {
         $this->cv = $cv;
         return $this;

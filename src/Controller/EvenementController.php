@@ -84,6 +84,67 @@ final class EvenementController extends AbstractController
     }
 
 
+    #[Route('/events/admin', name: 'app_events_admiin')]
+    public function listEvenementAdmin(EvenementRepository $evenementRepository): Response
+    {
+        $request = Request::createFromGlobals();
+        $queryBuilder = $evenementRepository->createQueryBuilder('e');
+
+        // Handle status filter
+        $etatFilters = $request->query->all('etat');
+        if (!empty($etatFilters)) {
+            $queryBuilder->andWhere('e.etat IN (:etats)')
+                ->setParameter('etats', $etatFilters);
+        }
+
+        // Handle type filter
+        $typeFilters = $request->query->all('type');
+        if (!empty($typeFilters)) {
+            $queryBuilder->andWhere('e.type IN (:types)')
+                ->setParameter('types', $typeFilters);
+        }
+
+        // Handle price filter
+        $prixFilters = $request->query->all('prix');
+        if (!empty($prixFilters)) {
+            $priceConditions = [];
+            foreach ($prixFilters as $filter) {
+                switch ($filter) {
+                    case '0-50':
+                        $priceConditions[] = 'e.prix <= 50';
+                        break;
+                    case '50-100':
+                        $priceConditions[] = 'e.prix > 50 AND e.prix <= 100';
+                        break;
+                    case '100+':
+                        $priceConditions[] = 'e.prix > 100';
+                        break;
+                }
+            }
+            if (!empty($priceConditions)) {
+                $queryBuilder->andWhere('(' . implode(' OR ', $priceConditions) . ')');
+            }
+        }
+
+        // Order by date
+        $queryBuilder->orderBy('e.dateDebut', 'DESC');
+
+        $list = $queryBuilder->getQuery()->getResult();
+
+        // Convert images to base64 for display
+        foreach ($list as $event) {
+            $image = $event->getImage();
+            if ($image) {
+                $event->setBase64Image(base64_encode($image));
+            }
+        }
+
+        return $this->render('evenement/admin.html.twig', [
+            'list' => $list,
+        ]);
+    }
+
+
 
 
     #[Route('/events/map', name: 'app_nearby_events')]
@@ -235,6 +296,8 @@ final class EvenementController extends AbstractController
         ]);
     }
 
+
+
     #[Route('/events/delete/{id}', name: 'app_delete')]
     public function delete(EvenementRepository $ev, EntityManagerInterface $em, $id): RedirectResponse
     {
@@ -295,6 +358,50 @@ final class EvenementController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+//    #[Route('/events/add', name: 'app_add_event')]
+//    public function add(Request $request, EntityManagerInterface $em): Response
+//    {
+//        $event = new Evenement();
+//        $form = $this->createForm(EvenementFormType::class, $event);
+//        $form->handleRequest($request);
+//
+//        if ($form->isSubmitted()) {
+//            if ($form->isValid()) {
+//                // Handle image upload
+//                $imageFile = $form->get('image')->getData();
+//                if ($imageFile) {
+//                    try {
+//                        $imageContent = file_get_contents($imageFile->getPathname());
+//                        $event->setImage($imageContent);
+//                    } catch (\Exception $e) {
+//                        $this->addFlash('error', 'Erreur lors du traitement de l\'image.');
+//                        return $this->redirectToRoute('app_add_event');
+//                    }
+//                }
+//
+//                // Ensure dates are set properly
+//                if (!$event->getDateDebut() || !$event->getDateFin()) {
+//                    $this->addFlash('error', 'Les dates sont obligatoires.');
+//                    return $this->redirectToRoute('app_add_event');
+//                }
+//
+//                $em->persist($event);
+//                $em->flush();
+//
+//                $this->addFlash('success', 'L\'événement a été ajouté avec succès.');
+//                return $this->redirectToRoute('app_events');
+//            } else {
+//                // Debug form errors if needed
+//                // foreach ($form->getErrors(true) as $error) {
+//                //     $this->addFlash('error', $error->getMessage());
+//                // }
+//            }
+//        }
+//
+//        return $this->render('evenement/AddEvenement.html.twig', [
+//            'form' => $form->createView(),
+//        ]);
+//    }
 
 
     #[Route('/event/{id}', name: 'app_event_details')]
