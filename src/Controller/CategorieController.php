@@ -7,7 +7,6 @@ use App\Form\CategorieType;
 use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -34,7 +33,7 @@ final class CategorieController extends AbstractController
     {
         $categorie = new Categorie();
         $form = $this->createForm(CategorieType::class, $categorie, [
-            'validation_groups' => ['creation'] // Activer le groupe creation
+            'validation_groups' => ['creation']
         ]);
         $form->handleRequest($request);
 
@@ -62,6 +61,8 @@ final class CategorieController extends AbstractController
         $em=$doctrine->getManager();
         $em->remove($categorie);
         $em->flush();
+
+        $this->addFlash('success', 'Catégorie supprimée avec succès.');
         return $this->redirectToRoute('app_afficher_categorie');
     }
     #[Route('/modifier/{id}', name: 'app_modifier_categorie')]
@@ -90,7 +91,6 @@ final class CategorieController extends AbstractController
                 // Sinon, conserver l'image existante.
                 $categorie->setImage($oldImage);
             }
-
             $em->persist($categorie);
             $em->flush();
 

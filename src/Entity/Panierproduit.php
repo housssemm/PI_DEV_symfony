@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\PanierproduitRepository;
 
@@ -60,6 +60,16 @@ class Panierproduit
     }
 
     #[ORM\Column(type: 'integer', nullable: true)]
+    #[Assert\NotBlank(message: "La quantite est obligatoire.")]
+    #[Assert\GreaterThan(
+        value: 0,
+        message: "La quantité doit être strictement supérieure à zéro.",
+    )]
+   #[Assert\LessThanOrEqual(
+       value : 20,
+       message :"La quantité ne peut pas dépasser 20.",
+   )]
+
     private ?int $quantite = null;
 
     public function getQuantite(): ?int

@@ -37,12 +37,17 @@ final class ProduitController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupération du nom de l'image depuis le champ personnalisé "imageName"
+            // Récupération du nom de l'image
             $produit->setImage($form->get('imageFile')->getData()->getClientOriginalName());
+
+            $investisseur = $this->getUser();
+            $produit->setInvestisseurproduit($investisseur);
 
             $em = $doctrine->getManager();
             $em->persist($produit);
             $em->flush();
+
+            $this->addFlash('success', 'Produit ajoutée avec succès.');
             return $this->redirectToRoute('app_afficher_produit');
         }
         return $this->renderForm('produit/ajouterProduit.html.twig', [
@@ -57,6 +62,8 @@ final class ProduitController extends AbstractController
         $em=$doctrine->getManager();
         $em->remove($categorie);
         $em->flush();
+
+        $this->addFlash('success', 'Produit supprimé avec succès.');
         return $this->redirectToRoute('app_afficher_produit');
     }
     #[Route('/modifierProduit/{id}', name: 'app_modifier_produit')]
@@ -79,10 +86,14 @@ final class ProduitController extends AbstractController
             } else {
                 $Produit->setImage($oldImage);
             }
+            $investisseur = $this->getUser();
+            $Produit->setInvestisseurproduit($investisseur);
+
             $em = $doctrine->getManager();
             $em->persist($Produit);
             $em->flush();
 
+            $this->addFlash('success', 'Produit modifiée avec succès.');
             return $this->redirectToRoute('app_afficher_produit');
         }
 

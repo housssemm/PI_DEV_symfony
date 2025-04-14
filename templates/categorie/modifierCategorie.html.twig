@@ -125,5 +125,146 @@
         });
     </script>
 
+    <style>
+        /* -- Styles généraux du formulaire -- */
+        .form-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('{{ asset('img/image4.png') }}') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;  /* Prendre toute la hauteur de la fenêtre */
+        }
+        .card-title.text-primary {
+            color: #ff6503; /* Couleur orangée */
+            text-align: center; /* Centrer le titre */
+            font-size: 2rem; /* Taille du texte */
+            font-weight: bold; /* Gras */
+        }
+        /* Appliquer flexbox à .form-center pour s'assurer qu'il est centré correctement */
+        .form-center {
+            display: flex;
+            justify-content: center; /* Centrage horizontal */
+            align-items: center;     /* Centrage vertical */
+            flex-direction: column;  /* Aligner les éléments en colonne */
+            max-width: 900px;        /* Largeur maximale du formulaire */
+            margin: 0 auto;          /* Centrer horizontalement */
+        }
 
+        .card-content {
+            padding: 2.5rem;
+        }
+
+        /* Container du formulaire */
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* -- Styles des champs de formulaire -- */
+        .form-control-custom {
+            border-radius: 0.375rem; /* Ajouter un rayon de bordure arrondi */
+            border: 2px solid #ccc;
+            transition: all 0.3s ease-in-out;
+            font-size: 0.9rem;
+            padding: 0.6rem;
+            height: auto;
+        }
+
+        .form-floating .form-control-custom {
+            padding-left: 1.5rem;
+        }
+
+        /* -- Label flottant -- */
+        .form-floating label {
+            font-size: 1rem; /* Augmentation de la taille de la police du label */
+            font-weight: 600;
+            color: #000000; /* Changement de la couleur en noir */
+            padding: 0.5rem;
+            border-radius: 0; /* Pas de bordures arrondies */
+            transition: transform 0.3s ease;
+        }
+
+        /* -- Styles du bouton de soumission -- */
+        .btn-primary {
+            background-color: #ff6503;
+            color: white;
+            border-radius: 10px; /* Garder les bords du bouton arrondis */
+            transition: background-color 0.3s ease;
+            padding: 0.6rem 1.1rem; /* Réduire un peu le padding */
+            font-size: 1.1rem; /* Réduire légèrement la taille de la police */
+            min-width: 180px; /* Vous pouvez aussi réduire la largeur minimale */
+            font-weight: bold;
+            margin-top: 2rem; /* Ajouter la marge en haut */
+        }
+
+        .btn-primary:hover {
+            background-color: #ff7820;
+        }
+
+        /* -- Styles de prévisualisation d'image -- */
+        .image-wrapper img {
+            max-width: 80%; /* Réduction de la taille de l'image actuelle à 80% de la largeur de son conteneur */
+            height: auto; /* Ajustement automatique de la hauteur pour maintenir les proportions */
+            object-fit: cover; /* Assurez-vous que l'image couvre bien son conteneur */
+            margin: 0 auto; /* Centrage de l'image */
+        }
+
+        .placeholder-image {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 0; /* Angles droits pour le conteneur d'image */
+        }
+
+        .image-preview {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .image-preview img {
+            max-width: 300px;
+            max-height: 200px;
+            object-fit: contain;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Animation de la prévisualisation de l'image */
+        .animated-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .input-group input[type="file"] {
+            background-color: #fff; /* Fond blanc */
+            border-radius: 0.375rem; /* Coins arrondis */
+        }
+
+        /* Centrer la section avec le fond d'image */
+        .form-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('{{ asset('img/image4.png') }}') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        /* Centrer le bouton de soumission */
+        .text-center.mt-5 {
+            display: flex;
+            justify-content: center;  /* Centrage horizontal */
+            align-items: center;      /* Centrage vertical */
+            width: 100%;              /* S'assurer que le conteneur prend toute la largeur */
+            height: 100%;             /* S'assurer que le conteneur prend toute la hauteur disponible */
+        }
+
+    </style>
 {% endblock %}

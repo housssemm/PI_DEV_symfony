@@ -83,17 +83,43 @@
     color: #000;
 }
 
-.btn-retour {
-    background-color: #ff6200;
-    color: #fff;
-    border-radius: 8px;
+/* Boutons Retour et Voir Panier */
+.btn-retour, .btn-voir-panier {
+    background-color: #ff6200; /* Couleur de fond orangée */
+    color: white; /* Texte en blanc */
+    font-weight: bold;
+    border: none;
     padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 146, 0, 0.6);
     transition: background-color 0.3s ease;
 }
 
-.btn-retour:hover {
+/* Au survol */
+.btn-retour:hover, .btn-voir-panier:hover {
     background-color: #fb7014;
+    color: #000;
 }
+
+/* Espacement entre les deux boutons */
+.d-flex.gap-3 {
+    gap: 20px; /* Espacement entre les boutons */
+}
+
+/* Style spécifique pour "Voir Panier" si besoin */
+.btn-voir-panier {
+    background-color: #ff6200; /* Couleur spécifique */
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+/* Style spécifique pour "Retour" si besoin */
+.btn-retour {
+    background-color: #ff6200; /* Couleur spécifique */
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
 
 .product-description-section {
     padding: 20px;

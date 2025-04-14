@@ -71,7 +71,6 @@ class Categorie
         groups: ["creation", "Update"]
     )]
 
-
     private ?UploadedFile $imageFile = null;
     public function getImageFile(): ?UploadedFile
     {

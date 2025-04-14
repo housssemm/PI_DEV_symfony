@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Categorie;
-use App\Entity\Investisseurproduit;
 use App\Entity\Produit;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -39,13 +38,6 @@ class ProduitType extends AbstractType
             ])
             ->add('prix', NumberType::class, [
                 'empty_data' => 1.0,
-            ])
-            ->add('investisseurproduit', EntityType::class, [
-                'class' => Investisseurproduit::class,
-                'choice_label' => function(Investisseurproduit $Investisseurproduit) {
-                    return $Investisseurproduit->getUser()->getPrenom() . ' ' . $Investisseurproduit->getUser()->getNom();
-                },
-                'label' => 'Choisir un Investisseur',
             ])
             ->add('categorie', EntityType::class, [
                 'class' => Categorie::class,

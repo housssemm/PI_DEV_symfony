@@ -167,7 +167,15 @@
 
 
                             <li><a href="./about-us.html">Planning</a></li>
-                            <li><a href="./class-details.html">Produit</a></li>
+{#                            <li><a href="./class-details.html">Produit</a></li>#}
+                            {% if is_granted('ROLE_INVESTISSEUR') %}
+                                <li><a href="{{ path('app_afficher_produit') }}">Produit</a></li>
+                                {% if app.request.attributes.get('_route') == 'app_afficher_produit' %}
+                                    <li><a href="{{ path('app_afficher_categorie') }}">Categorie</a></li>
+                                {% endif %}
+                            {% elseif is_granted('ROLE_ADHERENT') %}
+                                <li><a href="{{ path('app_afficher_panier') }}">Produit</a></li>
+                            {% endif %}
                             <li><a href="./services.html">Evénement</a></li>
                             <li><a href="./team.html">Offre</a></li>
                             <li><a href="./contact.html">Réclamation</a></li>
