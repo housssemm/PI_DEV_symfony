@@ -1,0 +1,92 @@
+{% extends 'base1.html.twig' %}
+
+{% block body %}
+    <style>
+        body {
+            background-color: #232323;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .video-link {
+            color: #f36100;
+            font-weight: bold;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .info-item i {
+            color: #f36100;
+            margin-right: 8px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            color: #efeded;
+            margin-bottom: 20px;
+        }
+    </style>
+
+    <section>
+        <div class="container my-5">
+            <h1 class="text-center mb-5 fs-2" style="color: #f36100;">Liste des Séances</h1>
+
+            <div class="row row-cols-1 row-cols-md-3 g-4" id="seanceList">
+                {% for seance in seances %}
+                    <div class="col" style="margin-bottom: 30px;">
+                        <div class="card h-100 text-start bg-dark text-light">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-dumbbell"></i> {{ seance.titre }}</h5>
+
+                                <div class="info-item"><i class="fas fa-align-left"></i> <strong>Description:</strong> {{ seance.description }}</div>
+                                <div class="info-item"><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> {{ seance.date|date('d/m/Y') }}</div>
+                                <div class="info-item"><i class="fas fa-clock"></i> <strong>Heure:</strong> {{ seance.heureDebut|date('H:i') }} - {{ seance.heureFin|date('H:i') }}</div>
+                                <div class="info-item"><i class="fas fa-user-tie"></i> <strong>Coach :</strong> {{ seance.coach.nom }} {{ seance.coach.prenom }}</div>
+                                <div class="info-item"><i class="fas fa-user"></i> <strong>Adhérent :</strong> {{ seance.adherent.nom }} {{ seance.adherent.prenom }}</div>
+                                <div class="info-item"><i class="fas fa-tag"></i> <strong>Type:</strong> {{ seance.type }}</div>
+                                <div class="info-item"><i class="fas fa-video"></i> <strong>Vidéo:</strong>
+                                    {% if seance.lienVideo %}
+                                        <a class="video-link" href="{{ seance.lienVideo }}" target="_blank">Voir</a>
+                                    {% else %}
+                                        Aucune
+                                    {% endif %}
+                                </div>
+
+                                <a href="{{ path('admin_seance_delete', {'id': seance.id}) }}"
+                                   class="btn btn-danger mt-3 w-100"
+                                   onclick="return confirm('Voulez-vous vraiment supprimer cette séance ?');">
+                                    <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Font Awesome pour les icônes -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}

@@ -136,6 +136,21 @@ class SeanceController extends AbstractController
             );
         }
     }
+    #[Route('/AfficherSeance',name:'app_seance_admiin')]
+    public function afficher(SeanceRepository $repoSeance):response
+    {
+        $list=$repoSeance->findAll();
+        return $this->render('planning/seance_admin.html.twig',['seances'=>$list]);
+    }
+    #[Route('/deleteSeance/{id}', name: 'admin_seance_delete')]
+    public function deleteSeanceAdmin($id,SeanceRepository $repoSeance,ManagerRegistry $doctrine ):response
+    {
+        $seance=$repoSeance->find($id);
+        $em=$doctrine->getManager();
+        $em->remove($seance);
+        $em->flush();
+        return $this->redirectToRoute('app_seance_admiin');
+    }
 
 
 
