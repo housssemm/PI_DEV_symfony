@@ -12,7 +12,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f4f6f9;
-            overflow-x: hidden;
+            overflow-x: auto;
         }
 
         /* Sidebar */
@@ -209,13 +209,14 @@
 
     <ul class="sidebar-menu">
         <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-{#        <li><a href="{{ path('app_admin_reclamation_index') }}"><i class="fas fa-exclamation-circle"></i> Réclamations</a></li>#}
-        <li><a href="#"><i class="fas fa-users"></i> Utilisateurs</a></li>
-        <li><a href="#"><i class="fas fa-dumbbell"></i> Coaches</a></li>
+        <li><a href="{{ path('admin_dashboard') }}"><i class="fas fa-users"></i> Utilisateurs</a></li>
+        <li><a href="#"><i class="fas fa-dumbbell"></i> Séances et Planning</a></li>
         <li><a href="#"><i class="fas fa-calendar-alt"></i> Événements</a></li>
         <li><a href="#"><i class="fas fa-shopping-cart"></i> Produits</a></li>
-        <li><a href="#"><i class="fas fa-cog"></i> Paramètres</a></li>
-        <li><a href="#"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+        <li><a href="#"><i class="fas fa-percent"></i> Offres</a></li>
+        <li><a href="#"><i class="fas fa-exclamation-circle"></i> Réclamations</a></li>
+        <li><a href="#"><i class="fas fa-cog"></i> Paramètres </a></li>
+        <li><a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
     </ul>
 </div>
 
@@ -226,12 +227,15 @@
         </button>
 
         <div class="user-info ml-auto">
-            <img src="{{ asset('img/admin-avatar.jpg') }}" alt="Admin">
+            <a href="{{ path('app_profile') }}">
+                <img src="{{ asset('uploads/user_images/pdp.png') }}" alt="Admin">
+            </a>
             <div>
-                <span class="d-block font-weight-bold">Admin</span>
+                <span class="d-block font-weight-bold">Admin2</span>
                 <small class="text-muted">Administrateur</small>
             </div>
         </div>
+
     </nav>
 
     <div class="content-header">
