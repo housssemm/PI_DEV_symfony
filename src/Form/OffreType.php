@@ -30,27 +30,37 @@ class OffreType extends AbstractType
                     'class' => 'form-select bg-secondary text-white border-0'
                 ],
                 'label' => 'État',
-            ])
-            ->add('offrecoachs', CollectionType::class, [
+            ]);
+
+        // Ajout conditionnel des coachs
+        if (!$options['exclude_coachs']) {
+            $builder->add('offrecoachs', CollectionType::class, [
                 'entry_type' => OffreCoachType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
                 'label' => 'Coachs associés',
-            ])
-            ->add('offreproduits', CollectionType::class, [
+            ]);
+        }
+
+        // Ajout conditionnel des produits
+        if (!$options['exclude_produits']) {
+            $builder->add('offreproduits', CollectionType::class, [
                 'entry_type' => OffreProduitType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
                 'label' => 'Produits associés',
             ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Offre::class,
+            'exclude_coachs' => false, // Nouvelle option
+            'exclude_produits' => false // Nouvelle option
         ]);
     }
 }
