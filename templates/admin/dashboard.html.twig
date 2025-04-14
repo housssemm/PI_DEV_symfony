@@ -60,6 +60,10 @@
 <body>
 <div class="container">
     <h1 class="text-center mb-4">Tableau de Bord Administrateur</h1>
+    <a href="{{ path('app_home') }}" class="btn" style="background-color: #F58400; color: white;">
+        <i class="fas fa-home"></i> Accueil
+    </a>
+
 
     <!-- Messages flash pour succès et erreurs -->
     {% for message in app.flashes('success') %}

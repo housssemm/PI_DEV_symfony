@@ -80,7 +80,7 @@ class CreateurEvenement extends User
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $certificatValide = null;
 
-    public function isCertificatValide(): ?bool
+    public function getCertificatValide(): ?bool
     {
         return $this->certificatValide;
     }
