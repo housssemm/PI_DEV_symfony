@@ -114,7 +114,7 @@
                 <li><a href="./classes.html">Produit</a></li>
                 <li><a href="./services.html">Evenement</a></li>
                 <li><a href="./team.html">Réclamation</a></li>
-                <li><a href="./contact.html">Offre</a></li>
+                <li><a href="{{ path('offre_list') }}">Offre</a></li>
 
             </ul>
         </nav>
@@ -192,7 +192,7 @@
                             {% endif %}
 
                             <li><a href="{{ path('app_events') }}">Evénement</a></li>
-                            <li><a href="./team.html">Offre</a></li>
+                            <li><a href="{{ path('offre_list') }}">Offre</a></li>
                             <li><a href={{ path('app_reclamation_index') }}>Réclamation</a></li>
 
                         </ul>
