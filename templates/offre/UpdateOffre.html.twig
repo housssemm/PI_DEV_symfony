@@ -2,13 +2,39 @@
 
 {% block title %}Modifier l'Offre - {{ offre.nom }}{% endblock %}
 
+{% block Hero_Section_Begin %}
+    <style>
+        body { background: #151515; }
+        .erreur { color: red; }
+    </style>
+    <section class="breadcrumb-section set-bg" data-setbg={{ asset('img/breadcrumb-bg.jpg') }}>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2>Update - Offers</h2>
+                        <div class="bt-option">
+                            <a href="./index.html">Home</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
 {% block body %}
     <style>
-        body{
+        body {
             background: #151515;
         }
 
+        .erreur {
+            color: red;
+        }
     </style>
+
     <div class="container py-4">
         <h1 class="text-white mb-4 d-flex align-items-center gap-2">
             <i class="bi bi-pencil-square text-warning"></i>
@@ -22,6 +48,7 @@
                 <div class="col-md-6">
                     <label class="form-label text-light">Nom</label>
                     {{ form_widget(form.nom, {'attr': {'class': 'form-control bg-secondary text-white border-0'}}) }}
+                    <div class="erreur">{{ form_errors(form.nom) }}</div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label text-light">État</label>
@@ -32,11 +59,13 @@
             <div class="mb-3">
                 <label class="form-label text-light">Description</label>
                 {{ form_widget(form.description, {'attr': {'class': 'form-control bg-secondary text-white border-0', 'rows': 3}}) }}
+                <div class="erreur">{{ form_errors(form.description) }}</div>
             </div>
 
             <div class="mb-4">
                 <label class="form-label text-light">Durée de validité</label>
                 {{ form_widget(form.duree_validite, {'attr': {'class': 'form-control bg-secondary text-white border-0'}}) }}
+                <div class="erreur">{{ form_errors(form.duree_validite) }}</div>
             </div>
 
             <hr class="border-secondary">
@@ -45,26 +74,25 @@
             <div class="offrecoachs" data-prototype="{{ form_widget(form.offrecoachs.vars.prototype)|e('html_attr') }}">
                 {% for coachForm in form.offrecoachs %}
                     <div class="p-3 mb-3 bg-secondary rounded-3 position-relative">
-                        {{ form_widget(coachForm, {'attr': {'class': 'text-white'}}) }}
+                        <div class="mb-2">
+                            <label class="form-label text-white">Coach</label>
+                            {{ form_widget(coachForm.coach, {'attr': {'class': 'form-select bg-dark text-white border-0'}}) }}
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-white">Nouveau tarif</label>
+                            {{ form_widget(coachForm.nouveauTarif, {'attr': {'class': 'form-control bg-dark text-white border-0'}}) }}
+                            <div class="erreur">{{ form_errors(coachForm.nouveauTarif) }}</div>
+                        </div>
+                        <div>
+                            <label class="form-label text-white">Réservations max</label>
+                            {{ form_widget(coachForm.reservationMax, {'attr': {'class': 'form-control bg-dark text-white border-0'}}) }}
+                            <div class="erreur">{{ form_errors(coachForm.reservationMax) }}</div>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
             <button type="button" class="btn btn-outline-primary btn-sm mb-4 add-collection" data-target="offrecoachs">
                 <i class="bi bi-plus-circle"></i> Ajouter un coach
-            </button>
-
-            <hr class="border-secondary">
-
-            <h4 class="text-white mb-3"><i class="bi bi-box-fill text-primary me-2"></i>Produits associés</h4>
-            <div class="offreproduits" data-prototype="{{ form_widget(form.offreproduits.vars.prototype)|e('html_attr') }}">
-                {% for produitForm in form.offreproduits %}
-                    <div class="p-3 mb-3 bg-secondary rounded-3 position-relative">
-                        {{ form_widget(produitForm, {'attr': {'class': 'text-white'}}) }}
-                    </div>
-                {% endfor %}
-            </div>
-            <button type="button" class="btn btn-outline-primary btn-sm mb-4 add-collection" data-target="offreproduits">
-                <i class="bi bi-plus-circle"></i> Ajouter un produit
             </button>
 
             <div class="d-flex justify-content-end mt-4 gap-2">

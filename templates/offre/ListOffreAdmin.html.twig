@@ -1,0 +1,278 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Offres{% endblock %}
+
+{% block Hero_Section_Begin %}
+    <style>
+        body { background: #151515; }
+        .erreur { color: red; }
+    </style>
+    <section class="breadcrumb-section set-bg" data-setbg={{ asset('img/offre2.jpg') }}>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2>Offre - Coaches - Products</h2>
+                        <div class="bt-option">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block body %}
+    <style>
+        body{
+            background: #151515;
+        }
+        .page-title{
+            color: #fff;
+
+        }
+    </style>
+    <div class="container">
+        <h1 class="page-title">
+            <i class="bi bi-tags"></i>
+            Liste des Offres
+        </h1>
+
+        <!-- Formulaire de recherche et filtres -->
+        <div class="card mb-4 bg-dark border-secondary">
+            <div class="card-body">
+                <form action="{{ path('offre_list') }}" method="get" class="row g-3">
+
+                    <!-- Recherche par nom -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="nom" class="form-label">
+                                <i class="bi bi-search"></i> Recherche par nom
+                            </label>
+                            <input type="text" name="nom" id="nom" class="form-control"
+                                   placeholder="Nom de l'offre" value="{{ app.request.get('nom') }}">
+                        </div>
+                    </div>
+
+                    <!-- Filtre par date -->
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-calendar-date"></i> Date de validité
+                            </label>
+                            <input type="date" class="form-control" name="date" value="{{ app.request.get('date') }}">
+                        </div>
+                    </div>
+
+                    <!-- Sélecteur de tri -->
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="tri" class="form-label">
+                                <i class="bi bi-sort-alpha-down"></i> Trier par
+                            </label>
+                            <select name="tri" id="tri" class="form-select">
+                                <option value="">-- Aucun tri --</option>
+                                <option value="nom_asc" {% if app.request.get('tri') == 'nom_asc' %}selected{% endif %}>Nom (A → Z)</option>
+                                <option value="nom_desc" {% if app.request.get('tri') == 'nom_desc' %}selected{% endif %}>Nom (Z → A)</option>
+                                <option value="date_asc" {% if app.request.get('tri') == 'date_asc' %}selected{% endif %}>Date croissante</option>
+                                <option value="date_desc" {% if app.request.get('tri') == 'date_desc' %}selected{% endif %}>Date décroissante</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Bouton appliquer les filtres -->
+                    <!-- Bouton appliquer les filtres -->
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+
+        <!-- Affichage des offres -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for offre in offres %}
+                <div class="col">
+                    <div class="card h-100 bg-dark border-secondary">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">{{ offre.nom }}</h5>
+                            <p class="card-text text-muted">{{ offre.description|slice(0, 100) }}...</p>
+
+                            <ul class="list-group list-group-flush bg-dark">
+                                <li class="list-group-item bg-dark border-secondary">
+                                    <i class="bi bi-calendar-check text-primary"></i>
+                                    Valide jusqu'au : {{ offre.duree_validite|date('d/m/Y') }}
+                                </li>
+                                <li class="list-group-item bg-dark border-secondary">
+                                    <i class="bi bi-circle-fill text-primary"></i>
+                                    État :
+                                    <span class="badge bg-success">
+                                            {{ offre.etat }}
+                                        </span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="card-footer bg-dark border-secondary">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <!-- Bouton SUPPRIMER -->
+                                <form method="post" action="{{ path('offre_delete', {'id': offre.id}) }}"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id) }}">
+                                    <button class="btn btn-danger btn-offre-action">
+                                        <i class="bi bi-trash"></i> Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert bg-dark border-secondary text-light">
+                        <i class="bi bi-info-circle text-primary"></i> Aucune offre trouvée
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Calendrier -->
+    <div id="calendar" class="mt-4 bg-white p-3 rounded shadow"></div>
+
+    {% block javascripts %}
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js"></script>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const calendarEl = document.getElementById('calendar');
+
+                const calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    locale: 'fr',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek'
+                    },
+                    events: {{ offres_json|raw }}
+                });
+
+                calendar.render();
+            });
+
+        </script>
+    {% endblock %}
+
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.css" rel="stylesheet" />
+
+    <style>
+        .btn-offre-action {
+            font-size: 14px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            width: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            background-color: #1f2937; /* gris foncé */
+            border: 1px solid #3b82f6; /* bleu clair */
+            color: #e0f2fe;
+            box-shadow: inset 0 0 0 transparent;
+        }
+
+        .btn-offre-action i {
+            font-size: 16px;
+        }
+
+        .btn-offre-action:hover {
+            background-color: #1e40af; /* bleu plus intense */
+            box-shadow: 0 0 10px #3b82f6, 0 0 5px #3b82f6;
+            transform: translateY(-2px);
+            color: #ffffff;
+        }
+
+        .btn-offre-action.btn-warning:hover {
+            background-color: #ca8a04;
+            box-shadow: 0 0 10px #facc15, 0 0 5px #facc15;
+            color: #fff;
+        }
+
+        .btn-offre-action.btn-warning {
+            border-color: #facc15;
+            color: #fef3c7;
+        }
+
+        .btn-danger.btn-offre-action:hover {
+            background-color: #dc2626;
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+            border-color: #3b82f6 !important;
+        }
+
+        .badge-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .badge-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .list-group-item {
+            color: #e2e8f0;
+        }
+
+        .form-check-input:checked {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .form-check-label {
+            color: #94a3b8;
+        }
+        .btn-success {
+            font-size: 18px; /* Agrandit le texte du bouton */
+            padding: 12px 20px; /* Agrandit la taille du bouton */
+            border-radius: 10px; /* Bords arrondis */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1); /* Effet 3D avec ombres */
+            transition: all 0.3s ease; /* Transition fluide pour les effets */
+        }
+
+        .btn-success:hover {
+            background-color: #45a049; /* Changer la couleur du bouton au survol */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3), 0 3px 5px rgba(0, 0, 0, 0.2); /* Effet d'ombre plus prononcé au survol */
+            transform: translateY(-2px); /* Légère élévation du bouton pour l'effet 3D */
+        }
+
+        .btn-success:active {
+            background-color: #388e3c; /* Couleur encore plus foncée lorsque le bouton est cliqué */
+            transform: translateY(1px); /* Effet d'enfoncement au clic */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1); /* Ombre plus faible lorsqu'on clique */
+        }
+        #calendar {
+            min-height: 500px;
+            width: 100%;
+            margin: 0 auto; /* Assurez-vous que le calendrier est centré */
+        }
+        .container {
+            margin-bottom: 50px;  /* Ajoutez de l'espace en bas pour le calendrier */
+        }
+
+
+
+    </style>
+{% endblock %}
