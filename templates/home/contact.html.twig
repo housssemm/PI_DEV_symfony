@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home Page
+{% endblock %}
+{% block Hero_Section_Begin %}
+{% endblock %}
+{% block body %}
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb-bg.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2>Contactez Nous</h2>
+                        <div class="bt-option">
+                            <a href="./index.html">Home</a>
+                            <a href="#">Pages</a>
+                            <span>Contactez Nous</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Contact Section Begin -->
+    <section class="contact-section spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="section-title contact-title">
+                        <span>contactez Nous</span>
+                        <h2>Tenez-vous informé</h2>
+                    </div>
+                    <div class="contact-widget">
+                        <div class="cw-text">
+                            <i class="fa fa-map-marker"></i>
+                            <p>
+                                Z.I. Chotrana II BP 160 Pôle Technologique,<br> El Ghazela, 2083 Ariana, <br>Cite El Ghazala, Ariana Governorate</p>
+                        </div>
+                        <div class="cw-text">
+                            <i class="fa fa-mobile"></i>
+                            <ul>
+                                <li>27-700-219 </li>
+                                <li>93-633-130</li>
+                            </ul>
+                        </div>
+                        <div class="cw-text email">
+                            <i class="fa fa-envelope"></i>
+                            <p>Coachini_support@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="leave-comment">
+                        <form action="#">
+                            <input type="text" placeholder="Name">
+                            <input type="text" placeholder="Email">
+                            <input type="text" placeholder="Website">
+                            <textarea placeholder="Comment"></textarea>
+                            <button type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="map">
+                <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3189.629357206675!2d10.187960115492875!3d36.8999250799378!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1302c943354e5fcd%3A0x94ddaf9c01d1ab18!2sP%C3%B4le%20Technologique%20El%20Ghazela%2C%20Ariana%202083%2C%20Tunisie!5e0!3m2!1sfr!2stn!4v1614523674546!5m2!1sfr!2stn"
+                        height="550" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+
+
+            </div>
+        </div>
+    </section>
+    <!-- Contact Section End -->
+
+
+
+{% endblock %}

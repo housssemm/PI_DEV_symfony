@@ -325,10 +325,45 @@ final class EvenementController extends AbstractController
         return $this->redirectToRoute('app_events');
     }
 
+//    #[Route('/events/add', name: 'app_add_event')]
+//    public function add(Request $request, EntityManagerInterface $em): Response
+//    {
+//        $event = new Evenement();
+//
+//        // Crée le formulaire basé sur le type EvenementFormType
+//        $form = $this->createForm(EvenementFormType::class, $event);
+//
+//        // Gère la requête (hydrate l'objet + vérifie s'il y a soumission)
+//        $form->handleRequest($request);
+//
+//        // Si le formulaire est soumis et valide
+//        if ($form->isSubmitted() && $form->isValid()) {
+//
+//            // Gère l'image uploadée
+//            $imageFile = $form->get('image')->getData();
+//            if ($imageFile) {
+//                $imageContent = file_get_contents($imageFile->getPathname());
+//                $event->setImage($imageContent);
+//            }
+//
+//            $em->persist($event);
+//            $em->flush();
+//
+//            $this->addFlash('success', 'L\'événement a été ajouté avec succès.');
+//            return $this->redirectToRoute('app_events');
+//        }
+//
+//        // Rend la vue avec le formulaire
+//        return $this->render('evenement/AddEvenement.html.twig', [
+//            'form' => $form->createView(),
+//        ]);
+//    }
+
     #[Route('/events/add', name: 'app_add_event')]
     public function add(Request $request, EntityManagerInterface $em): Response
     {
         $event = new Evenement();
+        $event->setEtat('ACTIF'); // Set the etat to 'ACTIF' by default
 
         // Crée le formulaire basé sur le type EvenementFormType
         $form = $this->createForm(EvenementFormType::class, $event);
@@ -358,51 +393,6 @@ final class EvenementController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-//    #[Route('/events/add', name: 'app_add_event')]
-//    public function add(Request $request, EntityManagerInterface $em): Response
-//    {
-//        $event = new Evenement();
-//        $form = $this->createForm(EvenementFormType::class, $event);
-//        $form->handleRequest($request);
-//
-//        if ($form->isSubmitted()) {
-//            if ($form->isValid()) {
-//                // Handle image upload
-//                $imageFile = $form->get('image')->getData();
-//                if ($imageFile) {
-//                    try {
-//                        $imageContent = file_get_contents($imageFile->getPathname());
-//                        $event->setImage($imageContent);
-//                    } catch (\Exception $e) {
-//                        $this->addFlash('error', 'Erreur lors du traitement de l\'image.');
-//                        return $this->redirectToRoute('app_add_event');
-//                    }
-//                }
-//
-//                // Ensure dates are set properly
-//                if (!$event->getDateDebut() || !$event->getDateFin()) {
-//                    $this->addFlash('error', 'Les dates sont obligatoires.');
-//                    return $this->redirectToRoute('app_add_event');
-//                }
-//
-//                $em->persist($event);
-//                $em->flush();
-//
-//                $this->addFlash('success', 'L\'événement a été ajouté avec succès.');
-//                return $this->redirectToRoute('app_events');
-//            } else {
-//                // Debug form errors if needed
-//                // foreach ($form->getErrors(true) as $error) {
-//                //     $this->addFlash('error', $error->getMessage());
-//                // }
-//            }
-//        }
-//
-//        return $this->render('evenement/AddEvenement.html.twig', [
-//            'form' => $form->createView(),
-//        ]);
-//    }
-
 
     #[Route('/event/{id}', name: 'app_event_details')]
     public function eventDetails(Evenement $event): Response
