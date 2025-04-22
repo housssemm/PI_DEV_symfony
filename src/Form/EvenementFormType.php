@@ -295,24 +295,23 @@ class EvenementFormType extends AbstractType
                 'label' => 'Lieu',
                 'required' => false,
             ])
-            ->add('etat', ChoiceType::class, [
-                'label' => 'État',
-                'choices' => [
-                    'EXPIRE' => 'EXPIRE',
-                    'ACTIF' => 'ACTIF',
-
-                ],
-                'required' => false,
-                'placeholder' => 'Sélectionnez un état'
-            ])
-            ->add('prix', MoneyType::class, [
+//            ->add('etat', ChoiceType::class, [
+//                'label' => 'État',
+//                'choices' => [
+//                    'EXPIRE' => 'EXPIRE',
+//                    'ACTIF' => 'ACTIF',
+//
+//                ],
+//                'required' => false,
+//                'placeholder' => 'Sélectionnez un état'
+//            ])
+            ->add('prix', IntegerType::class, [
                 'label' => 'Prix',
-                'currency' => '',
                 'required' => true,
             ])
             ->add('image', FileType::class, [
                 'label' => 'Image (Tous formats)',
-                'mapped' => false,
+
                 'required' => true,
                 'constraints' => [
                     new File([

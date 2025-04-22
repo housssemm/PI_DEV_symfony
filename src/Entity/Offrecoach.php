@@ -62,7 +62,7 @@ class Offrecoach
         return $this;
     }
 
-    #[ORM\Column(name: 'nouveauTarif' , type: 'decimal', precision: 10, scale: 2, nullable: false)]
+    #[ORM\Column(name: 'nouveau_tarif' , type: 'decimal', precision: 10, scale: 2, nullable: false)]
     #[Assert\NotBlank]
     #[Assert\Positive(message: "Le tarif doit être strictement positif.")]
     private ?float $nouveauTarif = null;
@@ -79,7 +79,7 @@ class Offrecoach
         return $this;
     }
 
-    #[ORM\Column(name: 'reservationActuelle' , type: 'integer', nullable: false)]
+    #[ORM\Column(name: 'reservation_actuelle' , type: 'integer', nullable: false)]
     private ?int $reservationActuelle = null;
 
     public function getReservationActuelle(): ?int
@@ -93,7 +93,7 @@ class Offrecoach
         return $this;
     }
 
-    #[ORM\Column(name:'reservationMax' , type: 'integer', nullable: false)]
+    #[ORM\Column(name:'reservation_max' , type: 'integer', nullable: false)]
     #[Assert\NotBlank]
     #[Assert\Positive(message: "Les réservations max doivent être strictement positives.")]
     private ?int $reservationMax = null;

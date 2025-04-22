@@ -1,31 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Liste des Offres{% endblock %}
-
-{% block Hero_Section_Begin %}
-    <style>
-        body { background: #151515; }
-        .erreur { color: red; }
-    </style>
-    <section class="breadcrumb-section set-bg" data-setbg={{ asset('img/offre2.jpg') }}>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div class="breadcrumb-text">
-                        <h2>Offre - Coaches - Products</h2>
-                        <div class="bt-option">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-{% endblock %}
 
 {% block body %}
     <style>
         body{
-            background: #151515;
+            background: #1a1a1a;
         }
         .page-title{
             color: #fff;
@@ -141,33 +121,7 @@
             {% endfor %}
         </div>
     </div>
-    <!-- Calendrier -->
-    <div id="calendar" class="mt-4 bg-white p-3 rounded shadow"></div>
 
-    {% block javascripts %}
-        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js"></script>
-
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const calendarEl = document.getElementById('calendar');
-
-                const calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    locale: 'fr',
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek'
-                    },
-                    events: {{ offres_json|raw }}
-                });
-
-                calendar.render();
-            });
-
-        </script>
-    {% endblock %}
 
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.css" rel="stylesheet" />
 

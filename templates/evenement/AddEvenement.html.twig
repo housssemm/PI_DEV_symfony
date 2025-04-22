@@ -200,6 +200,7 @@
             {{ form_start(form, {'attr': {'novalidate': 'novalidate','enctype': 'multipart/form-data'}}) }}
 
             <div class="mb-3">
+                <i class="bi bi-calendar-event"></i>
                 {{ form_label(form.titre, null, {'label_attr': {'class': 'form-label'}}) }}
                 {{ form_widget(form.titre, {
                     'attr': {
@@ -269,17 +270,7 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    {{ form_label(form.etat, null, {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.etat, {
-                        'attr': {
-                            'class': 'form-select' ~ (form.etat.vars.valid ? '' : ' is-invalid')
-                        }
-                    }) }}
-                    <div class="invalid-feedback">
-                        {{ form_errors(form.etat) }}
-                    </div>
-                </div>
+
                 <div class="col-md-6 mb-3">
                     {{ form_label(form.prix, null, {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.prix, {
@@ -292,20 +283,21 @@
                         {{ form_errors(form.prix) }}
                     </div>
                 </div>
-            </div>
-
-            <div class="mb-3">
-                {{ form_label(form.capaciteMaximale, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.capaciteMaximale, {
-                    'attr': {
-                        'class': 'form-control' ~ (form.capaciteMaximale.vars.valid ? '' : ' is-invalid'),
-                        'placeholder': "Entrez la capacité maximale"
-                    }
-                }) }}
-                <div class="invalid-feedback">
-                    {{ form_errors(form.capaciteMaximale) }}
+                <div class="mb-3">
+                    {{ form_label(form.capaciteMaximale, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.capaciteMaximale, {
+                        'attr': {
+                            'class': 'form-control' ~ (form.capaciteMaximale.vars.valid ? '' : ' is-invalid'),
+                            'placeholder': "Entrez la capacité maximale"
+                        }
+                    }) }}
+                    <div class="invalid-feedback">
+                        {{ form_errors(form.capaciteMaximale) }}
+                    </div>
                 </div>
             </div>
+
+
 
             <div class="mb-3">
                 {{ form_label(form.image, null, {'label_attr': {'class': 'form-label'}}) }}
