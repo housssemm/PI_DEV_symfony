@@ -199,50 +199,23 @@
         to { transform: translateX(0); opacity: 1; }
     }
 
-     .g-recaptcha,
-     .g-recaptcha > div,
-     .g-recaptcha iframe {
-         width: 100% !important;
-         max-width: 100% !important;
-     }
-
 </style>
 <style>
     .recaptcha-wrapper {
-        width: 100%;
-        overflow: hidden;
+        /* centre le widget */
+        text-align: center;
+        margin-bottom: 1rem;
     }
+
     .recaptcha-wrapper .g-recaptcha {
-        transform-origin: top left;
+        /* échelle à 90 % de sa taille native */
+        transform: scale(0.9);
+        transform-origin: top center;
+        /* conserve l’espace pour éviter le crop */
+        display: inline-block;
     }
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function(){
-        // dimensions natives du widget v2
-        const RC_WIDTH  = 304;
-        const RC_HEIGHT = 78;
-
-        // wrapper & widget
-        const wrapper = document.querySelector('.recaptcha-wrapper');
-        const widget  = wrapper.querySelector('.g-recaptcha');
-
-        // calcul de l’échelle X pour remplir la largeur
-        const availableWidth = wrapper.clientWidth;
-        const scaleX = availableWidth / RC_WIDTH;
-
-        // facteur pour réduire la hauteur (80% par exemple)
-        const heightFactor = 0.6;
-        // on applique donc scaleY = scaleX * heightFactor
-        const scaleY = scaleX * heightFactor;
-
-        // applique les deux échelles
-        widget.style.transform = `scale(${scaleX}, ${scaleY})`;
-
-        // ajuste la hauteur du wrapper pour contenir le widget sans rognage
-        wrapper.style.height = `${RC_HEIGHT * scaleY}px`;
-    });
-</script>
 
 
 <script>
