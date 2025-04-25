@@ -134,6 +134,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use App\Service\SmsSender;
+use Twilio\Exceptions\TwilioException;
 
 class AdminController extends AbstractController
 {
@@ -199,6 +201,7 @@ class AdminController extends AbstractController
         ]);
     }
 
+
     #[Route('/admin/validate/{id}', name: 'admin_validate_user', methods: ['POST'])]
     public function validateUser(int $id, EntityManagerInterface $em): Response
     {
@@ -223,8 +226,7 @@ class AdminController extends AbstractController
         $this->addFlash('success', 'Utilisateur validé avec succès.');
         return $this->redirectToRoute('admin_dashboard');
     }
-
-    #[Route('/admin/reject/{id}', name: 'admin_reject_user', methods: ['POST'])]
+#[Route('/admin/reject/{id}', name: 'admin_reject_user', methods: ['POST'])]
     public function rejectUser(int $id, EntityManagerInterface $em): Response
     {
         // Restreindre l'accès aux admins

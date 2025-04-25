@@ -64,7 +64,14 @@
         <i class="fas fa-home"></i> Accueil
     </a>
 
-
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
     <!-- Messages flash pour succès et erreurs -->
     {% for message in app.flashes('success') %}
         <div class="alert alert-success">{{ message }}</div>
@@ -136,11 +143,10 @@
                     <div class="card">
                         <div class="card-header">Coach</div>
                         <div class="card-body">
-                            {% if user.image %}
-                                <img src="{{ asset('uploads/images/' ~ user.image) }}" alt="Image de {{ user.nom }}" class="img-fluid mb-3" style="max-height: 150px;">
-                            {% else %}
+                            {% if user.image is empty %}
                                 <p class="card-text">Aucune image</p>
                             {% endif %}
+
                             <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
                             <p class="card-text">Email: {{ user.email }}</p>
                             <p class="card-text">Spécialité: {{ user.specialite }}</p>
@@ -173,11 +179,10 @@
                     <div class="card">
                         <div class="card-header">Investisseur</div>
                         <div class="card-body">
-                            {% if user.image %}
-                                <img src="{{ asset('uploads/images/' ~ user.image) }}" alt="Image de {{ user.nom }}" class="img-fluid mb-3" style="max-height: 150px;">
-                            {% else %}
+                            {% if user.image is empty %}
                                 <p class="card-text">Aucune image</p>
                             {% endif %}
+
                             <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
                             <p class="card-text">Email: {{ user.email }}</p>
                             <p class="card-text">Nom de l’entreprise: {{ user.nomEntreprise }}</p>
@@ -185,7 +190,15 @@
                             <p class="card-text">Adresse: {{ user.adresseInvestisseur }}</p>
                             <p class="card-text">Téléphone: {{ user.telephoneInvestisseur }}</p>
                             <div class="d-flex justify-content-between">
-                                <button class="btn btn-validate" onclick="confirmValidation({{ user.id }})">Valider</button>
+                                <button
+                                        type="button"
+                                        class="btn btn-validate"
+                                        data-id="{{ user.id }}"
+                                        data-token="{{ csrf_token('admin_validate_user' ~ user.id) }}"
+                                        onclick="confirmValidation(event, this)"
+                                >
+                                    Valider
+                                </button>
                                 <button class="btn btn-reject" onclick="confirmRejection({{ user.id }})">Rejeter</button>
                             </div>
                         </div>
@@ -204,11 +217,11 @@
                     <div class="card">
                         <div class="card-header">Créateur d'événements</div>
                         <div class="card-body">
-                            {% if user.image %}
-                                <img src="{{ asset('uploads/images/' ~ user.image) }}" alt="Image de {{ user.nom }}" class="img-fluid mb-3" style="max-height: 150px;">
-                            {% else %}
-                                <p class="card-text">Aucune image</p>
-                            {% endif %}
+                            <div class="card-body">
+                                {% if user.image is empty %}
+                                    <p class="card-text">Aucune image</p>
+                                {% endif %}
+                            </div>
                             <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
                             <p class="card-text">Email: {{ user.email }}</p>
                             <p class="card-text">Nom de l’organisation: {{ user.nomOrganisation }}</p>
@@ -216,7 +229,15 @@
                             <p class="card-text">Adresse: {{ user.adresseCreateur }}</p>
                             <p class="card-text">Téléphone: {{ user.telephoneCreateur }}</p>
                             <div class="d-flex justify-content-between">
-                                <button class="btn btn-validate" onclick="confirmValidation({{ user.id }})">Valider</button>
+                                <button
+                                        type="button"
+                                        class="btn btn-validate"
+                                        data-id="{{ user.id }}"
+                                        data-token="{{ csrf_token('admin_validate_user' ~ user.id) }}"
+                                        onclick="confirmValidation(event, this)"
+                                >
+                                    Valider
+                                </button>
                                 <button class="btn btn-reject" onclick="confirmRejection({{ user.id }})">Rejeter</button>
                             </div>
                         </div>
@@ -225,6 +246,65 @@
             {% endif %}
         {% endfor %}
     </div>
+
+    <script>
+        function confirmValidation(event, button) {
+            event.preventDefault(); // Empêche tout comportement par défaut
+            const userId = button.dataset.id;
+            const csrfToken = button.dataset.token;
+
+            Swal.fire({
+                title: 'Confirmez-vous la validation ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Oui',
+                cancelButtonText: 'Non',
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                fetch(`/admin/validate/${userId}`, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ '_token': csrfToken })
+                })
+                    .then(res => {
+                        if (!res.ok) throw new Error(`Erreur HTTP : ${res.status}`);
+                        return res;
+                    })
+                    .then(() => {
+                        Swal.fire({
+                            title: 'Succès',
+                            text: 'Utilisateur validé avec succès.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    })
+                    .catch(err => {
+                        Swal.fire('Erreur', 'La validation a échoué : ' + err.message, 'error');
+                    });
+            });
+        }
+
+        function confirmRejection(userId) {
+            Swal.fire({
+                title: 'Confirmez-vous le rejet ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Oui',
+                cancelButtonText: 'Non',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('Rejeté', 'Utilisateur rejeté avec succès.', 'success');
+                }
+            });
+        }
+    </script>
     <script>
         // Fonction pour animer un compteur
         function animateCounter(elementId, endValue, duration) {

@@ -12,7 +12,13 @@ parameters:
 
 
 services:
-    # default configuration for services in *this* file
+
+    App\Service\SmsSender:
+      arguments:
+        $twilioSid: '%env(string:TWILIO_SID)%'
+        $twilioToken: '%env(string:TWILIO_AUTH_TOKEN)%'
+        $from: '%env(string:TWILIO_PHONE_NUMBER)%'
+
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
