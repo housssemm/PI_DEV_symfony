@@ -1,29 +1,80 @@
+#parameters:
+#  user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
+#  cv_directory: '%kernel.project_dir%/public/uploads/cv'
+#  RECAPTCHA_SECRET_KEY: '%env(string:RECAPTCHA3_SECRET)%'
+#  RECAPTCHA_SITE_KEY: '%env(string:RECAPTCHA3_KEY)%'
+#
+#  twilio.sid: '%env(TWILIO_SID)%'
+#  twilio.auth_token: '%env(TWILIO_AUTH_TOKEN)%'
+#  twilio.phone_number: '%env(TWILIO_PHONE_NUMBER)%'
+#
+#services:
+#  _defaults:
+#    autowire: true
+#    autoconfigure: true
+#    public: false
+#
+#  # Injection du Client Mailjet
+#  Mailjet\Client:
+#    arguments:
+#      $key:     '%env(MAILJET_APIKEY)%'
+#      $secret:  '%env(MAILJET_SECRET)%'
+#      $settings:
+#        version: 'v3.1'
+#
+#  App\Service\SmsSender:
+#    arguments:
+#      $sid: '%twilio.sid%'
+#      $authToken: '%twilio.auth_token%'
+#      $fromNumber: '%twilio.phone_number%'
+#
+#  App\:
+#    resource: '../src/'
+#    exclude:
+#      - '../src/DependencyInjection/'
+#      - '../src/Entity/'
+#      - '../src/Kernel.php'
+
+# config/services.yaml
+
+# config/services.yaml
+
+# config/services.yaml
+
 parameters:
+  # Répertoires d’uploads
   user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
-  cv_directory: '%kernel.project_dir%/public/uploads/cv'
-  RECAPTCHA_SECRET_KEY: '%env(string:RECAPTCHA3_SECRET)%'
-  RECAPTCHA_SITE_KEY: '%env(string:RECAPTCHA3_KEY)%'
+  cv_directory:          '%kernel.project_dir%/public/uploads/cv'
+
+  # Clés ReCAPTCHA (inchangées)
+  RECAPTCHA_SECRET_KEY:  '%env(string:RECAPTCHA3_SECRET)%'
+  RECAPTCHA_SITE_KEY:    '%env(string:RECAPTCHA3_KEY)%'
 
 services:
+  # 1) Defaults appliqués à tous les services déclarés en-dessous
   _defaults:
-    autowire: true
+    autowire:      true
     autoconfigure: true
-    public: false
+    public:       false
 
-  # Injection du Client Mailjet
+    # 2) Bind global pour les arguments de SmsSender
+    bind:
+      string $sid:        '%env(string:TWILIO_SID)%'
+      string $authToken:  '%env(string:TWILIO_AUTH_TOKEN)%'
+      string $fromNumber: '%env(string:TWILIO_PHONE_NUMBER)%'
+
+  # 3) Client Mailjet
   Mailjet\Client:
     arguments:
-      $key:     '%env(MAILJET_APIKEY)%'
-      $secret:  '%env(MAILJET_SECRET)%'
+      $key:      '%env(string:MAILJET_APIKEY)%'
+      $secret:   '%env(string:MAILJET_SECRET)%'
       $settings:
         version: 'v3.1'
 
-  App\Service\SmsSender:
-    arguments:
-      $twilioSid:   '%env(string:TWILIO_SID)%'
-      $twilioToken: '%env(string:TWILIO_AUTH_TOKEN)%'
-      $from:        '%env(string:TWILIO_PHONE_NUMBER)%'
+  # 4) Votre service Twilio SMS (il sera autowiré avec les binds ci-dessus)
+  App\Service\SmsSender: ~
 
+  # 5) Le reste de vos services (controllers, etc.)
   App\:
     resource: '../src/'
     exclude:

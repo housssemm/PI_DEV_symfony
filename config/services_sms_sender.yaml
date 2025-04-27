@@ -1,0 +1,12 @@
+# config/services_sms_sender.yaml
+
+services:
+  # On désactive AUTOWIRE/AUTOCONFIGURE pour SmsSender
+  App\Service\SmsSender:
+    autowire:      false
+    autoconfigure: false
+    public:       false
+    arguments:
+      $sid:        '%env(string:TWILIO_SID)%'
+      $authToken:  '%env(string:TWILIO_AUTH_TOKEN)%'
+      $fromNumber: '%env(string:TWILIO_PHONE_NUMBER)%'

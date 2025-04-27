@@ -1,3 +1,520 @@
+{#<!DOCTYPE html>#}
+{#<html lang="fr">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>Tableau de Bord Admin</title>#}
+{#    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">#}
+{#    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">#}
+{#    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>#}
+{#    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>#}
+{#    <style>#}
+{#        body {#}
+{#            background-color: #1a1a1a;#}
+{#            color: white;#}
+{#            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;#}
+{#        }#}
+{#        .container {#}
+{#            margin-top: 50px;#}
+{#        }#}
+{#        .card {#}
+{#            background-color: #2d2d2d;#}
+{#            border: none;#}
+{#            border-radius: 10px;#}
+{#            margin-bottom: 20px;#}
+{#            transition: transform 0.3s ease, box-shadow 0.3s ease;#}
+{#        }#}
+{#        .card:hover {#}
+{#            transform: translateY(-5px);#}
+{#            box-shadow: 0 8px 16px rgba(255, 107, 1, 0.3);#}
+{#        }#}
+{#        .card-header {#}
+{#            background-color: #ff6b01;#}
+{#            color: white;#}
+{#            font-weight: bold;#}
+{#        }#}
+{#        .card-body {#}
+{#            color: white;#}
+{#        }#}
+{#        .card-title {#}
+{#            color: white;#}
+{#        }#}
+{#        .card-text {#}
+{#            color: white;#}
+{#        }#}
+{#        .chart-container {#}
+{#            position: relative;#}
+{#            height: 40vh;#}
+{#            width: 80vw;#}
+{#        }#}
+{#        .btn-validate {#}
+{#            background-color: #28a745;#}
+{#            color: white;#}
+{#        }#}
+{#        .btn-reject {#}
+{#            background-color: #dc3545;#}
+{#            color: white;#}
+{#        }#}
+{#    </style>#}
+{#</head>#}
+{#<body>#}
+{#<div class="container">#}
+{#    <h1 class="text-center mb-4">Tableau de Bord Administrateur</h1>#}
+{#    <a href="{{ path('app_home') }}" class="btn" style="background-color: #F58400; color: white;">#}
+{#        <i class="fas fa-home"></i> Accueil#}
+{#    </a>#}
+
+{#    {% for label, messages in app.flashes %}#}
+{#        {% for message in messages %}#}
+{#            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">#}
+{#                {{ message }}#}
+{#                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#    {% endfor %}#}
+{#    <!-- Messages flash pour succès et erreurs -->#}
+{#    {% for message in app.flashes('success') %}#}
+{#        <div class="alert alert-success">{{ message }}</div>#}
+{#    {% endfor %}#}
+{#    {% for message in app.flashes('error') %}#}
+{#        <div class="alert alert-danger">{{ message }}</div>#}
+{#    {% endfor %}#}
+
+
+{#    <div class="row mb-5">#}
+{#        <div class="col-md-3">#}
+{#            <div class="card">#}
+{#                <div class="card-header">Adhérents</div>#}
+{#                <div class="card-body">#}
+{#                    <h2 class="card-title" id="adherentCount">0</h2> <!-- Départ à 0 -->#}
+{#                    <p class="card-text">Nombre total d'adhérents</p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-md-3">#}
+{#            <div class="card">#}
+{#                <div class="card-header">Coachs</div>#}
+{#                <div class="card-body">#}
+{#                    <h2 class="card-title" id="coachCount">0</h2> <!-- Départ à 0 -->#}
+{#                    <p class="card-text">Nombre de coachs validés</p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-md-3">#}
+{#            <div class="card">#}
+{#                <div class="card-header">Créateurs d'événements</div>#}
+{#                <div class="card-body">#}
+{#                    <h2 class="card-title" id="createurCount">0</h2> <!-- Départ à 0 -->#}
+{#                    <p class="card-text">Nombre de créateurs validés</p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-md-3">#}
+{#            <div class="card">#}
+{#                <div class="card-header">Investisseurs</div>#}
+{#                <div class="card-body">#}
+{#                    <h2 class="card-title" id="investisseurCount">0</h2> <!-- Départ à 0 -->#}
+{#                    <p class="card-text">Nombre d'investisseurs validés</p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#    <!-- Graphique et Total côte à côte -->#}
+{#    <div class="row mb-5">#}
+{#        <div class="col-md-8">#}
+{#            <div class="chart-container" style="width: 100%;">#}
+{#                <canvas id="userChart"></canvas>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-md-4 text-center">#}
+{#            <h2 style="color: #ff8c00; font-size: 2.5rem;">Total Utilisateurs</h2>#}
+{#            <p id="totalUsers" style="font-size: 3.5rem; font-weight: bold;">0</p> <!-- Départ à 0 -->#}
+{#        </div>#}
+{#    </div>#}
+
+{#    <h2 class="text-center mb-4">Demandes de Validation</h2>#}
+
+{#    <!-- Section Coachs -->#}
+{#    <h3 class="text-center mb-3">Coachs</h3>#}
+{#    <div class="row">#}
+{#        {% for user in users %}#}
+{#            {% if user.getDiscriminator() == 'coach' %}#}
+{#                <div class="col-md-4">#}
+{#                    <div class="card">#}
+{#                        <div class="card-header">Coach</div>#}
+{#                        <div class="card-body">#}
+{#                            {% if user.image is empty %}#}
+{#                                <p class="card-text">Aucune image</p>#}
+{#                            {% endif %}#}
+
+{#                            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>#}
+{#                            <p class="card-text">Email: {{ user.email }}</p>#}
+{#                            <p class="card-text">Spécialité: {{ user.specialite }}</p>#}
+{#                            <p class="card-text">Années d’expérience: {{ user.anneeExperience }}</p>#}
+{#                            <p class="card-text">CV:#}
+{#                                {% if user.cv %}#}
+{#                                    <a href="{{ asset('uploads/cv/' ~ user.cv) }}" target="_blank">Voir le CV</a>#}
+{#                                {% else %}#}
+{#                                    Non fourni#}
+{#                                {% endif %}#}
+{#                            </p>#}
+{#                            <p class="card-text">Note: {{ user.note ?? 'Non attribuée' }}</p>#}
+{#                            <div class="d-flex justify-content-between">#}
+{#                                <button class="btn btn-validate" onclick="confirmValidation({{ user.id }})">Valider</button>#}
+{#                                <button class="btn btn-reject" onclick="confirmRejection({{ user.id }})">Rejeter</button>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#    </div>#}
+
+{#    <!-- Section Investisseurs -->#}
+{#    <h3 class="text-center mb-3">Investisseurs de produits</h3>#}
+{#    <div class="row">#}
+{#        {% for user in users %}#}
+{#            {% if user.getDiscriminator() == 'investisseur_produit' %}#}
+{#                <div class="col-md-4">#}
+{#                    <div class="card">#}
+{#                        <div class="card-header">Investisseur</div>#}
+{#                        <div class="card-body">#}
+{#                            {% if user.image is empty %}#}
+{#                                <p class="card-text">Aucune image</p>#}
+{#                            {% endif %}#}
+
+{#                            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>#}
+{#                            <p class="card-text">Email: {{ user.email }}</p>#}
+{#                            <p class="card-text">Nom de l’entreprise: {{ user.nomEntreprise }}</p>#}
+{#                            <p class="card-text">Description: {{ user.descriptionInvestisseur }}</p>#}
+{#                            <p class="card-text">Adresse: {{ user.adresseInvestisseur }}</p>#}
+{#                            <p class="card-text">Téléphone: {{ user.telephoneInvestisseur }}</p>#}
+{#                            <div class="d-flex justify-content-between">#}
+{#                                <button#}
+{#                                        type="button"#}
+{#                                        class="btn btn-validate"#}
+{#                                        data-id="{{ user.id }}"#}
+{#                                        data-token="{{ csrf_token('admin_validate_user' ~ user.id) }}"#}
+{#                                        onclick="confirmValidation(event, this)"#}
+{#                                >#}
+{#                                    Valider#}
+{#                                </button>#}
+{#                                <button#}
+{#                                        type="button"#}
+{#                                        class="btn btn-validate"#}
+{#                                        data-id="{{ user.id }}"#}
+{#                                        data-token="{{ csrf_token('admin_validate_user'~user.id) }}"#}
+{#                                        onclick="confirmValidation(event, this)"#}
+{#                                >#}
+{#                                    Valider#}
+{#                                </button>#}
+{#                                <form#}
+{#                                        action="{{ path('admin_validate_user', {id: user.id}) }}"#}
+{#                                        method="post"#}
+{#                                        style="display:inline"#}
+{#                                        onsubmit="return confirm('Valider cet utilisateur ?');"#}
+{#                                >#}
+{#                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">#}
+{#                                    <button type="submit" class="btn btn-validate">Valider</button>#}
+{#                                </form>#}
+
+
+{#                                <button class="btn btn-reject" onclick="confirmRejection({{ user.id }})">Rejeter</button>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#    </div>#}
+
+{#    <!-- Section Créateurs d'événements -->#}
+{#    <h3 class="text-center mb-3">Créateurs d'événements</h3>#}
+{#    <div class="row">#}
+{#        {% for user in users %}#}
+{#            {% if user.getDiscriminator() == 'createur_evenement' %}#}
+{#                <div class="col-md-4">#}
+{#                    <div class="card">#}
+{#                        <div class="card-header">Créateur d'événements</div>#}
+{#                        <div class="card-body">#}
+{#                            <div class="card-body">#}
+{#                                {% if user.image is empty %}#}
+{#                                    <p class="card-text">Aucune image</p>#}
+{#                                {% endif %}#}
+{#                            </div>#}
+{#                            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>#}
+{#                            <p class="card-text">Email: {{ user.email }}</p>#}
+{#                            <p class="card-text">Nom de l’organisation: {{ user.nomOrganisation }}</p>#}
+{#                            <p class="card-text">Description: {{ user.descriptionCreateur }}</p>#}
+{#                            <p class="card-text">Adresse: {{ user.adresseCreateur }}</p>#}
+{#                            <p class="card-text">Téléphone: {{ user.telephoneCreateur }}</p>#}
+{#                            <div class="d-flex justify-content-between">#}
+{#                                <button#}
+{#                                        type="button"#}
+{#                                        class="btn btn-validate"#}
+{#                                        data-id="{{ user.id }}"#}
+{#                                        data-token="{{ csrf_token('admin_validate_user' ~ user.id) }}"#}
+{#                                        onclick="confirmValidation(event, this)"#}
+{#                                >#}
+{#                                    Valider#}
+{#                                </button>#}
+{#                                <button class="btn btn-reject" onclick="confirmRejection({{ user.id }})">Rejeter</button>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#    </div>#}
+
+{#    <script>#}
+{#        function confirmValidation(event, button) #}{#}#}
+{#            event.preventDefault(); // Empêche tout comportement par défaut#}
+{#            const userId = button.dataset.id;#}
+{#            const csrfToken = button.dataset.token;#}
+
+{#            Swal.fire(#}{#}#}
+{#                title: 'Confirmez-vous la validation ?',#}
+{#                icon: 'warning',#}
+{#                showCancelButton: true,#}
+{#                confirmButtonText: 'Oui',#}
+{#                cancelButtonText: 'Non',#}
+{#            }).then((result) => #}{#}#}
+{#                if (!result.isConfirmed) return;#}
+
+{#                fetch(`/admin/validate/${userId}`, #}{#}#}
+{#                    method: 'POST',#}
+{#                    credentials: 'same-origin',#}
+{#                    headers: #}{#}#}
+{#                        'Content-Type': 'application/x-www-form-urlencoded',#}
+{#                    },#}
+{#                    body: new URLSearchParams({ '_token': csrfToken })#}
+{#                })#}
+{#                    .then(res => #}{#}#}
+{#                        if (!res.ok) throw new Error(`Erreur HTTP : ${res.status}`);#}
+{#                        return res;#}
+{#                    })#}
+{#                    .then(() => #}{#}#}
+{#                        Swal.fire(#}{#}#}
+{#                            title: 'Succès',#}
+{#                            text: 'Utilisateur validé avec succès.',#}
+{#                            icon: 'success',#}
+{#                            timer: 2000,#}
+{#                            showConfirmButton: false#}
+{#                        }).then(() => #}{#}#}
+{#                            window.location.reload();#}
+{#                        });#}
+{#                    })#}
+{#                    .catch(err => #}{#}#}
+{#                        Swal.fire('Erreur', 'La validation a échoué : ' + err.message, 'error');#}
+{#                    });#}
+{#            });#}
+{#        }#}
+
+{#        function confirmRejection(userId) #}{#}#}
+{#            Swal.fire(#}{#}#}
+{#                title: 'Confirmez-vous le rejet ?',#}
+{#                icon: 'warning',#}
+{#                showCancelButton: true,#}
+{#                confirmButtonText: 'Oui',#}
+{#                cancelButtonText: 'Non',#}
+{#            }).then((result) => #}{#}#}
+{#                if (result.isConfirmed) #}{#}#}
+{#                    Swal.fire('Rejeté', 'Utilisateur rejeté avec succès.', 'success');#}
+{#                }#}
+{#            });#}
+{#        }#}
+{#    </script>#}
+{#    <script>#}
+{#        function confirmValidation(event, button) {#}
+{#            event.preventDefault();#}
+{#            const userId    = button.dataset.id;#}
+{#            const csrfToken = button.dataset.token;#}
+
+{#            Swal.fire({#}
+{#                title: 'Confirmez la validation ?',#}
+{#                icon: 'warning',#}
+{#                showCancelButton: true,#}
+{#                confirmButtonText: 'Oui',#}
+{#                cancelButtonText: 'Non',#}
+{#            }).then(result => {#}
+{#                if (!result.isConfirmed) return;#}
+
+{#                fetch(`/admin/validate/${userId}`, {#}
+{#                    method: 'POST',#}
+{#                    credentials: 'same-origin',#}
+{#                    headers: {#}
+{#                        'Content-Type': 'application/x-www-form-urlencoded'#}
+{#                    },#}
+{#                    body: new URLSearchParams({ '_token': csrfToken })#}
+{#                })#}
+{#                    .then(res => {#}
+{#                        if (!res.ok) throw new Error(`Statut HTTP ${res.status}`);#}
+{#                        return res;#}
+{#                    })#}
+{#                    .then(() => {#}
+{#                        Swal.fire({#}
+{#                            title: 'Succès',#}
+{#                            text: 'Utilisateur validé.',#}
+{#                            icon: 'success',#}
+{#                            timer: 1500,#}
+{#                            showConfirmButton: false#}
+{#                        }).then(() => window.location.reload());#}
+{#                    })#}
+{#                    .catch(err => {#}
+{#                        Swal.fire('Erreur', err.message, 'error');#}
+{#                    });#}
+{#            });#}
+{#        }#}
+{#    </script>#}
+{#    <script>#}
+{#        // Fonction pour animer un compteur#}
+{#        function animateCounter(elementId, endValue, duration) {#}
+{#            let start = 0;#}
+{#            const stepTime = Math.abs(Math.floor(duration / endValue));#}
+{#            const element = document.getElementById(elementId);#}
+
+{#            const counter = setInterval(() => {#}
+{#                start += 1;#}
+{#                element.textContent = start;#}
+{#                if (start >= endValue) {#}
+{#                    clearInterval(counter);#}
+{#                    element.textContent = endValue; // Assurer la valeur exacte#}
+{#                }#}
+{#            }, stepTime);#}
+{#        }#}
+
+{#        // Lancer les animations au chargement#}
+{#        window.onload = function() {#}
+{#            animateCounter('adherentCount', {{ adherentCount }}, 500); // 1 seconde#}
+{#            animateCounter('coachCount', {{ coachCount }}, 500);#}
+{#            animateCounter('createurCount', {{ createurCount }}, 500);#}
+{#            animateCounter('investisseurCount', {{ investisseurCount }}, 500);#}
+{#            animateCounter('totalUsers', {{ totalUsers }}, 500);#}
+{#        };#}
+{#    </script>#}
+{#    <script>#}
+{#        function confirmValidation(userId) {#}
+{#            Swal.fire({#}
+{#                title: 'Confirmation',#}
+{#                text: 'Voulez-vous vraiment accepter cet utilisateur ?',#}
+{#                icon: 'question',#}
+{#                showCancelButton: true,#}
+{#                confirmButtonColor: '#28a745',#}
+{#                cancelButtonColor: '#dc3545',#}
+{#                confirmButtonText: 'Oui, valider',#}
+{#                cancelButtonText: 'Non, annuler'#}
+{#            }).then((result) => {#}
+{#                if (result.isConfirmed) {#}
+{#                    fetch('/admin/validate/' + userId, {#}
+{#                        method: 'POST',#}
+{#                        headers: {#}
+{#                            'X-Requested-With': 'XMLHttpRequest',#}
+{#                            'X-CSRF-Token': '{{ csrf_token }}'#}
+{#                        }#}
+{#                    }).then(response => {#}
+{#                        if (response.ok) {#}
+{#                            Swal.fire({#}
+{#                                title: 'Succès',#}
+{#                                text: 'Utilisateur ajouté avec succès !',#}
+{#                                icon: 'success',#}
+{#                                confirmButtonColor: '#28a745'#}
+{#                            }).then(() => {#}
+{#                                location.reload();#}
+{#                            });#}
+{#                        } else {#}
+{#                            Swal.fire({#}
+{#                                title: 'Erreur',#}
+{#                                text: 'Une erreur est survenue lors de la validation.',#}
+{#                                icon: 'error',#}
+{#                                confirmButtonColor: '#dc3545'#}
+{#                            });#}
+{#                        }#}
+{#                    });#}
+{#                }#}
+{#            });#}
+{#        }#}
+
+{#        function confirmRejection(userId) {#}
+{#            Swal.fire({#}
+{#                title: 'Confirmation',#}
+{#                text: 'Voulez-vous vraiment rejeter et supprimer cet utilisateur ?',#}
+{#                icon: 'warning',#}
+{#                showCancelButton: true,#}
+{#                confirmButtonColor: '#dc3545',#}
+{#                cancelButtonColor: '#6c757d',#}
+{#                confirmButtonText: 'Oui, supprimer',#}
+{#                cancelButtonText: 'Non, annuler'#}
+{#            }).then((result) => {#}
+{#                if (result.isConfirmed) {#}
+{#                    fetch('/admin/reject/' + userId, {#}
+{#                        method: 'POST',#}
+{#                        headers: {#}
+{#                            'X-Requested-With': 'XMLHttpRequest',#}
+{#                            'X-CSRF-Token': '{{ csrf_token }}'#}
+{#                        }#}
+{#                    }).then(response => response.text().then(text => {#}
+{#                        if (response.ok) {#}
+{#                            Swal.fire({#}
+{#                                title: 'Succès',#}
+{#                                text: 'Utilisateur supprimé avec succès !',#}
+{#                                icon: 'success',#}
+{#                                confirmButtonColor: '#28a745'#}
+{#                            }).then(() => {#}
+{#                                location.reload();#}
+{#                            });#}
+{#                        } else {#}
+{#                            Swal.fire({#}
+{#                                title: 'Erreur',#}
+{#                                text: text || 'Une erreur est survenue lors de la suppression.',#}
+{#                                icon: 'error',#}
+{#                                confirmButtonColor: '#dc3545'#}
+{#                            });#}
+{#                        }#}
+{#                    }));#}
+{#                }#}
+{#            });#}
+{#        }#}
+{#    </script>#}
+{#<script>#}
+{#    const ctx = document.getElementById('userChart').getContext('2d');#}
+{#    const userChart = new Chart(ctx, {#}
+{#        type: 'bar',#}
+{#        data: {#}
+{#            labels: ['Adhérents', 'Coachs', 'Créateurs', 'Investisseurs'],#}
+{#            datasets: [{#}
+{#                label: 'Nombre d\'utilisateurs',#}
+{#                data: [{{ adherentCount }}, {{ coachCount }}, {{ createurCount }}, {{ investisseurCount }}],#}
+{#                backgroundColor: [#}
+{#                    'rgba(255, 99, 132, 0.2)',#}
+{#                    'rgba(54, 162, 235, 0.2)',#}
+{#                    'rgba(255, 206, 86, 0.2)',#}
+{#                    'rgba(75, 192, 192, 0.2)'#}
+{#                ],#}
+{#                borderColor: [#}
+{#                    'rgba(255, 99, 132, 1)',#}
+{#                    'rgba(54, 162, 235, 1)',#}
+{#                    'rgba(255, 206, 86, 1)',#}
+{#                    'rgba(75, 192, 192, 1)'#}
+{#                ],#}
+{#                borderWidth: 1#}
+{#            }]#}
+{#        },#}
+{#        options: {#}
+{#            indexAxis: 'y',#}
+{#            scales: {#}
+{#                x: {#}
+{#                    beginAtZero: true#}
+{#                }#}
+{#            }#}
+{#        }#}
+{#    });#}
+{#</script>#}
+{#</div>#}
+{#</body>#}
+{#</html>#}
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -55,6 +572,17 @@
             background-color: #dc3545;
             color: white;
         }
+        /* Ajout de préfixes pour compatibilité */
+        .card {
+            user-select: none;
+            -webkit-user-select: none; /* Pour Safari */
+        }
+        @media print {
+            body {
+                color-adjust: economy;
+                print-color-adjust: economy; /* Pour Chrome, Edge */
+            }
+        }
     </style>
 </head>
 <body>
@@ -68,25 +596,17 @@
         {% for message in messages %}
             <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
                 {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Fermer"></button>
             </div>
         {% endfor %}
     {% endfor %}
-    <!-- Messages flash pour succès et erreurs -->
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
-
 
     <div class="row mb-5">
         <div class="col-md-3">
             <div class="card">
                 <div class="card-header">Adhérents</div>
                 <div class="card-body">
-                    <h2 class="card-title" id="adherentCount">0</h2> <!-- Départ à 0 -->
+                    <h2 class="card-title" id="adherentCount">0</h2>
                     <p class="card-text">Nombre total d'adhérents</p>
                 </div>
             </div>
@@ -95,7 +615,7 @@
             <div class="card">
                 <div class="card-header">Coachs</div>
                 <div class="card-body">
-                    <h2 class="card-title" id="coachCount">0</h2> <!-- Départ à 0 -->
+                    <h2 class="card-title" id="coachCount">0</h2>
                     <p class="card-text">Nombre de coachs validés</p>
                 </div>
             </div>
@@ -104,7 +624,7 @@
             <div class="card">
                 <div class="card-header">Créateurs d'événements</div>
                 <div class="card-body">
-                    <h2 class="card-title" id="createurCount">0</h2> <!-- Départ à 0 -->
+                    <h2 class="card-title" id="createurCount">0</h2>
                     <p class="card-text">Nombre de créateurs validés</p>
                 </div>
             </div>
@@ -113,13 +633,13 @@
             <div class="card">
                 <div class="card-header">Investisseurs</div>
                 <div class="card-body">
-                    <h2 class="card-title" id="investisseurCount">0</h2> <!-- Départ à 0 -->
+                    <h2 class="card-title" id="investisseurCount">0</h2>
                     <p class="card-text">Nombre d'investisseurs validés</p>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Graphique et Total côte à côte -->
+
     <div class="row mb-5">
         <div class="col-md-8">
             <div class="chart-container" style="width: 100%;">
@@ -128,7 +648,7 @@
         </div>
         <div class="col-md-4 text-center">
             <h2 style="color: #ff8c00; font-size: 2.5rem;">Total Utilisateurs</h2>
-            <p id="totalUsers" style="font-size: 3.5rem; font-weight: bold;">0</p> <!-- Départ à 0 -->
+            <p id="totalUsers" style="font-size: 3.5rem; font-weight: bold;">0</p>
         </div>
     </div>
 
@@ -138,7 +658,7 @@
     <h3 class="text-center mb-3">Coachs</h3>
     <div class="row">
         {% for user in users %}
-            {% if user.getDiscriminator() == 'coach' %}
+            {% if user.getDiscriminator() == 'coach' and not user.certificat_valide %}
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header">Coach</div>
@@ -146,7 +666,6 @@
                             {% if user.image is empty %}
                                 <p class="card-text">Aucune image</p>
                             {% endif %}
-
                             <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
                             <p class="card-text">Email: {{ user.email }}</p>
                             <p class="card-text">Spécialité: {{ user.specialite }}</p>
@@ -160,8 +679,14 @@
                             </p>
                             <p class="card-text">Note: {{ user.note ?? 'Non attribuée' }}</p>
                             <div class="d-flex justify-content-between">
-                                <button class="btn btn-validate" onclick="confirmValidation({{ user.id }})">Valider</button>
-                                <button class="btn btn-reject" onclick="confirmRejection({{ user.id }})">Rejeter</button>
+                                <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">
+                                    <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Coach')">Valider</button>
+                                </form>
+                                <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">
+                                    <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -174,7 +699,7 @@
     <h3 class="text-center mb-3">Investisseurs de produits</h3>
     <div class="row">
         {% for user in users %}
-            {% if user.getDiscriminator() == 'investisseur_produit' %}
+            {% if user.getDiscriminator() == 'investisseur_produit' and not user.certificatValide %}
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header">Investisseur</div>
@@ -182,44 +707,21 @@
                             {% if user.image is empty %}
                                 <p class="card-text">Aucune image</p>
                             {% endif %}
-
                             <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
                             <p class="card-text">Email: {{ user.email }}</p>
                             <p class="card-text">Nom de l’entreprise: {{ user.nomEntreprise }}</p>
                             <p class="card-text">Description: {{ user.descriptionInvestisseur }}</p>
                             <p class="card-text">Adresse: {{ user.adresseInvestisseur }}</p>
-                            <p class="card-text">Téléphone: {{ user.telephoneInvestisseur }}</p>
+                            <p class="card-text">Téléphone: {{ user.telephoneInvestisseur ?? 'N/A' }}</p>
                             <div class="d-flex justify-content-between">
-{#                                <button#}
-{#                                        type="button"#}
-{#                                        class="btn btn-validate"#}
-{#                                        data-id="{{ user.id }}"#}
-{#                                        data-token="{{ csrf_token('admin_validate_user' ~ user.id) }}"#}
-{#                                        onclick="confirmValidation(event, this)"#}
-{#                                >#}
-{#                                    Valider#}
-{#                                </button>#}
-{#                                <button#}
-{#                                        type="button"#}
-{#                                        class="btn btn-validate"#}
-{#                                        data-id="{{ user.id }}"#}
-{#                                        data-token="{{ csrf_token('admin_validate_user'~user.id) }}"#}
-{#                                        onclick="confirmValidation(event, this)"#}
-{#                                >#}
-{#                                    Valider#}
-{#                                </button>#}
-                                <form
-                                        action="{{ path('admin_validate_user', {id: user.id}) }}"
-                                        method="post"
-                                        style="display:inline"
-                                        onsubmit="return confirm('Valider cet utilisateur ?');"
-                                >
+                                <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">
                                     <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">
-                                    <button type="submit" class="btn btn-validate">Valider</button>
+                                    <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Investisseur')">Valider</button>
                                 </form>
-
-
-                                <button class="btn btn-reject" onclick="confirmRejection({{ user.id }})">Rejeter</button>
+                                <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">
+                                    <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -232,33 +734,29 @@
     <h3 class="text-center mb-3">Créateurs d'événements</h3>
     <div class="row">
         {% for user in users %}
-            {% if user.getDiscriminator() == 'createur_evenement' %}
+            {% if user.getDiscriminator() == 'createur_evenement' and not user.certificatValide %}
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header">Créateur d'événements</div>
                         <div class="card-body">
-                            <div class="card-body">
-                                {% if user.image is empty %}
-                                    <p class="card-text">Aucune image</p>
-                                {% endif %}
-                            </div>
+                            {% if user.image is empty %}
+                                <p class="card-text">Aucune image</p>
+                            {% endif %}
                             <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
                             <p class="card-text">Email: {{ user.email }}</p>
                             <p class="card-text">Nom de l’organisation: {{ user.nomOrganisation }}</p>
                             <p class="card-text">Description: {{ user.descriptionCreateur }}</p>
                             <p class="card-text">Adresse: {{ user.adresseCreateur }}</p>
-                            <p class="card-text">Téléphone: {{ user.telephoneCreateur }}</p>
+                            <p class="card-text">Téléphone: {{ user.telephoneCreateur ?? 'N/A' }}</p>
                             <div class="d-flex justify-content-between">
-                                <button
-                                        type="button"
-                                        class="btn btn-validate"
-                                        data-id="{{ user.id }}"
-                                        data-token="{{ csrf_token('admin_validate_user' ~ user.id) }}"
-                                        onclick="confirmValidation(event, this)"
-                                >
-                                    Valider
-                                </button>
-                                <button class="btn btn-reject" onclick="confirmRejection({{ user.id }})">Rejeter</button>
+                                <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">
+                                    <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Créateur d\'événements')">Valider</button>
+                                </form>
+                                <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">
+                                    <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -266,217 +764,77 @@
             {% endif %}
         {% endfor %}
     </div>
+</div>
 
-{#    <script>#}
-{#        function confirmValidation(event, button) {#}
-{#            event.preventDefault(); // Empêche tout comportement par défaut#}
-{#            const userId = button.dataset.id;#}
-{#            const csrfToken = button.dataset.token;#}
-
-{#            Swal.fire({#}
-{#                title: 'Confirmez-vous la validation ?',#}
-{#                icon: 'warning',#}
-{#                showCancelButton: true,#}
-{#                confirmButtonText: 'Oui',#}
-{#                cancelButtonText: 'Non',#}
-{#            }).then((result) => {#}
-{#                if (!result.isConfirmed) return;#}
-
-{#                fetch(`/admin/validate/${userId}`, {#}
-{#                    method: 'POST',#}
-{#                    credentials: 'same-origin',#}
-{#                    headers: {#}
-{#                        'Content-Type': 'application/x-www-form-urlencoded',#}
-{#                    },#}
-{#                    body: new URLSearchParams({ '_token': csrfToken })#}
-{#                })#}
-{#                    .then(res => {#}
-{#                        if (!res.ok) throw new Error(`Erreur HTTP : ${res.status}`);#}
-{#                        return res;#}
-{#                    })#}
-{#                    .then(() => {#}
-{#                        Swal.fire({#}
-{#                            title: 'Succès',#}
-{#                            text: 'Utilisateur validé avec succès.',#}
-{#                            icon: 'success',#}
-{#                            timer: 2000,#}
-{#                            showConfirmButton: false#}
-{#                        }).then(() => {#}
-{#                            window.location.reload();#}
-{#                        });#}
-{#                    })#}
-{#                    .catch(err => {#}
-{#                        Swal.fire('Erreur', 'La validation a échoué : ' + err.message, 'error');#}
-{#                    });#}
-{#            });#}
-{#        }#}
-
-{#        function confirmRejection(userId) {#}
-{#            Swal.fire({#}
-{#                title: 'Confirmez-vous le rejet ?',#}
-{#                icon: 'warning',#}
-{#                showCancelButton: true,#}
-{#                confirmButtonText: 'Oui',#}
-{#                cancelButtonText: 'Non',#}
-{#            }).then((result) => {#}
-{#                if (result.isConfirmed) {#}
-{#                    Swal.fire('Rejeté', 'Utilisateur rejeté avec succès.', 'success');#}
-{#                }#}
-{#            });#}
-{#        }#}
-{#    </script>#}
-    <script>
-        function confirmValidation(event, button) {
-            event.preventDefault();
-            const userId    = button.dataset.id;
-            const csrfToken = button.dataset.token;
-
-            Swal.fire({
-                title: 'Confirmez la validation ?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Oui',
-                cancelButtonText: 'Non',
-            }).then(result => {
-                if (!result.isConfirmed) return;
-
-                fetch(`/admin/validate/${userId}`, {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({ '_token': csrfToken })
-                })
-                    .then(res => {
-                        if (!res.ok) throw new Error(`Statut HTTP ${res.status}`);
-                        return res;
-                    })
-                    .then(() => {
-                        Swal.fire({
-                            title: 'Succès',
-                            text: 'Utilisateur validé.',
-                            icon: 'success',
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => window.location.reload());
-                    })
-                    .catch(err => {
-                        Swal.fire('Erreur', err.message, 'error');
-                    });
-            });
-        }
-    </script>
-    <script>
-        // Fonction pour animer un compteur
-        function animateCounter(elementId, endValue, duration) {
-            let start = 0;
-            const stepTime = Math.abs(Math.floor(duration / endValue));
-            const element = document.getElementById(elementId);
-
-            const counter = setInterval(() => {
-                start += 1;
-                element.textContent = start;
-                if (start >= endValue) {
-                    clearInterval(counter);
-                    element.textContent = endValue; // Assurer la valeur exacte
-                }
-            }, stepTime);
-        }
-
-        // Lancer les animations au chargement
-        window.onload = function() {
-            animateCounter('adherentCount', {{ adherentCount }}, 500); // 1 seconde
-            animateCounter('coachCount', {{ coachCount }}, 500);
-            animateCounter('createurCount', {{ createurCount }}, 500);
-            animateCounter('investisseurCount', {{ investisseurCount }}, 500);
-            animateCounter('totalUsers', {{ totalUsers }}, 500);
-        };
-    </script>
-    <script>
-        function confirmValidation(userId) {
-            Swal.fire({
-                title: 'Confirmation',
-                text: 'Voulez-vous vraiment accepter cet utilisateur ?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#28a745',
-                cancelButtonColor: '#dc3545',
-                confirmButtonText: 'Oui, valider',
-                cancelButtonText: 'Non, annuler'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch('/admin/validate/' + userId, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-Token': '{{ csrf_token }}'
-                        }
-                    }).then(response => {
-                        if (response.ok) {
-                            Swal.fire({
-                                title: 'Succès',
-                                text: 'Utilisateur ajouté avec succès !',
-                                icon: 'success',
-                                confirmButtonColor: '#28a745'
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Erreur',
-                                text: 'Une erreur est survenue lors de la validation.',
-                                icon: 'error',
-                                confirmButtonColor: '#dc3545'
-                            });
-                        }
-                    });
-                }
-            });
-        }
-
-        function confirmRejection(userId) {
-            Swal.fire({
-                title: 'Confirmation',
-                text: 'Voulez-vous vraiment rejeter et supprimer cet utilisateur ?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Oui, supprimer',
-                cancelButtonText: 'Non, annuler'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch('/admin/reject/' + userId, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-Token': '{{ csrf_token }}'
-                        }
-                    }).then(response => response.text().then(text => {
-                        if (response.ok) {
-                            Swal.fire({
-                                title: 'Succès',
-                                text: 'Utilisateur supprimé avec succès !',
-                                icon: 'success',
-                                confirmButtonColor: '#28a745'
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Erreur',
-                                text: text || 'Une erreur est survenue lors de la suppression.',
-                                icon: 'error',
-                                confirmButtonColor: '#dc3545'
-                            });
-                        }
-                    }));
-                }
-            });
-        }
-    </script>
 <script>
+    function confirmValidation(event, userType) {
+        event.preventDefault();
+        const form = event.target.closest('form');
+        const message = userType === 'Coach'
+            ? 'Voulez-vous valider cet utilisateur ?'
+            : 'Voulez-vous valider cet utilisateur et envoyer un SMS de confirmation ?';
+
+        Swal.fire({
+            title: 'Confirmer la validation',
+            text: message,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#dc3545',
+            confirmButtonText: 'Oui, valider',
+            cancelButtonText: 'Non, annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+        return false;
+    }
+
+    function confirmRejection(event) {
+        event.preventDefault();
+        const form = event.target.closest('form');
+
+        Swal.fire({
+            title: 'Confirmer le rejet',
+            text: 'Voulez-vous rejeter et supprimer cet utilisateur ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Oui, rejeter',
+            cancelButtonText: 'Non, annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+        return false;
+    }
+
+    function animateCounter(elementId, endValue, duration) {
+        let start = 0;
+        const stepTime = Math.abs(Math.floor(duration / endValue));
+        const element = document.getElementById(elementId);
+
+        const counter = setInterval(() => {
+            start += 1;
+            element.textContent = start;
+            if (start >= endValue) {
+                clearInterval(counter);
+                element.textContent = endValue;
+            }
+        }, stepTime);
+    }
+
+    window.onload = function() {
+        animateCounter('adherentCount', {{ adherentCount }}, 500);
+        animateCounter('coachCount', {{ coachCount }}, 500);
+        animateCounter('createurCount', {{ createurCount }}, 500);
+        animateCounter('investisseurCount', {{ investisseurCount }}, 500);
+        animateCounter('totalUsers', {{ totalUsers }}, 500);
+    };
+
     const ctx = document.getElementById('userChart').getContext('2d');
     const userChart = new Chart(ctx, {
         type: 'bar',
@@ -510,6 +868,5 @@
         }
     });
 </script>
-</div>
 </body>
 </html>
