@@ -704,10 +704,12 @@
 						</a>
 
 
-							<button type="submit" class="btn btn-delete">
-								<i class="bi-credit-card"></i>
-								payer place
-							</button>
+							<form action="{{ path('app_create_checkout_session', {'evenementId': event.id}) }}" method="POST">
+								<button type="submit" class="btn btn-delete">
+									<i class="bi-credit-card"></i>
+									payer place
+								</button>
+							</form>
 						{% endif %}
 
 				</div>
