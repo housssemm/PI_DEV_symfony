@@ -16,7 +16,7 @@ class OffreCoachType extends AbstractType
     {
         $builder
 //            ->add('nouveauTarif')
-               ->add('nouveauPrix', NumberType::class, [
+               ->add('nouveauTarif', NumberType::class, [
                      'required' => true,
                      'invalid_message' => 'Veuillez entrer un nombre valide.',
                  ])

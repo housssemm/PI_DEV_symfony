@@ -48,8 +48,10 @@ class Offrecoach
     }
 
     #[ORM\ManyToOne(targetEntity: Coach::class, inversedBy: 'offrecoachs')]
-    #[ORM\JoinColumn(name: 'idCoach', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'idCoach', referencedColumnName: 'id', nullable: false)]
+    #[Assert\NotNull(message: "Veuillez sélectionner un coach.")]
     private ?Coach $coach = null;
+
 
     public function getCoach(): ?Coach
     {
