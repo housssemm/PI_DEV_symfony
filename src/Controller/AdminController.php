@@ -136,6 +136,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use App\Service\SmsSender;
 use Twilio\Exceptions\TwilioException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Csrf\CsrfToken;
 
 class AdminController extends AbstractController
 {
@@ -201,32 +203,139 @@ class AdminController extends AbstractController
         ]);
     }
 
+//
+//    #[Route('/admin/validate/{id}', name: 'admin_validate_user', methods: ['POST'])]
+//    public function validateUser(int $id, EntityManagerInterface $em): Response
+//    {
+//        // Restreindre l'accès aux admins
+//        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+//
+//        $user = $em->getRepository(User::class)->find($id);
+//        if (!$user) {
+//            $this->addFlash('error', 'Utilisateur non trouvé.');
+//            return $this->redirectToRoute('admin_dashboard');
+//        }
+//
+//        if ($user instanceof \App\Entity\Coach) {
+//            $user->setCertificat_valide(true);
+//        } elseif ($user instanceof \App\Entity\InvestisseurProduit || $user instanceof \App\Entity\CreateurEvenement) {
+//            $user->setCertificatValide(true);
+//        }
+//
+//        $em->persist($user);
+//        $em->flush();
+//
+//        $this->addFlash('success', 'Utilisateur validé avec succès.');
+//        return $this->redirectToRoute('admin_dashboard');
+//    }
+//    #[Route('/admin/validate/{id}', name: 'admin_validate_user' , methods: ['GET','POST'])]
+//    public function validateUser(
+//        int $id,
+//        Request $request,
+//        EntityManagerInterface $em,
+//        SmsSender $smsSender,
+//        CsrfTokenManagerInterface $csrf
+//    ): Response {
+//        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+//
+//        // CSRF
+//        $submittedToken = $request->request->get('_token');
+//        if (!$csrf->isTokenValid(new CsrfToken('admin_validate_user'.$id, $submittedToken))) {
+//            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+//        }
+//
+//        // Charger l’utilisateur
+//        $user = $em->getRepository(User::class)->find($id);
+//        if (!$user) {
+//            $this->addFlash('error', 'Utilisateur non trouvé.');
+//            return $this->redirectToRoute('admin_dashboard');
+//        }
+//
+//        // Valider le certificat
+//        if ($user instanceof Coach) {
+//            $user->setCertificat_valide(true);
+//        } elseif ($user instanceof InvestisseurProduit || $user instanceof CreateurEvenement) {
+//            $user->setCertificatValide(true);
+//        }
+//
+//        $em->flush();
+//
+//        // Récupérer le téléphone
+//        if ($user instanceof InvestisseurProduit) {
+//            $phone = $user->getTelephoneInvestisseur();
+//        } elseif ($user instanceof CreateurEvenement) {
+//            $phone = $user->getTelephoneCreateur();
+//        } else {
+//            $phone = null;
+//        }
+//
+//        if ($phone) {
+//            try {
+//                $smsSender->send('+216'.trim($phone), 'Félicitations ! Votre compte Coachini a été validé.');
+//                $this->addFlash('success', 'Utilisateur validé et SMS envoyé avec succès.');
+//            } catch (TwilioException $e) {
+//                $this->addFlash('error', 'Validation OK, mais échec de l’envoi du SMS : '.$e->getMessage());
+//            }
+//        } else {
+//            $this->addFlash('success', 'Utilisateur validé avec succès.'.(
+//                $user instanceof Coach ? '' : ' Aucun téléphone pour envoi SMS.'
+//                ));
+//        }
+//
+//        return $this->redirectToRoute('admin_dashboard');
+//    }
 
-    #[Route('/admin/validate/{id}', name: 'admin_validate_user', methods: ['POST'])]
-    public function validateUser(int $id, EntityManagerInterface $em): Response
-    {
-        // Restreindre l'accès aux admins
+
+
+    #[Route('/admin/validate/{id}', name: 'admin_validate_user', methods: ['GET','POST'])]
+    public function validateUser(
+        int $id,
+        Request $request,
+        EntityManagerInterface $em,
+        SmsSender $smsSender,
+        CsrfTokenManagerInterface $csrf
+    ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
+        // 1) Vérification CSRF
+        $submittedToken = $request->request->get('_token');
+        if (!$csrf->isTokenValid(new CsrfToken('admin_validate_user'.$id, $submittedToken))) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
+
+        // 2) Charger l’utilisateur et valider
         $user = $em->getRepository(User::class)->find($id);
         if (!$user) {
             $this->addFlash('error', 'Utilisateur non trouvé.');
             return $this->redirectToRoute('admin_dashboard');
         }
 
-        if ($user instanceof \App\Entity\Coach) {
+        if ($user instanceof Coach) {
             $user->setCertificat_valide(true);
-        } elseif ($user instanceof \App\Entity\InvestisseurProduit || $user instanceof \App\Entity\CreateurEvenement) {
+        } elseif ($user instanceof InvestisseurProduit || $user instanceof CreateurEvenement) {
             $user->setCertificatValide(true);
         }
-
-        $em->persist($user);
         $em->flush();
 
-        $this->addFlash('success', 'Utilisateur validé avec succès.');
+        // 3) Envoi SMS si numéro dispo
+        $phone = $user instanceof InvestisseurProduit
+            ? $user->getTelephoneInvestisseur()
+            : ($user instanceof CreateurEvenement ? $user->getTelephoneCreateur() : null);
+
+        if ($phone) {
+            try {
+                $smsSender->send('+216'.trim($phone), 'Félicitations ! Votre compte a été validé.');
+                $this->addFlash('success', 'Utilisateur validé et SMS envoyé.');
+            } catch (TwilioException $e) {
+                $this->addFlash('error', 'Validation OK, mais pas de SMS : '.$e->getMessage());
+            }
+        } else {
+            $this->addFlash('success', 'Utilisateur validé.'.($user instanceof Coach ? '' : ' Pas de téléphone pour SMS.'));
+        }
+
         return $this->redirectToRoute('admin_dashboard');
     }
-#[Route('/admin/reject/{id}', name: 'admin_reject_user', methods: ['POST'])]
+    #[Route('/admin/reject/{id}', name: 'admin_reject_user', methods: ['POST'])]
     public function rejectUser(int $id, EntityManagerInterface $em): Response
     {
         // Restreindre l'accès aux admins

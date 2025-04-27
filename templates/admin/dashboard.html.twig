@@ -190,15 +190,35 @@
                             <p class="card-text">Adresse: {{ user.adresseInvestisseur }}</p>
                             <p class="card-text">Téléphone: {{ user.telephoneInvestisseur }}</p>
                             <div class="d-flex justify-content-between">
-                                <button
-                                        type="button"
-                                        class="btn btn-validate"
-                                        data-id="{{ user.id }}"
-                                        data-token="{{ csrf_token('admin_validate_user' ~ user.id) }}"
-                                        onclick="confirmValidation(event, this)"
+{#                                <button#}
+{#                                        type="button"#}
+{#                                        class="btn btn-validate"#}
+{#                                        data-id="{{ user.id }}"#}
+{#                                        data-token="{{ csrf_token('admin_validate_user' ~ user.id) }}"#}
+{#                                        onclick="confirmValidation(event, this)"#}
+{#                                >#}
+{#                                    Valider#}
+{#                                </button>#}
+{#                                <button#}
+{#                                        type="button"#}
+{#                                        class="btn btn-validate"#}
+{#                                        data-id="{{ user.id }}"#}
+{#                                        data-token="{{ csrf_token('admin_validate_user'~user.id) }}"#}
+{#                                        onclick="confirmValidation(event, this)"#}
+{#                                >#}
+{#                                    Valider#}
+{#                                </button>#}
+                                <form
+                                        action="{{ path('admin_validate_user', {id: user.id}) }}"
+                                        method="post"
+                                        style="display:inline"
+                                        onsubmit="return confirm('Valider cet utilisateur ?');"
                                 >
-                                    Valider
-                                </button>
+                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">
+                                    <button type="submit" class="btn btn-validate">Valider</button>
+                                </form>
+
+
                                 <button class="btn btn-reject" onclick="confirmRejection({{ user.id }})">Rejeter</button>
                             </div>
                         </div>
@@ -247,61 +267,103 @@
         {% endfor %}
     </div>
 
+{#    <script>#}
+{#        function confirmValidation(event, button) {#}
+{#            event.preventDefault(); // Empêche tout comportement par défaut#}
+{#            const userId = button.dataset.id;#}
+{#            const csrfToken = button.dataset.token;#}
+
+{#            Swal.fire({#}
+{#                title: 'Confirmez-vous la validation ?',#}
+{#                icon: 'warning',#}
+{#                showCancelButton: true,#}
+{#                confirmButtonText: 'Oui',#}
+{#                cancelButtonText: 'Non',#}
+{#            }).then((result) => {#}
+{#                if (!result.isConfirmed) return;#}
+
+{#                fetch(`/admin/validate/${userId}`, {#}
+{#                    method: 'POST',#}
+{#                    credentials: 'same-origin',#}
+{#                    headers: {#}
+{#                        'Content-Type': 'application/x-www-form-urlencoded',#}
+{#                    },#}
+{#                    body: new URLSearchParams({ '_token': csrfToken })#}
+{#                })#}
+{#                    .then(res => {#}
+{#                        if (!res.ok) throw new Error(`Erreur HTTP : ${res.status}`);#}
+{#                        return res;#}
+{#                    })#}
+{#                    .then(() => {#}
+{#                        Swal.fire({#}
+{#                            title: 'Succès',#}
+{#                            text: 'Utilisateur validé avec succès.',#}
+{#                            icon: 'success',#}
+{#                            timer: 2000,#}
+{#                            showConfirmButton: false#}
+{#                        }).then(() => {#}
+{#                            window.location.reload();#}
+{#                        });#}
+{#                    })#}
+{#                    .catch(err => {#}
+{#                        Swal.fire('Erreur', 'La validation a échoué : ' + err.message, 'error');#}
+{#                    });#}
+{#            });#}
+{#        }#}
+
+{#        function confirmRejection(userId) {#}
+{#            Swal.fire({#}
+{#                title: 'Confirmez-vous le rejet ?',#}
+{#                icon: 'warning',#}
+{#                showCancelButton: true,#}
+{#                confirmButtonText: 'Oui',#}
+{#                cancelButtonText: 'Non',#}
+{#            }).then((result) => {#}
+{#                if (result.isConfirmed) {#}
+{#                    Swal.fire('Rejeté', 'Utilisateur rejeté avec succès.', 'success');#}
+{#                }#}
+{#            });#}
+{#        }#}
+{#    </script>#}
     <script>
         function confirmValidation(event, button) {
-            event.preventDefault(); // Empêche tout comportement par défaut
-            const userId = button.dataset.id;
+            event.preventDefault();
+            const userId    = button.dataset.id;
             const csrfToken = button.dataset.token;
 
             Swal.fire({
-                title: 'Confirmez-vous la validation ?',
+                title: 'Confirmez la validation ?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Oui',
                 cancelButtonText: 'Non',
-            }).then((result) => {
+            }).then(result => {
                 if (!result.isConfirmed) return;
 
                 fetch(`/admin/validate/${userId}`, {
                     method: 'POST',
                     credentials: 'same-origin',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     body: new URLSearchParams({ '_token': csrfToken })
                 })
                     .then(res => {
-                        if (!res.ok) throw new Error(`Erreur HTTP : ${res.status}`);
+                        if (!res.ok) throw new Error(`Statut HTTP ${res.status}`);
                         return res;
                     })
                     .then(() => {
                         Swal.fire({
                             title: 'Succès',
-                            text: 'Utilisateur validé avec succès.',
+                            text: 'Utilisateur validé.',
                             icon: 'success',
-                            timer: 2000,
+                            timer: 1500,
                             showConfirmButton: false
-                        }).then(() => {
-                            window.location.reload();
-                        });
+                        }).then(() => window.location.reload());
                     })
                     .catch(err => {
-                        Swal.fire('Erreur', 'La validation a échoué : ' + err.message, 'error');
+                        Swal.fire('Erreur', err.message, 'error');
                     });
-            });
-        }
-
-        function confirmRejection(userId) {
-            Swal.fire({
-                title: 'Confirmez-vous le rejet ?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Oui',
-                cancelButtonText: 'Non',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire('Rejeté', 'Utilisateur rejeté avec succès.', 'success');
-                }
             });
         }
     </script>
