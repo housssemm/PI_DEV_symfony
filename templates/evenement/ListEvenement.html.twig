@@ -526,22 +526,10 @@
 
 		<div class="events-section">
 			<h1 class="page-title">Liste des événements</h1>
-{#			<a href="{{ path('app_add_event') }}" class="add-button">#}
-{#				<i class="bi bi-plus-circle"></i>#}
-{#				Ajouter un événement#}
-{#			</a>#}
-{#			<div class="text-center my-4">#}
-{#				<a href="{{ path('app_nearby_events') }}" class="map-button">#}
-{#					Voir la carte des événements proches#}
-{#				</a>#}
-{#			</div>#}
+
 
 			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-{#	{% if loggedInUser== 'createur_evenement' %}#}
-{#					<a href="{{ path('app_add_event') }}" class="add-button">#}
-{#						<i class="bi bi-plus-circle"></i> Ajouter un événement#}
-{#					</a>#}
-{#				{% endif %}#}
+
 
 				{% if isCreateurEvenement %}
 					<a href="{{ path('app_add_event') }}" class="add-button">
@@ -551,6 +539,11 @@
 				<a href="{{ path('app_nearby_events') }}" class="map-button">
 					<i class="fas fa-map-marked-alt"></i> Voir la carte des événements proches
 				</a>
+				{% if not isCreateurEvenement %}
+					<a href="{{ path('app_mes_evenements') }}" class="add-button">
+						<i class="bi bi-plus-circle"></i> mes evenements
+					</a>
+				{% endif %}
 			</div>
 
 			{% for event in list %}

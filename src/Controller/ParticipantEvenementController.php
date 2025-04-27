@@ -233,4 +233,112 @@ final class ParticipantEvenementController extends AbstractController{
 
         return new JsonResponse(['status' => 'success'], 200);
     }
+
+
+
+//    #[Route('/mes-evenements', name: 'app_mes_evenements')]
+//    public function mesEvenements(EntityManagerInterface $entityManager): Response
+//    {
+//        $user = $this->getUser();
+//
+//        if (!$user) {
+//            $this->addFlash('error', 'Vous devez être connecté pour voir vos événements.');
+//            return $this->redirectToRoute('app_login'); // Or another appropriate route
+//        }
+//
+//        $participations = $entityManager->getRepository(Participantevenement::class)->findBy(['user' => $user]);
+//
+//        return $this->render('evenement/mes_evenements.html.twig', [
+//            'participations' => $participations,
+//        ]);
+//    }
+
+
+//    #[Route('/mes-evenements', name: 'app_mes_evenements')]
+//    public function mesEvenements(EntityManagerInterface $entityManager, Request $request): Response
+//    {
+//        $user = $this->getUser();
+//
+//        if (!$user) {
+//            $this->addFlash('error', 'Vous devez être connecté pour voir vos événements.');
+//            return $this->redirectToRoute('app_login');
+//        }
+//
+//        $etatPaiementFilters = $request->query->all('etat_paiement');
+//
+//        $qb = $entityManager->createQueryBuilder();
+//        $qb->select('p')
+//            ->from(Participantevenement::class, 'p')
+//            ->where('p.user = :user')
+//            ->orderBy('p.date_inscription', 'DESC')
+//            ->setParameter('user', $user);
+//
+//        if (!empty($etatPaiementFilters)) {
+//            $qb->andWhere('p.etat_paiement IN (:etatPaiement)')
+//                ->setParameter('etatPaiement', $etatPaiementFilters);
+//        }
+//
+//        $participations = $qb->getQuery()->getResult();
+//
+//        return $this->render('evenement/mes_evenements.html.twig', [
+//            'participations' => $participations,
+//        ]);
+//    }
+
+    #[Route('/mes-evenements', name: 'app_mes_evenements')]
+    public function mesEvenements(EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté pour voir vos événements.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        $etatPaiementFilters = $request->query->all('etat_paiement');
+
+        $qb = $entityManager->createQueryBuilder();
+        $qb->select('p', 'e') // Select both the participation and the event
+        ->from(Participantevenement::class, 'p')
+            ->leftJoin('p.evenement', 'e') // Join with the Evenement entity
+            ->where('p.user = :user')
+            ->orderBy('p.date_inscription', 'DESC')
+            ->setParameter('user', $user);
+
+        if (!empty($etatPaiementFilters)) {
+            $qb->andWhere('p.etat_paiement IN (:etatPaiement)')
+                ->setParameter('etatPaiement', $etatPaiementFilters);
+        }
+
+        $participations = $qb->getQuery()->getResult();
+
+        // Convert images to base64 for display
+//        foreach ($participations as $participation) {
+//            $evenement = $participation->getEvenement();
+//            if ($evenement && $evenement->getImage()) {
+//                $evenement->setBase64Image(base64_encode($evenement->getImage()));
+//            }
+//        }
+        // In your controller, add debug output
+        foreach ($participations as $participation) {
+            $evenement = $participation->getEvenement();
+            if ($evenement) {
+                $image = $evenement->getImage();
+                if ($image) {
+                    // Debug output - check if image exists and its size
+                    dump([
+                        'event_id' => $evenement->getId(),
+                        'image_size' => strlen($image),
+                        'first_bytes' => substr($image, 0, 50)
+                    ]);
+
+                    $evenement->setBase64Image(base64_encode($image));
+                }
+            }
+        }
+
+        return $this->render('evenement/mes_evenements.html.twig', [
+            'participations' => $participations,
+        ]);
+    }
 }
