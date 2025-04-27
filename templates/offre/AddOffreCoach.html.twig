@@ -61,29 +61,32 @@
             <hr class="border-secondary">
 
             <h4 class="text-white mb-3"><i class="bi bi-person-fill text-primary me-2"></i>Coachs associés</h4>
-            <div class="offrecoachs" data-prototype="{{ form_widget(form.offrecoachs.vars.prototype)|e('html_attr') }}">
-                {% for coachForm in form.offrecoachs %}
-                    <div class="p-3 mb-3 bg-secondary rounded-3">
-                        <div class="mb-2">
-                            <label class="form-label text-white">Coach</label>
-                            {{ form_widget(coachForm.coach, {'attr': {'class': 'form-select bg-dark text-white border-0'}}) }}
+            {% if form.offrecoachs is defined %}
+                <div class="offrecoachs" data-prototype="{{ form_widget(form.offrecoachs.vars.prototype)|e('html_attr') }}">
+                    {% for coachForm in form.offrecoachs %}
+                        <div class="p-3 mb-3 bg-secondary rounded-3">
+                            <div class="mb-2">
+                                <label class="form-label text-white">Coach</label>
+                                {{ form_widget(coachForm.coach, {'attr': {'class': 'form-select bg-dark text-white border-0'}}) }}
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-white">Nouveau tarif</label>
+                                {{ form_widget(coachForm.nouveauTarif, {'attr': {'class': 'form-control bg-dark text-white border-0'}}) }}
+                                <div class="erreur">{{ form_errors(coachForm.nouveauTarif) }}</div>
+                            </div>
+                            <div>
+                                <label class="form-label text-white">Réservations max</label>
+                                {{ form_widget(coachForm.reservationMax, {'attr': {'class': 'form-control bg-dark text-white border-0'}}) }}
+                                <div class="erreur">{{ form_errors(coachForm.reservationMax) }}</div>
+                            </div>
                         </div>
-                        <div class="mb-2">
-                            <label class="form-label text-white">Nouveau tarif</label>
-                            {{ form_widget(coachForm.nouveauTarif, {'attr': {'class': 'form-control bg-dark text-white border-0'}}) }}
-                            <div class="erreur"> {{ form_errors(coachForm.nouveauTarif) }}</div>
-                        </div>
-                        <div>
-                            <label class="form-label text-white">Réservations max</label>
-                            {{ form_widget(coachForm.reservationMax, {'attr': {'class': 'form-control bg-dark text-white border-0'}}) }}
-                            <div class="erreur">  {{ form_errors(coachForm.reservationMax) }}</div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-            <button type="button" class="btn btn-outline-primary btn-sm mb-4 add-collection" data-target="offrecoachs">
-                <i class="bi bi-plus-circle"></i> Ajouter un coach
-            </button>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-sm mb-4 add-collection" data-target="offrecoachs">
+                    <i class="bi bi-plus-circle"></i> Ajouter un coach
+                </button>
+            {% endif %}
+
 
             <div class="d-flex justify-content-end mt-4 gap-2">
                 <button type="submit" class="btn btn-primary">

@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Twilio\Rest\Client;
 
 
 #[Route('/offre')]
@@ -102,6 +103,8 @@ final class OffreController extends AbstractController
         ]);
     }
 
+
+
     #[Route('/new/produit', name: 'offre_new_produit', methods: ['GET', 'POST'])]
     public function newProduit(Request $request, EntityManagerInterface $em): Response
     {
@@ -119,6 +122,26 @@ final class OffreController extends AbstractController
 
             $em->persist($offre);
             $em->flush();
+
+            // Envoi du SMS avec Twilio
+            try {
+                $twilio = new Client(
+                    $this->getParameter('twilio_account_sid'),
+                    $this->getParameter('twilio_auth_token')
+                );
+
+                $twilio->messages->create(
+                    '+21656452244', // Mon numéro de téléphone
+                    [
+                        'from' => $this->getParameter('twilio_phone_number'),
+                        'body' => 'Nouvelle offre produit ajoutée : ' . $offre->getNom() . ' !'
+                    ]
+                );
+
+                $this->addFlash('success', 'Offre ajoutée et SMS envoyé avec succès !');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur lors de l\'envoi du SMS : ' . $e->getMessage());
+            }
 
             return $this->redirectToRoute('offre_list');
         }
@@ -205,7 +228,5 @@ final class OffreController extends AbstractController
             }, $offres)),
         ]);
     }
-
-
 
 }
