@@ -35,10 +35,10 @@
         .modal-form {
             width: 100%;
             max-width: 700px;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgb(239, 237, 237);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 0 20px rgb(205, 87, 24);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.49);
         }
         /* Styles pour les groupes de champs */
         .form-group {
@@ -121,10 +121,7 @@
         }
         /* Style de fond global */
         body {
-            background: linear-gradient(rgba(21, 21, 21, 0.85), rgba(21, 21, 21, 0.85)),
-            url('{{ asset('img/1234.jpg') }}') center/cover no-repeat fixed !important;
-            font-family: 'Arial', sans-serif;
-            margin: 0;
+            background: #151515 !important;
         }
 
         /* Messages d'erreur */
@@ -151,13 +148,13 @@
             <div class="form-group">
                 {{ form_label(form.Titre, 'Titre') }}
                 {{ form_widget(form.Titre, {'attr': {'class': 'form-control'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.Titre) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Titre) }}</div>
             </div>
 
             <div class="form-group">
                 {{ form_label(form.Description, 'Description') }}
                 {{ form_widget(form.Description, {'attr': {'class': 'form-control'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.Description) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Description) }}</div>
             </div>
         </div>
 
@@ -166,13 +163,13 @@
             <div class="form-group">
                 {{ form_label(form.Date, 'Date') }}
                 {{ form_widget(form.Date, {'attr': {'class': 'form-control'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.Date) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Date) }}</div>
             </div>
 
             <div class="form-group">
                 {{ form_label(form.Type, 'Type') }}
                 {{ form_widget(form.Type, {'attr': {'class': 'form-select', 'id': 'typeSeance'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.Type) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Type) }}</div>
             </div>
         </div>
 
@@ -180,6 +177,7 @@
             <div class="form-group" style="flex: 1;">
                 {{ form_label(form.LienVideo, 'Lien Vidéo') }}
                 {{ form_widget(form.LienVideo, {'attr': {'class': 'form-control'}}) }}
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.LienVideo) }}</div>
             </div>
 
             <div class="form-group" id="videoFileGroup" style="flex: 1; display: none;">
@@ -195,36 +193,23 @@
             <div class="form-group">
                 {{ form_label(form.heureDebut, 'Heure Début') }}
                 {{ form_widget(form.heureDebut, {'attr': {'class': 'form-control time-picker'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.heureDebut) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.heureDebut) }}</div>
             </div>
 
             <div class="form-group">
                 {{ form_label(form.heureFin, 'Heure Fin') }}
                 {{ form_widget(form.heureFin, {'attr': {'class': 'form-control time-picker'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.heureFin) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.heureFin) }}</div>
             </div>
         </div>
 
         {# Ligne pour Coach et Adhérent #}
         <div class="form-row">
             <div class="form-group">
-                {{ form_label(form.coach, 'Coach') }}
-                {{ form_widget(form.coach, {'attr': {'class': 'form-select'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.coach) }}</div>
-            </div>
-
-            <div class="form-group">
                 {{ form_label(form.adherent, 'Adhérent') }}
                 {{ form_widget(form.adherent, {'attr': {'class': 'form-select'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.adherent) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.adherent) }}</div>
             </div>
-        </div>
-
-        {# Champ Planning #}
-        <div class="form-group">
-            {{ form_label(form.planning, 'Planning') }}
-            {{ form_widget(form.planning, {'attr': {'class': 'form-select'}}) }}
-            <div class="invalid-feedback">{{ form_errors(form.planning) }}</div>
         </div>
 
         {# Bouton de soumission #}

@@ -212,6 +212,7 @@
 					</label>
 					<input type="text" class="form-control {{ errors.titre is defined ? 'is-invalid' }}"
 						   id="titre" name="titre" value="{{ event.titre }}" required>
+
 					{% if errors.titre is defined %}
 						<div class="invalid-feedback">
 							{{ errors.titre }}

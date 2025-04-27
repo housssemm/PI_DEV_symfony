@@ -20,7 +20,7 @@
                 padding: 2rem;
             }
             .invalid-feedback {
-                display: block;
+                display: block !important;
                 color: #dc3545;
             }
             body {
@@ -37,10 +37,7 @@
             <div class="card">
                 <div class="card-body">
                     {# L'action du formulaire pointe ici vers la route update avec l'id du planning #}
-                    {{ form_start(form, {
-                        'action': path('app_planning_update', {'id': planning.id}),
-                        'attr': {'novalidate': 'novalidate', 'class': 'modal-form'}
-                    }) }}
+                    {{ form_start(form,{'action': path('app_planning_update', {'id': planning.id}),'attr': {'novalidate': 'novalidate', 'class': 'modal-form'}}) }}
                     <div class="row g-3">
                         <div class="col-md-6">
                             <img class="img-fluid rounded w-100" src="{{ asset('img/plan.jpg') }}" alt="Image du planning">
@@ -50,24 +47,16 @@
                             <div class="mb-3">
                                 {{ form_label(form.titre, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
                                 {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
-                                <div class="invalid-feedback">
+                                <div class="invalid-feedback" style="display: block">
                                     {{ form_errors(form.titre) }}
                                 </div>
                             </div>
                             {# Champ Tarif #}
                             <div class="mb-3">
                                 {{ form_label(form.tarif, 'Tarif', {'label_attr': {'class': 'form-label'}}) }}
-                                {{ form_widget(form.tarif, {'attr': {'class': 'form-control', 'min': '0'}}) }}
-                                <div class="invalid-feedback">
+                                {{ form_widget(form.tarif, {'attr': {'class': 'form-control'}}) }}
+                                <div class="invalid-feedback" style="display: block">
                                     {{ form_errors(form.tarif) }}
-                                </div>
-                            </div>
-                            {# Champ Coach (si nécessaire, sinon tu peux l'afficher en lecture seule ou le masquer) #}
-                            <div class="mb-3 d-none">
-                                {{ form_label(form.coach, 'Coach', {'label_attr': {'class': 'form-label'}}) }}
-                                {{ form_widget(form.coach, {'attr': {'class': 'form-select'}}) }}
-                                <div class="invalid-feedback">
-                                    {{ form_errors(form.coach) }}
                                 </div>
                             </div>
                         </div>

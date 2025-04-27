@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Evenement;
 use App\Form\EvenementFormType;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Psr\Log\LoggerInterface;
 final class EvenementController extends AbstractController
@@ -24,8 +25,13 @@ final class EvenementController extends AbstractController
     }
 
     #[Route('/events', name: 'app_events')]
-    public function listEvenement(EvenementRepository $evenementRepository): Response
+    public function listEvenement(EvenementRepository $evenementRepository,Security $security): Response
     {
+        // Récupérer l'utilisateur connecté
+        $loggedInUser = $security->getUser();
+        $loggedInUser->getDiscriminator();
+        $isCreateurEvenement = $loggedInUser instanceof \App\Entity\CreateurEvenement;
+
         $request = Request::createFromGlobals();
         $queryBuilder = $evenementRepository->createQueryBuilder('e');
 
@@ -80,53 +86,75 @@ final class EvenementController extends AbstractController
 
         return $this->render('evenement/ListEvenement.html.twig', [
             'list' => $list,
+
+            'isCreateurEvenement' => $isCreateurEvenement,
+        ]);
+    }
+
+
+    #[Route('/events/admin', name: 'app_events_admiin')]
+    public function listEvenementAdmin(EvenementRepository $evenementRepository): Response
+    {
+        $request = Request::createFromGlobals();
+        $queryBuilder = $evenementRepository->createQueryBuilder('e');
+
+        // Handle status filter
+        $etatFilters = $request->query->all('etat');
+        if (!empty($etatFilters)) {
+            $queryBuilder->andWhere('e.etat IN (:etats)')
+                ->setParameter('etats', $etatFilters);
+        }
+
+        // Handle type filter
+        $typeFilters = $request->query->all('type');
+        if (!empty($typeFilters)) {
+            $queryBuilder->andWhere('e.type IN (:types)')
+                ->setParameter('types', $typeFilters);
+        }
+
+        // Handle price filter
+        $prixFilters = $request->query->all('prix');
+        if (!empty($prixFilters)) {
+            $priceConditions = [];
+            foreach ($prixFilters as $filter) {
+                switch ($filter) {
+                    case '0-50':
+                        $priceConditions[] = 'e.prix <= 50';
+                        break;
+                    case '50-100':
+                        $priceConditions[] = 'e.prix > 50 AND e.prix <= 100';
+                        break;
+                    case '100+':
+                        $priceConditions[] = 'e.prix > 100';
+                        break;
+                }
+            }
+            if (!empty($priceConditions)) {
+                $queryBuilder->andWhere('(' . implode(' OR ', $priceConditions) . ')');
+            }
+        }
+
+        // Order by date
+        $queryBuilder->orderBy('e.dateDebut', 'DESC');
+
+        $list = $queryBuilder->getQuery()->getResult();
+
+        // Convert images to base64 for display
+        foreach ($list as $event) {
+            $image = $event->getImage();
+            if ($image) {
+                $event->setBase64Image(base64_encode($image));
+            }
+        }
+
+        return $this->render('evenement/admin.html.twig', [
+            'list' => $list,
         ]);
     }
 
 
 
 
-//    #[Route('/events/map', name: 'app_nearby_events')]
-//    public function map(EntityManagerInterface $em, HttpClientInterface $httpClient): Response
-//    {
-//        $events = $em->getRepository(Evenement::class)->findAll();
-//        $eventsArray = [];
-//        foreach ($events as $event) {
-//            $lieu = $event->getLieu();
-//            // Utilisation de Nominatim (OpenStreetMap) pour géocoder le lieu
-//            $response = $httpClient->request('GET', 'https://nominatim.openstreetmap.org/search', [
-//                'query' => [
-//                    'q' => $lieu,
-//                    'format' => 'json',
-//                    'limit' => 1
-//                ],
-//                'headers' => [
-//                    'User-Agent' => 'CoachiniMap/1.0' // Important pour éviter d'être bloqué
-//                ]
-//            ]);
-//            $data = $response->toArray();
-//            if (!empty($data)) {
-//                $latitude = $data[0]['lat'];
-//                $longitude = $data[0]['lon'];
-//                $image = $event->getImage();
-//                if ($image) {
-//                    $event->setBase64Image(base64_encode($image));
-//                }
-//                $eventsArray[] = [
-//                    'id' => $event->getId(), // Ajout de l'ID pour le lien vers les détails
-//                    'titre' => $event->getTitre(),
-//                    'dateDebut' => $event->getDateDebut()->format('Y-m-d'),
-//                    'lieu' => $lieu,
-//                    'latitude' => $latitude,
-//                    'longitude' => $longitude,
-//                    'image' => $image
-//                ];
-//            }
-//        }
-//        return $this->render('evenement/EventMapDisplay.html.twig', [
-//            'events' => $eventsArray
-//        ]);
-//    }
     #[Route('/events/map', name: 'app_nearby_events')]
     public function map(EntityManagerInterface $em, HttpClientInterface $httpClient): Response
     {
@@ -152,7 +180,7 @@ final class EvenementController extends AbstractController
                 $image = $event->getImage();
                 if ($image) {
                     $base64Image = base64_encode($image);
-                    $event->setBase64Image($base64Image); // Keep this if you need it elsewhere
+                    $event->setBase64Image($base64Image);
                 }
                 $eventsArray[] = [
                     'id' => $event->getId(),
@@ -276,6 +304,8 @@ final class EvenementController extends AbstractController
         ]);
     }
 
+
+
     #[Route('/events/delete/{id}', name: 'app_delete')]
     public function delete(EvenementRepository $ev, EntityManagerInterface $em, $id): RedirectResponse
     {
@@ -303,10 +333,14 @@ final class EvenementController extends AbstractController
         return $this->redirectToRoute('app_events');
     }
 
+
     #[Route('/events/add', name: 'app_add_event')]
-    public function add(Request $request, EntityManagerInterface $em): Response
+    public function add(Request $request, EntityManagerInterface $em ): Response
     {
+
+
         $event = new Evenement();
+        $event->setEtat('ACTIF'); // Set the etat to 'ACTIF' by default
 
         // Crée le formulaire basé sur le type EvenementFormType
         $form = $this->createForm(EvenementFormType::class, $event);
@@ -337,10 +371,13 @@ final class EvenementController extends AbstractController
         ]);
     }
 
-
     #[Route('/event/{id}', name: 'app_event_details')]
-    public function eventDetails(Evenement $event): Response
+    public function eventDetails(Evenement $event,Security $security): Response
     {
+        $loggedInUser = $security->getUser();
+        $loggedInUser->getDiscriminator();
+        $isCreateurEvenement = $loggedInUser instanceof \App\Entity\CreateurEvenement;
+
         // Convert image to base64 for display
         $image = $event->getImage();
         if ($image) {
@@ -348,7 +385,8 @@ final class EvenementController extends AbstractController
         }
 
         return $this->render('evenement/EventDetails.html.twig', [
-            'event' => $event
+            'event' => $event,
+            'isCreateurEvenement' => $isCreateurEvenement,
         ]);
     }
 
@@ -393,7 +431,7 @@ final class EvenementController extends AbstractController
             'message' => $message
         ]);
     }
-    #[Route('/bmi', name: 'bmi_calculator')]
+    #[Route('/bmii', name: 'bmi_calculator')]
     public function calculateBmi(Request $request)
     {
         $height = $request->get('height');

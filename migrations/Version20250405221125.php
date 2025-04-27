@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250320133933 extends AbstractMigration
+final class Version20250405221125 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,33 +20,21 @@ final class Version20250320133933 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE messenger_messages (id BIGINT AUTO_INCREMENT NOT NULL, body LONGTEXT NOT NULL, headers LONGTEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at DATETIME NOT NULL, available_at DATETIME NOT NULL, delivered_at DATETIME DEFAULT NULL, INDEX IDX_75EA56E0FB7336F0 (queue_name), INDEX IDX_75EA56E0E3BD61CE (available_at), INDEX IDX_75EA56E016BA31DB (delivered_at), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('ALTER TABLE adherent DROP FOREIGN KEY adherent_ibfk_1');
-        $this->addSql('ALTER TABLE adherent ADD user_id INT DEFAULT NULL, CHANGE id id INT AUTO_INCREMENT NOT NULL, CHANGE Poids poids DOUBLE PRECISION DEFAULT NULL, CHANGE Taille taille DOUBLE PRECISION DEFAULT NULL, CHANGE Genre genre VARCHAR(255) DEFAULT NULL, CHANGE Objectif_personnelle objectif_personnelle VARCHAR(255) DEFAULT NULL, CHANGE Niveau_activites niveau_activites VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE adherent ADD CONSTRAINT FK_90D3F060A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
-        $this->addSql('CREATE INDEX IDX_90D3F060A76ED395 ON adherent (user_id)');
+        $this->addSql('ALTER TABLE adherent ADD Objectif-personnelle VARCHAR(255) NOT NULL, ADD niveau_activite VARCHAR(50) NOT NULL, ADD nom_entreprise VARCHAR(255) NOT NULL, ADD description_adherent LONGTEXT NOT NULL, ADD adresse_adherent VARCHAR(255) NOT NULL, ADD telephone_adherent VARCHAR(8) NOT NULL, DROP Objectif_personnelle, DROP Niveau_activites, CHANGE Poids poids DOUBLE PRECISION NOT NULL, CHANGE Taille taille DOUBLE PRECISION NOT NULL, CHANGE Age age INT NOT NULL, CHANGE Genre genre VARCHAR(10) NOT NULL');
+        $this->addSql('ALTER TABLE adherent ADD CONSTRAINT FK_90D3F060BF396750 FOREIGN KEY (id) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE admin DROP FOREIGN KEY admin_ibfk_1');
         $this->addSql('ALTER TABLE admin ADD user_id INT DEFAULT NULL, CHANGE id id INT AUTO_INCREMENT NOT NULL');
         $this->addSql('ALTER TABLE admin ADD CONSTRAINT FK_880E0D76A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
         $this->addSql('CREATE INDEX IDX_880E0D76A76ED395 ON admin (user_id)');
         $this->addSql('ALTER TABLE categorie CHANGE nom nom VARCHAR(255) DEFAULT NULL, CHANGE image image VARCHAR(255) NOT NULL');
-        $this->addSql('ALTER TABLE coach DROP FOREIGN KEY coach_ibfk_1');
-        $this->addSql('ALTER TABLE coach ADD user_id INT DEFAULT NULL, CHANGE id id INT AUTO_INCREMENT NOT NULL, CHANGE Certificat_valide certificat_valide TINYINT(1) DEFAULT NULL, CHANGE Specialite specialite VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE coach ADD CONSTRAINT FK_3F596DCCA76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
-        $this->addSql('CREATE INDEX IDX_3F596DCCA76ED395 ON coach (user_id)');
-        $this->addSql('ALTER TABLE createurevenement DROP FOREIGN KEY createurevenement_ibfk_1');
-        $this->addSql('ALTER TABLE createurevenement ADD user_id INT DEFAULT NULL, CHANGE id id INT AUTO_INCREMENT NOT NULL, CHANGE Description description LONGTEXT DEFAULT NULL, CHANGE Telephone telephone VARCHAR(255) DEFAULT NULL, CHANGE Certificat_valide certificat_valide TINYINT(1) DEFAULT NULL');
-        $this->addSql('ALTER TABLE createurevenement ADD CONSTRAINT FK_8B6724D4A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
-        $this->addSql('CREATE INDEX IDX_8B6724D4A76ED395 ON createurevenement (user_id)');
-        $this->addSql('ALTER TABLE evenement CHANGE titre titre VARCHAR(255) DEFAULT NULL, CHANGE description description LONGTEXT DEFAULT NULL, CHANGE etat etat VARCHAR(255) DEFAULT NULL, CHANGE prix prix DOUBLE PRECISION NOT NULL, CHANGE type type VARCHAR(255) NOT NULL, CHANGE organisateur organisateur VARCHAR(255) NOT NULL, CHANGE dateDebut date_debut DATE DEFAULT NULL, CHANGE dateFin date_fin DATE NOT NULL, CHANGE capaciteMaximale capacite_maximale INT NOT NULL, CHANGE idCreateurEvenement id_createur_evenement INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE investisseurproduit DROP FOREIGN KEY investisseurproduit_ibfk_1');
-        $this->addSql('ALTER TABLE investisseurproduit ADD user_id INT DEFAULT NULL, CHANGE id id INT AUTO_INCREMENT NOT NULL, CHANGE Description description LONGTEXT DEFAULT NULL, CHANGE Telephone telephone VARCHAR(255) DEFAULT NULL, CHANGE Certificat_valide certificat_valide TINYINT(1) DEFAULT NULL');
-        $this->addSql('ALTER TABLE investisseurproduit ADD CONSTRAINT FK_9F6FEA6CA76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
-        $this->addSql('CREATE INDEX IDX_9F6FEA6CA76ED395 ON investisseurproduit (user_id)');
-        $this->addSql('ALTER TABLE message DROP FOREIGN KEY message_ibfk_2');
+        $this->addSql('ALTER TABLE coach CHANGE Annee_experience annee_experience INT NOT NULL, CHANGE Certificat_valide certificat_valide TINYINT(1) DEFAULT NULL, CHANGE Specialite specialite VARCHAR(255) NOT NULL');
+        $this->addSql('ALTER TABLE createurevenement ADD description_createur LONGTEXT NOT NULL, ADD adresse_createur VARCHAR(255) NOT NULL, ADD telephone_createur VARCHAR(8) NOT NULL, DROP Description, DROP Adresse, DROP Telephone, CHANGE Nom_organisation nom_organisation VARCHAR(255) NOT NULL, CHANGE Certificat_valide certificat_valide TINYINT(1) DEFAULT NULL');
+        $this->addSql('ALTER TABLE evenement CHANGE titre titre VARCHAR(255) DEFAULT NULL, CHANGE description description LONGTEXT DEFAULT NULL, CHANGE etat etat VARCHAR(255) DEFAULT NULL, CHANGE prix prix DOUBLE PRECISION NOT NULL, CHANGE type type VARCHAR(255) NOT NULL, CHANGE organisateur organisateur VARCHAR(255) NOT NULL');
+        $this->addSql('ALTER TABLE investisseurproduit ADD description_investisseur LONGTEXT NOT NULL, ADD adresse_investisseur VARCHAR(255) NOT NULL, ADD telephone_investisseur VARCHAR(8) NOT NULL, DROP Description, DROP Adresse, DROP Telephone, DROP Certificat_valide, CHANGE Nom_entreprise nom_entreprise VARCHAR(255) NOT NULL');
         $this->addSql('ALTER TABLE message DROP FOREIGN KEY message_ibfk_1');
         $this->addSql('ALTER TABLE message DROP FOREIGN KEY message_ibfk_2');
         $this->addSql('ALTER TABLE message DROP FOREIGN KEY message_ibfk_1');
+        $this->addSql('ALTER TABLE message DROP FOREIGN KEY message_ibfk_2');
         $this->addSql('ALTER TABLE message CHANGE Contenu contenu LONGTEXT DEFAULT NULL');
         $this->addSql('ALTER TABLE message ADD CONSTRAINT FK_B6BD307F11839F5B FOREIGN KEY (Utilisateur_expediteur) REFERENCES user (id)');
         $this->addSql('ALTER TABLE message ADD CONSTRAINT FK_B6BD307F698D251B FOREIGN KEY (Utilisateur_destinataire) REFERENCES user (id)');
@@ -54,13 +42,13 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_B6BD307F11839F5B ON message (Utilisateur_expediteur)');
         $this->addSql('DROP INDEX utilisateur_destinataire ON message');
         $this->addSql('CREATE INDEX IDX_B6BD307F698D251B ON message (Utilisateur_destinataire)');
-        $this->addSql('ALTER TABLE message ADD CONSTRAINT message_ibfk_2 FOREIGN KEY (Utilisateur_destinataire) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE message ADD CONSTRAINT message_ibfk_1 FOREIGN KEY (Utilisateur_expediteur) REFERENCES user (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE message ADD CONSTRAINT message_ibfk_2 FOREIGN KEY (Utilisateur_destinataire) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE offre CHANGE description description LONGTEXT NOT NULL, CHANGE etat etat VARCHAR(255) NOT NULL');
-        $this->addSql('ALTER TABLE offrecoach DROP FOREIGN KEY offrecoach_ibfk_1');
         $this->addSql('ALTER TABLE offrecoach DROP FOREIGN KEY offrecoach_ibfk_2');
         $this->addSql('ALTER TABLE offrecoach DROP FOREIGN KEY offrecoach_ibfk_1');
         $this->addSql('ALTER TABLE offrecoach DROP FOREIGN KEY offrecoach_ibfk_2');
+        $this->addSql('ALTER TABLE offrecoach DROP FOREIGN KEY offrecoach_ibfk_1');
         $this->addSql('ALTER TABLE offrecoach ADD nouveau_tarif NUMERIC(10, 2) NOT NULL, ADD reservation_actuelle INT NOT NULL, ADD reservation_max INT NOT NULL, DROP nouveauTarif, DROP reservationActuelle, DROP reservationMax, CHANGE idCoach idCoach INT DEFAULT NULL');
         $this->addSql('ALTER TABLE offrecoach ADD CONSTRAINT FK_202EA3A34CC8505A FOREIGN KEY (offre_id) REFERENCES offre (id)');
         $this->addSql('ALTER TABLE offrecoach ADD CONSTRAINT FK_202EA3A3289D2ED1 FOREIGN KEY (idCoach) REFERENCES coach (id)');
@@ -68,8 +56,8 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_202EA3A34CC8505A ON offrecoach (offre_id)');
         $this->addSql('DROP INDEX idcoach ON offrecoach');
         $this->addSql('CREATE INDEX IDX_202EA3A3289D2ED1 ON offrecoach (idCoach)');
-        $this->addSql('ALTER TABLE offrecoach ADD CONSTRAINT offrecoach_ibfk_1 FOREIGN KEY (offre_id) REFERENCES offre (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE offrecoach ADD CONSTRAINT offrecoach_ibfk_2 FOREIGN KEY (idCoach) REFERENCES coach (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE offrecoach ADD CONSTRAINT offrecoach_ibfk_1 FOREIGN KEY (offre_id) REFERENCES offre (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE offreproduit DROP FOREIGN KEY offreproduit_ibfk_1');
         $this->addSql('ALTER TABLE offreproduit DROP FOREIGN KEY offreproduit_ibfk_2');
         $this->addSql('ALTER TABLE offreproduit DROP FOREIGN KEY offreproduit_ibfk_1');
@@ -84,14 +72,13 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('ALTER TABLE offreproduit ADD CONSTRAINT offreproduit_ibfk_1 FOREIGN KEY (offre_id) REFERENCES offre (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE offreproduit ADD CONSTRAINT offreproduit_ibfk_2 FOREIGN KEY (idProduit) REFERENCES produit (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE paiement_planning DROP FOREIGN KEY paiement_planning_ibfk_2');
-        $this->addSql('ALTER TABLE paiement_planning DROP FOREIGN KEY paiement_planning_ibfk_1');
         $this->addSql('ALTER TABLE paiement_planning CHANGE id_adherent id_adherent INT DEFAULT NULL, CHANGE id_planning id_planning INT DEFAULT NULL, CHANGE etat_paiement etat_paiement VARCHAR(255) NOT NULL');
+        $this->addSql('ALTER TABLE paiement_planning ADD CONSTRAINT FK_1E3E47CCC0081CF5 FOREIGN KEY (id_adherent) REFERENCES adherent (id)');
         $this->addSql('DROP INDEX id_adherent ON paiement_planning');
         $this->addSql('CREATE INDEX IDX_1E3E47CCC0081CF5 ON paiement_planning (id_adherent)');
         $this->addSql('DROP INDEX id_planning ON paiement_planning');
         $this->addSql('CREATE INDEX IDX_1E3E47CC84425363 ON paiement_planning (id_planning)');
         $this->addSql('ALTER TABLE paiement_planning ADD CONSTRAINT paiement_planning_ibfk_2 FOREIGN KEY (id_planning) REFERENCES planning (id)');
-        $this->addSql('ALTER TABLE paiement_planning ADD CONSTRAINT paiement_planning_ibfk_1 FOREIGN KEY (id_adherent) REFERENCES adherent (id)');
         $this->addSql('ALTER TABLE panier DROP FOREIGN KEY fk_user');
         $this->addSql('ALTER TABLE panier CHANGE id_user id_user INT DEFAULT NULL');
         $this->addSql('DROP INDEX fk_user ON panier');
@@ -106,15 +93,15 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_656FE9BA728698BC ON panierproduit (panierId)');
         $this->addSql('ALTER TABLE panierproduit ADD CONSTRAINT panierproduit_ibfk_2 FOREIGN KEY (panierId) REFERENCES panier (id)');
         $this->addSql('ALTER TABLE panierproduit ADD CONSTRAINT panierproduit_ibfk_1 FOREIGN KEY (produitId) REFERENCES produit (id)');
-        $this->addSql('ALTER TABLE participantevenement DROP FOREIGN KEY participantevenement_ibfk_2');
         $this->addSql('ALTER TABLE participantevenement DROP FOREIGN KEY participantevenement_ibfk_1');
+        $this->addSql('ALTER TABLE participantevenement DROP FOREIGN KEY participantevenement_ibfk_2');
         $this->addSql('ALTER TABLE participantevenement CHANGE etat_paiement etat_paiement VARCHAR(255) DEFAULT NULL');
         $this->addSql('DROP INDEX userid ON participantevenement');
         $this->addSql('CREATE INDEX IDX_2BA7A88364B64DCC ON participantevenement (userId)');
         $this->addSql('DROP INDEX evenementid ON participantevenement');
         $this->addSql('CREATE INDEX IDX_2BA7A883BD959E61 ON participantevenement (evenementId)');
-        $this->addSql('ALTER TABLE participantevenement ADD CONSTRAINT participantevenement_ibfk_2 FOREIGN KEY (evenementId) REFERENCES evenement (id)');
         $this->addSql('ALTER TABLE participantevenement ADD CONSTRAINT participantevenement_ibfk_1 FOREIGN KEY (userId) REFERENCES user (id)');
+        $this->addSql('ALTER TABLE participantevenement ADD CONSTRAINT participantevenement_ibfk_2 FOREIGN KEY (evenementId) REFERENCES evenement (id)');
         $this->addSql('ALTER TABLE planning DROP FOREIGN KEY planning_ibfk_1');
         $this->addSql('ALTER TABLE planning DROP FOREIGN KEY planning_ibfk_1');
         $this->addSql('ALTER TABLE planning CHANGE tarif tarif NUMERIC(10, 2) NOT NULL');
@@ -134,8 +121,8 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('ALTER TABLE reclamation MODIFY IdReclamation INT NOT NULL');
         $this->addSql('ALTER TABLE reclamation DROP FOREIGN KEY reclamation_ibfk_1');
         $this->addSql('DROP INDEX `primary` ON reclamation');
-        $this->addSql('ALTER TABLE reclamation DROP FOREIGN KEY fk_reclamateur');
         $this->addSql('ALTER TABLE reclamation DROP FOREIGN KEY reclamation_ibfk_1');
+        $this->addSql('ALTER TABLE reclamation DROP FOREIGN KEY fk_reclamateur');
         $this->addSql('ALTER TABLE reclamation ADD type_r VARCHAR(255) DEFAULT NULL, DROP typeR, CHANGE description description LONGTEXT DEFAULT NULL, CHANGE Id_adherent Id_adherent INT DEFAULT NULL, CHANGE IdReclamation id_reclamation INT AUTO_INCREMENT NOT NULL');
         $this->addSql('ALTER TABLE reclamation ADD CONSTRAINT FK_CE60640428AA4EAA FOREIGN KEY (Id_coach) REFERENCES user (id)');
         $this->addSql('ALTER TABLE reclamation ADD PRIMARY KEY (id_reclamation)');
@@ -143,8 +130,8 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_CE60640428AA4EAA ON reclamation (Id_coach)');
         $this->addSql('DROP INDEX fk_reclamateur ON reclamation');
         $this->addSql('CREATE INDEX IDX_CE60640446949322 ON reclamation (Id_adherent)');
-        $this->addSql('ALTER TABLE reclamation ADD CONSTRAINT fk_reclamateur FOREIGN KEY (Id_adherent) REFERENCES user (id)');
         $this->addSql('ALTER TABLE reclamation ADD CONSTRAINT reclamation_ibfk_1 FOREIGN KEY (Id_coach) REFERENCES user (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE reclamation ADD CONSTRAINT fk_reclamateur FOREIGN KEY (Id_adherent) REFERENCES user (id)');
         $this->addSql('ALTER TABLE reponse DROP FOREIGN KEY reponse_ibfk_1');
         $this->addSql('ALTER TABLE reponse DROP FOREIGN KEY reponse_ibfk_1');
         $this->addSql('ALTER TABLE reponse CHANGE Contenu contenu LONGTEXT DEFAULT NULL, CHANGE status status VARCHAR(255) NOT NULL');
@@ -152,12 +139,12 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('DROP INDEX idreclamation ON reponse');
         $this->addSql('CREATE INDEX IDX_5FB6DEC79D8A5EFC ON reponse (Id_Reclamation)');
         $this->addSql('ALTER TABLE reponse ADD CONSTRAINT reponse_ibfk_1 FOREIGN KEY (Id_Reclamation) REFERENCES reclamation (IdReclamation) ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE seance DROP FOREIGN KEY seance_ibfk_1');
         $this->addSql('ALTER TABLE seance DROP FOREIGN KEY seance_ibfk_2');
         $this->addSql('ALTER TABLE seance DROP FOREIGN KEY seance_ibfk_3');
         $this->addSql('ALTER TABLE seance DROP FOREIGN KEY seance_ibfk_1');
         $this->addSql('ALTER TABLE seance DROP FOREIGN KEY seance_ibfk_2');
         $this->addSql('ALTER TABLE seance DROP FOREIGN KEY seance_ibfk_3');
+        $this->addSql('ALTER TABLE seance DROP FOREIGN KEY seance_ibfk_1');
         $this->addSql('ALTER TABLE seance ADD heure_debut TIME DEFAULT NULL, ADD heure_fin TIME DEFAULT NULL, DROP heureDebut, DROP heureFin, CHANGE Description description LONGTEXT DEFAULT NULL, CHANGE Type type VARCHAR(255) DEFAULT NULL, CHANGE LienVideo lien_video VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE seance ADD CONSTRAINT FK_DF7DFD0E289D2ED1 FOREIGN KEY (idCoach) REFERENCES coach (id)');
         $this->addSql('ALTER TABLE seance ADD CONSTRAINT FK_DF7DFD0EC370DA3B FOREIGN KEY (idAdherent) REFERENCES adherent (id)');
@@ -168,11 +155,11 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_DF7DFD0EC370DA3B ON seance (idAdherent)');
         $this->addSql('DROP INDEX planning_id ON seance');
         $this->addSql('CREATE INDEX IDX_DF7DFD0EBB1ADCC6 ON seance (Planning_id)');
-        $this->addSql('ALTER TABLE seance ADD CONSTRAINT seance_ibfk_1 FOREIGN KEY (idAdherent) REFERENCES adherent (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE seance ADD CONSTRAINT seance_ibfk_2 FOREIGN KEY (idCoach) REFERENCES coach (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE seance ADD CONSTRAINT seance_ibfk_3 FOREIGN KEY (Planning_id) REFERENCES planning (id) ON DELETE CASCADE');
-        $this->addSql('DROP INDEX Email ON user');
-        $this->addSql('ALTER TABLE user CHANGE Nom nom VARCHAR(255) DEFAULT NULL, CHANGE Prenom prenom VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE seance ADD CONSTRAINT seance_ibfk_1 FOREIGN KEY (idAdherent) REFERENCES adherent (id) ON DELETE CASCADE');
+        $this->addSql('DROP INDEX email ON user');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON user (email)');
         $this->addSql('ALTER TABLE participation MODIFY id INT NOT NULL');
         $this->addSql('DROP INDEX `primary` ON participation');
         $this->addSql('ALTER TABLE participation DROP FOREIGN KEY participation_ibfk_1');
@@ -190,36 +177,24 @@ final class Version20250320133933 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP TABLE messenger_messages');
-        $this->addSql('ALTER TABLE adherent DROP FOREIGN KEY FK_90D3F060A76ED395');
-        $this->addSql('DROP INDEX IDX_90D3F060A76ED395 ON adherent');
-        $this->addSql('ALTER TABLE adherent DROP user_id, CHANGE id id INT NOT NULL, CHANGE poids Poids FLOAT DEFAULT NULL, CHANGE taille Taille FLOAT DEFAULT NULL, CHANGE genre Genre ENUM(\'Homme\', \'Femme\') DEFAULT NULL, CHANGE objectif_personnelle Objectif_personnelle ENUM(\'Perdre_Poids\', \'Avoir_des_muscles\', \'Relaxation\') DEFAULT NULL, CHANGE niveau_activites Niveau_activites ENUM(\'Debutant\', \'Intermédiaire\', \'Avancé\') DEFAULT NULL');
-        $this->addSql('ALTER TABLE adherent ADD CONSTRAINT adherent_ibfk_1 FOREIGN KEY (id) REFERENCES user (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE adherent DROP FOREIGN KEY FK_90D3F060BF396750');
+        $this->addSql('ALTER TABLE adherent ADD Objectif_personnelle ENUM(\'Perdre_Poids\', \'Avoir_des_muscles\', \'Relaxation\') DEFAULT NULL, ADD Niveau_activites ENUM(\'Debutant\', \'Intermédiaire\', \'Avancé\') DEFAULT NULL, DROP Objectif-personnelle, DROP niveau_activite, DROP nom_entreprise, DROP description_adherent, DROP adresse_adherent, DROP telephone_adherent, CHANGE poids Poids FLOAT DEFAULT NULL, CHANGE taille Taille FLOAT DEFAULT NULL, CHANGE age Age INT DEFAULT NULL, CHANGE genre Genre ENUM(\'Homme\', \'Femme\') DEFAULT NULL');
         $this->addSql('ALTER TABLE admin DROP FOREIGN KEY FK_880E0D76A76ED395');
         $this->addSql('DROP INDEX IDX_880E0D76A76ED395 ON admin');
         $this->addSql('ALTER TABLE admin DROP user_id, CHANGE id id INT NOT NULL');
         $this->addSql('ALTER TABLE admin ADD CONSTRAINT admin_ibfk_1 FOREIGN KEY (id) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE categorie CHANGE nom nom VARCHAR(100) DEFAULT NULL, CHANGE image image VARCHAR(500) NOT NULL');
-        $this->addSql('ALTER TABLE coach DROP FOREIGN KEY FK_3F596DCCA76ED395');
-        $this->addSql('DROP INDEX IDX_3F596DCCA76ED395 ON coach');
-        $this->addSql('ALTER TABLE coach DROP user_id, CHANGE id id INT NOT NULL, CHANGE certificat_valide Certificat_valide TINYINT(1) DEFAULT 0, CHANGE specialite Specialite ENUM(\'musculation\', \'yoga\', \'gymnastique\', \'pilates\', \'danse\') DEFAULT NULL');
-        $this->addSql('ALTER TABLE coach ADD CONSTRAINT coach_ibfk_1 FOREIGN KEY (id) REFERENCES user (id) ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE createurevenement DROP FOREIGN KEY FK_8B6724D4A76ED395');
-        $this->addSql('DROP INDEX IDX_8B6724D4A76ED395 ON createurevenement');
-        $this->addSql('ALTER TABLE createurevenement DROP user_id, CHANGE id id INT NOT NULL, CHANGE description Description TEXT DEFAULT NULL, CHANGE telephone Telephone VARCHAR(20) DEFAULT NULL, CHANGE certificat_valide Certificat_valide TINYINT(1) DEFAULT 0');
-        $this->addSql('ALTER TABLE createurevenement ADD CONSTRAINT createurevenement_ibfk_1 FOREIGN KEY (id) REFERENCES user (id) ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE evenement CHANGE titre titre VARCHAR(100) DEFAULT NULL, CHANGE description description TEXT DEFAULT NULL, CHANGE etat etat ENUM(\'ACTIF\', \'EXPIRE\') DEFAULT NULL, CHANGE prix prix FLOAT NOT NULL, CHANGE type type VARCHAR(100) NOT NULL, CHANGE organisateur organisateur VARCHAR(100) NOT NULL, CHANGE date_debut dateDebut DATE DEFAULT NULL, CHANGE date_fin dateFin DATE NOT NULL, CHANGE capacite_maximale capaciteMaximale INT NOT NULL, CHANGE id_createur_evenement idCreateurEvenement INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE investisseurproduit DROP FOREIGN KEY FK_9F6FEA6CA76ED395');
-        $this->addSql('DROP INDEX IDX_9F6FEA6CA76ED395 ON investisseurproduit');
-        $this->addSql('ALTER TABLE investisseurproduit DROP user_id, CHANGE id id INT NOT NULL, CHANGE description Description TEXT DEFAULT NULL, CHANGE telephone Telephone VARCHAR(20) DEFAULT NULL, CHANGE certificat_valide Certificat_valide TINYINT(1) DEFAULT 0');
-        $this->addSql('ALTER TABLE investisseurproduit ADD CONSTRAINT investisseurproduit_ibfk_1 FOREIGN KEY (id) REFERENCES user (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE coach CHANGE annee_experience Annee_experience INT DEFAULT NULL, CHANGE certificat_valide Certificat_valide TINYINT(1) DEFAULT 0, CHANGE specialite Specialite ENUM(\'musculation\', \'yoga\', \'gymnastique\', \'pilates\', \'danse\') DEFAULT NULL');
+        $this->addSql('ALTER TABLE createurevenement ADD Description TEXT DEFAULT NULL, ADD Adresse VARCHAR(255) DEFAULT NULL, ADD Telephone VARCHAR(20) DEFAULT NULL, DROP description_createur, DROP adresse_createur, DROP telephone_createur, CHANGE nom_organisation Nom_organisation VARCHAR(255) DEFAULT NULL, CHANGE certificat_valide Certificat_valide TINYINT(1) DEFAULT 0');
+        $this->addSql('ALTER TABLE evenement CHANGE titre titre VARCHAR(100) DEFAULT NULL, CHANGE description description TEXT DEFAULT NULL, CHANGE etat etat ENUM(\'ACTIF\', \'EXPIRE\') DEFAULT NULL, CHANGE prix prix FLOAT NOT NULL, CHANGE type type VARCHAR(100) NOT NULL, CHANGE organisateur organisateur VARCHAR(100) NOT NULL');
+        $this->addSql('ALTER TABLE investisseurproduit ADD Description TEXT DEFAULT NULL, ADD Adresse VARCHAR(255) DEFAULT NULL, ADD Telephone VARCHAR(20) DEFAULT NULL, ADD Certificat_valide TINYINT(1) DEFAULT 0, DROP description_investisseur, DROP adresse_investisseur, DROP telephone_investisseur, CHANGE nom_entreprise Nom_entreprise VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE message DROP FOREIGN KEY FK_B6BD307F11839F5B');
         $this->addSql('ALTER TABLE message DROP FOREIGN KEY FK_B6BD307F698D251B');
         $this->addSql('ALTER TABLE message DROP FOREIGN KEY FK_B6BD307F11839F5B');
         $this->addSql('ALTER TABLE message DROP FOREIGN KEY FK_B6BD307F698D251B');
         $this->addSql('ALTER TABLE message CHANGE contenu Contenu TEXT DEFAULT NULL');
-        $this->addSql('ALTER TABLE message ADD CONSTRAINT message_ibfk_2 FOREIGN KEY (Utilisateur_destinataire) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE message ADD CONSTRAINT message_ibfk_1 FOREIGN KEY (Utilisateur_expediteur) REFERENCES user (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE message ADD CONSTRAINT message_ibfk_2 FOREIGN KEY (Utilisateur_destinataire) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('DROP INDEX idx_b6bd307f11839f5b ON message');
         $this->addSql('CREATE INDEX Utilisateur_expediteur ON message (Utilisateur_expediteur)');
         $this->addSql('DROP INDEX idx_b6bd307f698d251b ON message');
@@ -232,8 +207,8 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('ALTER TABLE offrecoach DROP FOREIGN KEY FK_202EA3A34CC8505A');
         $this->addSql('ALTER TABLE offrecoach DROP FOREIGN KEY FK_202EA3A3289D2ED1');
         $this->addSql('ALTER TABLE offrecoach ADD nouveauTarif DOUBLE PRECISION NOT NULL, ADD reservationActuelle INT NOT NULL, ADD reservationMax INT NOT NULL, DROP nouveau_tarif, DROP reservation_actuelle, DROP reservation_max, CHANGE idCoach idCoach INT NOT NULL');
-        $this->addSql('ALTER TABLE offrecoach ADD CONSTRAINT offrecoach_ibfk_1 FOREIGN KEY (offre_id) REFERENCES offre (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE offrecoach ADD CONSTRAINT offrecoach_ibfk_2 FOREIGN KEY (idCoach) REFERENCES coach (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE offrecoach ADD CONSTRAINT offrecoach_ibfk_1 FOREIGN KEY (offre_id) REFERENCES offre (id) ON DELETE CASCADE');
         $this->addSql('DROP INDEX idx_202ea3a3289d2ed1 ON offrecoach');
         $this->addSql('CREATE INDEX idCoach ON offrecoach (idCoach)');
         $this->addSql('DROP INDEX idx_202ea3a34cc8505a ON offrecoach');
@@ -253,6 +228,7 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('CREATE INDEX offre_id ON offreproduit (offre_id)');
         $this->addSql('ALTER TABLE offreproduit ADD CONSTRAINT FK_B71C6B8F4CC8505A FOREIGN KEY (offre_id) REFERENCES offre (id)');
         $this->addSql('ALTER TABLE offreproduit ADD CONSTRAINT FK_B71C6B8F391C87D5 FOREIGN KEY (idProduit) REFERENCES produit (id)');
+        $this->addSql('ALTER TABLE paiement_planning DROP FOREIGN KEY FK_1E3E47CCC0081CF5');
         $this->addSql('ALTER TABLE paiement_planning DROP FOREIGN KEY FK_1E3E47CCC0081CF5');
         $this->addSql('ALTER TABLE paiement_planning DROP FOREIGN KEY FK_1E3E47CC84425363');
         $this->addSql('ALTER TABLE paiement_planning CHANGE etat_paiement etat_paiement ENUM(\'PAYE\', \'EN_ATTENTE\') DEFAULT \'EN_ATTENTE\' NOT NULL, CHANGE id_adherent id_adherent INT NOT NULL, CHANGE id_planning id_planning INT NOT NULL');
@@ -318,10 +294,10 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('ALTER TABLE reclamation ADD typeR ENUM(\'PRODUIT\', \'COACH\', \'ADHERENT\', \'EVENEMENT\') DEFAULT NULL, DROP type_r, CHANGE description description TEXT DEFAULT NULL, CHANGE Id_adherent Id_adherent INT NOT NULL, CHANGE id_reclamation IdReclamation INT AUTO_INCREMENT NOT NULL');
         $this->addSql('ALTER TABLE reclamation ADD CONSTRAINT reclamation_ibfk_1 FOREIGN KEY (Id_coach) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE reclamation ADD PRIMARY KEY (IdReclamation)');
-        $this->addSql('DROP INDEX idx_ce60640428aa4eaa ON reclamation');
-        $this->addSql('CREATE INDEX Id_destinataire ON reclamation (Id_coach)');
         $this->addSql('DROP INDEX idx_ce60640446949322 ON reclamation');
         $this->addSql('CREATE INDEX fk_reclamateur ON reclamation (Id_adherent)');
+        $this->addSql('DROP INDEX idx_ce60640428aa4eaa ON reclamation');
+        $this->addSql('CREATE INDEX Id_destinataire ON reclamation (Id_coach)');
         $this->addSql('ALTER TABLE reclamation ADD CONSTRAINT FK_CE60640428AA4EAA FOREIGN KEY (Id_coach) REFERENCES user (id)');
         $this->addSql('ALTER TABLE reclamation ADD CONSTRAINT FK_CE60640446949322 FOREIGN KEY (Id_adherent) REFERENCES user (id)');
         $this->addSql('ALTER TABLE reponse DROP FOREIGN KEY FK_5FB6DEC79D8A5EFC');
@@ -338,9 +314,9 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('ALTER TABLE seance DROP FOREIGN KEY FK_DF7DFD0EC370DA3B');
         $this->addSql('ALTER TABLE seance DROP FOREIGN KEY FK_DF7DFD0EBB1ADCC6');
         $this->addSql('ALTER TABLE seance ADD heureDebut TIME DEFAULT NULL, ADD heureFin TIME DEFAULT NULL, DROP heure_debut, DROP heure_fin, CHANGE description Description TEXT DEFAULT NULL, CHANGE type Type ENUM(\'EN_DIRECT\', \'ENREGISTRE\') DEFAULT NULL, CHANGE lien_video LienVideo VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE seance ADD CONSTRAINT seance_ibfk_1 FOREIGN KEY (idAdherent) REFERENCES adherent (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE seance ADD CONSTRAINT seance_ibfk_2 FOREIGN KEY (idCoach) REFERENCES coach (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE seance ADD CONSTRAINT seance_ibfk_3 FOREIGN KEY (Planning_id) REFERENCES planning (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE seance ADD CONSTRAINT seance_ibfk_1 FOREIGN KEY (idAdherent) REFERENCES adherent (id) ON DELETE CASCADE');
         $this->addSql('DROP INDEX idx_df7dfd0ec370da3b ON seance');
         $this->addSql('CREATE INDEX idAdherent ON seance (idAdherent)');
         $this->addSql('DROP INDEX idx_df7dfd0e289d2ed1 ON seance');
@@ -350,7 +326,7 @@ final class Version20250320133933 extends AbstractMigration
         $this->addSql('ALTER TABLE seance ADD CONSTRAINT FK_DF7DFD0E289D2ED1 FOREIGN KEY (idCoach) REFERENCES coach (id)');
         $this->addSql('ALTER TABLE seance ADD CONSTRAINT FK_DF7DFD0EC370DA3B FOREIGN KEY (idAdherent) REFERENCES adherent (id)');
         $this->addSql('ALTER TABLE seance ADD CONSTRAINT FK_DF7DFD0EBB1ADCC6 FOREIGN KEY (Planning_id) REFERENCES planning (id)');
-        $this->addSql('ALTER TABLE user CHANGE nom Nom VARCHAR(100) DEFAULT NULL, CHANGE prenom Prenom VARCHAR(100) DEFAULT NULL');
+        $this->addSql('DROP INDEX uniq_8d93d649e7927c74 ON user');
         $this->addSql('CREATE UNIQUE INDEX Email ON user (Email)');
     }
 }

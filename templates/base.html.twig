@@ -7,29 +7,59 @@
     <meta name="keywords" content="Gym, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Gym | Template</title>
+
     <title>{% block title %}Home Coachini{% endblock %}</title>
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css?family=Muli:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600,700&display=swap" rel="stylesheet">
     {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
         <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.css" rel="stylesheet">
     {% endblock %}
 
 
     <!-- Css Styles -->
-    {% block css%}
-        <link rel="stylesheet" href="{{asset( 'css/bootstrap.min.css' )}}" >
-        <link rel="stylesheet" href="{{asset( 'css/flaticon.css') }}" >
+    {% block css %}
+        <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" >
+        <link rel="stylesheet" href="{{ asset('css/flaticon.css') }}" >
         <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/owl.carousel.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/barfiller.css') }}" >
         <link rel="stylesheet" href="{{ asset('css/magnific-popup.css') }}" >
         <link rel="stylesheet" href="{{ asset('css/slicknav.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/style.css' )}}" >
-
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}" >
     {% endblock %}
 </head>
+
+<style>
+    .alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        min-width: 300px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    .btn-close {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+</style>
 
 <body>
 
@@ -51,12 +81,42 @@
         </div>
         <nav class="canvas-menu mobile-menu">
             <ul>
+
+                <li><a href="{{ path('app_home') }}">Home</a></li>
+                <li><a href="{{ path('app_about') }}">About Us</a></li>
+                <li><a href="{{ path('app_classes') }}">Classes</a></li>
+                <li><a href="{{ path('app_services') }}">Services</a></li>
+                <li><a href="{{ path('app_home_team') }}">Our Team</a></li>
+                {% if app.user %}
+                    {#                    <li><a href="{{ path('app_profile') }}">Mon Profil</a></li>#}
+                    <li><a href="{{ path('app_logout') }}" id="logout-btn-mobile">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{{ path('app_login') }}">Connexion</a></li>
+                    <li><a href="{{ path('app_r') }}">Inscription</a></li>
+                {% endif %}
+                <li><a href="#">Pages</a>
+                    <ul class="dropdown">
+                        <li><a href="{{ path('app_about') }}">About us</a></li>
+                        <li><a href="{{ path('app_gym') }}">My Gym Partner</a></li>
+
+                        <li><a href="{{ path('app_timetable') }}">Classes timetable</a></li>
+                        <li><a href="{{ path('bmi_calculator') }}">Bmi calculate</a></li>
+                        <li><a href="{{ path('app_team') }}">Mon Profile</a></li>
+                        <li><a href="{{ path('app_team') }}">Our team</a></li>
+                        <li><a href="{{ path('app_gallery') }}">Gallery</a></li>
+                        <li><a href="{{ path('app_blog') }}">Our blog</a></li>
+                        <li><a href="{{ path('app_404') }}">404</a></li>
+                    </ul>
+                </li>
+                <li><a href="{{ path('app_contact') }}">Contact</a></li>
+
                 <li><a href="./index.html">Home</a></li>
                 <li><a href="./about-us.html">Planning</a></li>
                 <li><a href="./classes.html">Produit</a></li>
                 <li><a href="./services.html">Evenement</a></li>
                 <li><a href="./team.html">Réclamation</a></li>
-                <li><a href="./contact.html">Offre</a></li>
+                <li><a href="{{ path('offre_list') }}">Offre</a></li>
+
             </ul>
         </nav>
         <div id="mobile-menu-wrap"></div>
@@ -76,19 +136,66 @@
                 <div class="col-lg-3">
                     <div class="logoo">
                         <a href="./index.html">
-                            <img src="{{asset('img/logoo.png')}}" alt="">
+                            <img src="{{ asset('img/logoo.png') }}" alt="">
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <nav class="nav-menu">
                         <ul>
-                            <li class="active"><a href="./index.html">Home</a></li>
-                            <li><a href="./about-us.html">Planning</a></li>
-                            <li><a href="./class-details.html">Produit</a></li>
-                            <li><a href="./services.html">Evénement</a></li>
-                            <li><a href="./team.html">Offre</a></li>
-                            <li><a href="./contact.html">Réclamation</a></li>
+
+                            <li class="active"><a href="{{ path('app_homee') }}">Home</a></li>
+                            <li><a href="{{ path('app_about') }}">About Us</a></li>
+                            <li><a href="{{ path('app_classes') }}">Classes</a></li>
+                            <li><a href="{{ path('app_services') }}">Services</a></li>
+                            <li><a href="{{ path('app_team') }}">Our Team</a></li>
+                            {% if app.user %}
+                                {#                                <li><a href="{{ path('app_profile') }}">Mon Profil</a></li>#}
+                                <li><a href="{{ path('app_logout') }}" id="logout-btn">Déconnexion</a></li>
+                            {% else %}
+                                <li><a href="{{ path('app_login') }}">Connexion</a></li>
+                                <li><a href="{{ path('app_r') }}">Inscription</a></li>
+                            {% endif %}
+                            <li><a href="#">Pages</a>
+                                <ul class="dropdown">
+                                    <li><a href="./about-us.html">About us</a></li>
+                                    <li><a href="{{ path('app_gym') }}">My Gym Partner</a></li>
+                                    <li><a href="./class-timetable.html">Classes timetable</a></li>
+                                    <li><a href="{{ path('bmi_calculator') }}">Bmi calculate</a></li>
+                                    <li><a href="{{ path('app_profile') }}">Mon Profile</a></li>
+                                    <li><a href="./team.html">App Guide</a></li>
+                                    <li><a href="{{ path('app_home_team') }}">Our team</a></li>
+                                    <li><a href="./gallery.html">Gallery</a></li>
+                                    <li><a href="./blog.html">Our blog</a></li>
+                                    <li><a href="./404.html">404</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./contact.html">Contact</a></li>
+
+{#                            <li><a href="./class-details.html">Planning</a></li>#}
+                            {% if is_granted('ROLE_COACH') %}
+                                <li><a href="{{ path('app_afficher_plan') }}">Planning</a></li>
+                            {% elseif is_granted('ROLE_ADHERENT') %}
+                                <li><a href="{{ path('app_afficher_planAdr') }}">Planning</a></li>
+                            {% endif %}
+
+
+
+
+{#                            <li><a href="./class-details.html">Produit</a></li>#}
+                            {% if is_granted('ROLE_INVESTISSEUR') %}
+                                <li><a href="{{ path('app_afficher_produit') }}">Produit</a></li>
+                                {% if app.request.attributes.get('_route') == 'app_afficher_produit' %}
+                                    <li><a href="{{ path('app_afficher_categorie') }}">Categorie</a></li>
+                                {% endif %}
+                            {% elseif is_granted('ROLE_ADHERENT') %}
+                                <li><a href="{{ path('app_afficher_panier') }}">Produit</a></li>
+                            {% endif %}
+
+                            <li><a href="{{ path('app_events') }}">Evénement</a></li>
+                            <li><a href="{{ path('offre_list') }}">Offre</a></li>
+                            <li><a href={{ path('app_reclamation_index') }}>Réclamation</a></li>
+
                         </ul>
                     </nav>
                 </div>
@@ -114,14 +221,27 @@
     <!-- Header End -->
 {% endblock %}
 
+{% block bodyy %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
 
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endblock %}
 
 {% block Hero_Section_Begin %}
-
     <!-- Hero Section Begin -->
     <section class="hero-section">
         <div class="hs-slider owl-carousel">
-            <div class="hs-item set-bg" data-setbg="{{asset('img/hero/hero-1.jpg')}}">
+            <div class="hs-item set-bg" data-setbg="{{ asset('img/hero/hero-1.jpg') }}">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-6 offset-lg-6">
@@ -134,7 +254,7 @@
                     </div>
                 </div>
             </div>
-            <div class="hs-item set-bg" data-setbg="{{asset('img/hero/hero-2.jpg')}}">
+            <div class="hs-item set-bg" data-setbg="{{ asset('img/hero/hero-2.jpg') }}">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-6 offset-lg-6">
@@ -152,10 +272,91 @@
     <!-- Hero Section End -->
 {% endblock %}
 
+{% block body %}
 
-{% block body %}{% endblock %}
+{% endblock %}
 
 
+
+{#{% block footer %}#}
+{#    <!-- Footer Section Begin -->#}
+{#    <section class="footer-section">#}
+{#        <div class="container">#}
+{#            <div class="row">#}
+{#                <div class="col-lg-4">#}
+{#                    <div class="fs-about">#}
+{#                        <div class="fa-logo">#}
+
+{#                            <a href="#"><img src="{{ asset('img/logoo1.png') }}" alt=""></a>#}
+
+{#                            <a href="#"><img src="{{asset('img/logoo.png')}}" alt=""></a>#}
+
+{#                        </div>#}
+{#                        <p>Coachini est une plateforme innovante dédiée aux coachs et aux adhérents, offrant des séances personnalisées, un suivi efficace et une gestion simplifiée des entraînements. </p>#}
+{#                        <div class="fa-social">#}
+{#                            <a href="#"><i class="fa fa-facebook"></i></a>#}
+{#                            <a href="#"><i class="fa fa-twitter"></i></a>#}
+{#                            <a href="#"><i class="fa fa-youtube-play"></i></a>#}
+{#                            <a href="#"><i class="fa fa-instagram"></i></a>#}
+{#                            <a href="#"><i class="fa  fa-envelope-o"></i></a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-2 col-md-3 col-sm-6">#}
+{#                    <div class="fs-widget">#}
+{#                        <h4>Useful links</h4>#}
+{#                        <ul>#}
+{#                            <li><a href="#">About</a></li>#}
+{#                            <li><a href="#">Blog</a></li>#}
+{#                            <li><a href="#">Classes</a></li>#}
+{#                            <li><a href="#">Contact</a></li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-2 col-md-3 col-sm-6">#}
+{#                    <div class="fs-widget">#}
+{#                        <h4>Support</h4>#}
+{#                        <ul>#}
+{#                            <li><a href="#">Login</a></li>#}
+{#                            <li><a href="#">My account</a></li>#}
+{#                            <li><a href="#">Subscribe</a></li>#}
+{#                            <li><a href="#">Contact</a></li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-4 col-md-6">#}
+{#                    <div class="fs-widget">#}
+{#                        <h4>Tips & Guides</h4>#}
+{#                        <div class="fw-recent">#}
+{#                            <h6><a href="#">Physical fitness may help prevent depression, anxiety</a></h6>#}
+{#                            <ul>#}
+{#                                <li>3 min read</li>#}
+{#                                <li>20 Comment</li>#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                        <div class="fw-recent">#}
+{#                            <h6><a href="#">Fitness: The best exercise to lose belly fat and tone up...</a></h6>#}
+{#                            <ul>#}
+{#                                <li>3 min read</li>#}
+{#                                <li>20 Comment</li>#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="row">#}
+{#                <div class="col-lg-12 text-center">#}
+{#                    <div class="copyright-text">#}
+{#                        <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->#}
+{#                            Copyright ©<script>document.write(new Date().getFullYear());</script> All rights reserved | by <a href="https://colorlib.com" target="_blank">Team Coachini</a>#}
+{#                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </section>#}
+{#    <!-- Footer Section End -->#}
+{#{% endblock %}#}
 {% block footer %}
     <!-- Footer Section Begin -->
     <section class="footer-section">
@@ -234,9 +435,59 @@
 
 
 <!-- Js Plugins -->
-
 {% block js %}
-    <script src="{{asset('js/jquery-3.3.1.min.js')}}"></script>
+
+    <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('js/masonry.pkgd.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.barfiller.js') }}"></script>
+    <script src="{{ asset('js/jquery.slicknav.js') }}"></script>
+    <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}"></script>
+    <!-- Ajout de SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{#{% endblock %}#}
+
+<script>
+    // Fermer automatiquement les messages flash après 5 secondes
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function (alert) {
+            setTimeout(function () {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        });
+
+        // Gestion de la popup de déconnexion pour le menu principal et mobile
+        const logoutBtn = document.getElementById('logout-btn');
+        const logoutBtnMobile = document.getElementById('logout-btn-mobile');
+
+        function attachLogoutHandler(btn) {
+            if (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Voulez-vous vraiment vous déconnecter ?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Oui',
+                        cancelButtonText: 'Non',
+                        background: '#1a1a1a',
+                        color: '#fff',
+                        confirmButtonColor: '#FF6B00',
+                        cancelButtonColor: '#d33'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = btn.getAttribute('href');
+                        }
+                    });
+                });
+            }
+        }
+
+    <script src="{{asset('js/jquery-3.3.1.min.js')}}"> </script>
     <script src="{{asset('js/bootstrap.min.js')}}"></script>
     <script src="{{asset('js/jquery.magnific-popup.min.js')}}"></script>
     <script src="{{asset('js/masonry.pkgd.min.js')}}"></script>
@@ -249,9 +500,15 @@
 {% endblock %}
 
 {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
     <!-- Les scripts JavaScript sont inclus ici -->
 {% endblock %}
 
+
+        attachLogoutHandler(logoutBtn);
+        attachLogoutHandler(logoutBtnMobile);
+    });
+</script>
 
 </body>
 

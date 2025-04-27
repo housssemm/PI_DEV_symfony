@@ -1,0 +1,30 @@
+{% extends '../base.html.twig' %}
+
+{% block title %}Accueil - Coachini{% endblock %}
+
+{% block body %}
+    <h1>Bienvenue sur Coachini</h1>
+    <p>Vous êtes connecté !</p>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            {% for message in app.flashes('success') %}
+            Swal.fire({
+                icon: 'success',
+                title: 'Connexion réussie !',
+                text: '{{ message }}',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                background: '#1a1a1a',
+                color: '#fff',
+                toast: true,
+                position: 'top-end'
+            });
+            {% endfor %}
+        });
+    </script>
+{% endblock %}

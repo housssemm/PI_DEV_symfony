@@ -142,7 +142,7 @@
 
         {# En-tête du formulaire #}
         <div class="form-header">
-            <h2>Modifier la Séance</h2>
+            <h2> Modifier Séance</h2>
             <div class="form-divider"></div>
         </div>
 
@@ -151,13 +151,13 @@
             <div class="form-group">
                 {{ form_label(form.Titre, 'Titre') }}
                 {{ form_widget(form.Titre, {'attr': {'class': 'form-control'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.Titre) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Titre) }}</div>
             </div>
 
             <div class="form-group">
                 {{ form_label(form.Description, 'Description') }}
                 {{ form_widget(form.Description, {'attr': {'class': 'form-control'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.Description) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Description) }}</div>
             </div>
         </div>
 
@@ -166,13 +166,13 @@
             <div class="form-group">
                 {{ form_label(form.Date, 'Date') }}
                 {{ form_widget(form.Date, {'attr': {'class': 'form-control'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.Date) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Date) }}</div>
             </div>
 
             <div class="form-group">
                 {{ form_label(form.Type, 'Type') }}
                 {{ form_widget(form.Type, {'attr': {'class': 'form-select', 'id': 'typeSeance'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.Type) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Type) }}</div>
             </div>
         </div>
 
@@ -180,6 +180,7 @@
             <div class="form-group" style="flex: 1;">
                 {{ form_label(form.LienVideo, 'Lien Vidéo') }}
                 {{ form_widget(form.LienVideo, {'attr': {'class': 'form-control'}}) }}
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.LienVideo) }}</div>
             </div>
 
             <div class="form-group" id="videoFileGroup" style="flex: 1; display: none;">
@@ -195,40 +196,27 @@
             <div class="form-group">
                 {{ form_label(form.heureDebut, 'Heure Début') }}
                 {{ form_widget(form.heureDebut, {'attr': {'class': 'form-control time-picker'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.heureDebut) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.heureDebut) }}</div>
             </div>
 
             <div class="form-group">
                 {{ form_label(form.heureFin, 'Heure Fin') }}
                 {{ form_widget(form.heureFin, {'attr': {'class': 'form-control time-picker'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.heureFin) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.heureFin) }}</div>
             </div>
         </div>
 
-        {# Ligne pour Coach et Adhérent #}
-        <div class="form-row" style="display: none;">
+        {# Ligne pour Adhérent #}
+        <div class="form-row">
             <div class="form-group">
-                {{ form_label(form.coach, 'Coach') }}
-                {{ form_widget(form.coach, {'attr': {'class': 'form-select'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.coach) }}</div>
-            </div>
-
-            <div class="form-group" style="display: none;" >
                 {{ form_label(form.adherent, 'Adhérent') }}
                 {{ form_widget(form.adherent, {'attr': {'class': 'form-select'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.adherent) }}</div>
+                <div class="invalid-feedback" style="display: block">{{ form_errors(form.adherent) }}</div>
             </div>
-        </div>
-
-        {# Champ Planning #}
-        <div class="form-group" style="display: none;">
-            {{ form_label(form.planning, 'Planning') }}
-            {{ form_widget(form.planning, {'attr': {'class': 'form-select'}}) }}
-            <div class="invalid-feedback">{{ form_errors(form.planning) }}</div>
         </div>
 
         {# Bouton de soumission #}
-        <button type="submit" class="btn btn-primary">modifier</button>
+        <button type="submit" class="btn btn-primary">Modifier</button>
 
         {# Fin du formulaire #}
         {{ form_end(form) }}

@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PlanningAdherent{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Inclusion de Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- FullCalendar -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script src="{{ asset('js/exercice.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendrier');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                aspectRatio: 1.6,
+                locale: 'fr',
+                timeZone: 'Africa/Tunis',
+                headerToolbar: {
+                    start: 'prev,next today',
+                    center: 'title',
+                    end: 'dayGridMonth,timeGridWeek'
+                },
+                dateClick: function(info) {
+                    const dateStr = info.dateStr;
+                    const container = document.getElementById('seances-list');
+
+                    container.innerHTML = '<div class="loading-spinner"></div>';
+
+                    fetch(`/planningAdherent/day-json/${dateStr}`)
+                        .then(async response => {
+                            const text = await response.text();
+                            try {
+                                return JSON.parse(text); // Double parsing pour éviter les erreurs
+                            } catch {
+                                throw new Error(text);
+                            }
+                        })
+                        .then(data => {
+                            container.innerHTML = data.map(seance => `
+                             <div class="seance-card ${seance.type.toLowerCase().replace('_', '-')}" data-id="${seance.id}">
+                              <div class="card-header">
+                             <h3 class="title">${seance.titre}</h3>
+                            <span class="badge ${seance.type === 'EN_DIRECT' ? 'live' : 'recorded'}">
+                               ${seance.type === 'EN_DIRECT' ? '🔴 EN DIRECT' : '⏺ ENREGISTRE'}
+                             </span>
+                            </div>
+
+                            <div class="card-body">
+                            <div class="meta-info">
+                             <div class="date-time">
+                              <span class="date">📅 ${seance.date}</span>
+                              <span class="time">⌚ ${seance.heureDebut} - ${seance.heureFin}</span>
+                                 </div>
+                             </div>
+
+                                <div class="description">
+                           📝 ${seance.description || 'Aucune description'}
+                                </div>
+
+                             <div class="participants">
+                                <div class="coach">
+                                  👨 ${seance.coach}
+                                 </div>
+                          </div>
+                          <div class="actions" style="text-align: right; margin-top: 10px;">
+                          <button class="btn" style="background-color: #ff6600; color: white" onclick="window.location.href='/seance/participer/${seance.id}'">
+                              Participer
+                            </button>
+                </div>
+                        </div>
+                     </div>
+    `).join('');
+                        })
+                        .catch(error => {
+                            container.innerHTML = `<div class="error animate__animated animate__shakeX">⚠️ ${error.message}</div>`;
+                        });
+                }
+            });
+            calendar.render(); });
+    </script>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ asset('css/plan.css') }}">
+{% endblock %}
+
+{% block Hero_Section_Begin %}
+    <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb-bg.jpg">
+        <div class="container" >
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2 style="margin-bottom: 10px;">DÉTAILS DE PLANNING</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+
+ {% block body %}
+     {# Calendrier #}
+     <div  id='calendrier'></div>
+     <h2 style="text-align: center; color: white">listes des Séances</h2>
+     <div id="seances-list" class="mt-4"></div>
+
+     <h1 style="text-align: center; color: white">Détection d'exercice</h1>
+     <div id="video-container" style="color: white">
+         <img id="video-frame" src="" alt="Flux vidéo désactivé" width="640" height="480">
+     </div>
+     <div class="btn-container" style="text-align: center;">
+         <button onclick="startCamera()">Démarrer</button>
+         <button onclick="stopCamera()">Arrêter</button>
+     </div>
+ {% endblock %}

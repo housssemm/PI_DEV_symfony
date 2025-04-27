@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Categorie;
 use App\Form\CategorieType;
 use App\Repository\CategorieRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,25 +32,27 @@ final class CategorieController extends AbstractController
     public function AjouterCategorie(ManagerRegistry $doctrine, Request $request): Response
     {
         $categorie = new Categorie();
-        $form = $this->createForm(CategorieType::class, $categorie);
+        $form = $this->createForm(CategorieType::class, $categorie, [
+            'validation_groups' => ['creation']
+        ]);
         $form->handleRequest($request);
 
+        // Vérification du formulaire
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupération du nom de l'image depuis le champ personnalisé "imageName"
-            $imageName = $request->request->get('imageName');
-
-            if ($imageName)
-                $categorie->setImage($imageName);
-
+            $categorie->setImage($form->get('imageFile')->getData()->getClientOriginalName());
             $em = $doctrine->getManager();
             $em->persist($categorie);
             $em->flush();
+
+            $this->addFlash('success', 'Catégorie ajoutée avec succès.');
             return $this->redirectToRoute('app_afficher_categorie');
         }
+
         return $this->renderForm('categorie/ajouterCategorie.html.twig', [
             'form' => $form,
         ]);
     }
+
 
     #[Route('/supprimer/{id}',name:'app_supprimer_categorie')]
     public function SupprimerCategorie($id,CategorieRepository $repocateg,ManagerRegistry $doctrine): Response
@@ -58,36 +61,46 @@ final class CategorieController extends AbstractController
         $em=$doctrine->getManager();
         $em->remove($categorie);
         $em->flush();
+
+        $this->addFlash('success', 'Catégorie supprimée avec succès.');
         return $this->redirectToRoute('app_afficher_categorie');
     }
     #[Route('/modifier/{id}', name: 'app_modifier_categorie')]
-    public function ModifierCategorie(ManagerRegistry $doctrine, Request $request, $id, CategorieRepository $repocategorie): Response
+    public function ModifierCategorie(Request $request, EntityManagerInterface $em, CategorieRepository $repo, $id): Response
     {
-        $Categorie = $repocategorie->find($id);
-        $oldImage = $Categorie->getImage(); // Récupérer l'ancienne image
-        $form = $this->createForm(CategorieType::class, $Categorie);
+        $categorie = $repo->find($id);
+        if (!$categorie) {
+            throw $this->createNotFoundException('Catégorie non trouvée.');
+        }
+        // Conservez l'ancienne image
+        $oldImage = $categorie->getImage();
+
+        // Pour la modification, on utilise le groupe "Update" afin de ne pas requérir le champ imageFile.
+        $form = $this->createForm(CategorieType::class, $categorie, [
+            'validation_groups' => ['Update']
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer la valeur du champ personnalisé "imageName" depuis la requête
-            $newImageName = $request->request->get('imageName', '');
+            $imageFile = $form->get('imageFile')->getData();
 
-            if ($newImageName) {
-                $Categorie->setImage($newImageName);
+            if ($imageFile) {
+                // Si l'utilisateur fournit un nouveau fichier, utiliser le nom du fichier uploadé.
+                $categorie->setImage($imageFile->getClientOriginalName());
             } else {
-                $Categorie->setImage($oldImage);
+                // Sinon, conserver l'image existante.
+                $categorie->setImage($oldImage);
             }
-
-            $em = $doctrine->getManager();
-            $em->persist($Categorie);
+            $em->persist($categorie);
             $em->flush();
 
+            $this->addFlash('success', 'Catégorie modifiée avec succès.');
             return $this->redirectToRoute('app_afficher_categorie');
         }
 
         return $this->renderForm('categorie/modifierCategorie.html.twig', [
             'f' => $form->createView(),
-            'categorie' => $Categorie
+            'categorie' => $categorie
         ]);
     }
 }

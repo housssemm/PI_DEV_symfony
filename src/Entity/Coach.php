@@ -5,61 +5,38 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
 use App\Repository\CoachRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: CoachRepository::class)]
 #[ORM\Table(name: 'coach')]
-class Coach
+class Coach extends User
 {
-    // Primary Key - ID
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
+    #[ORM\Column]
+    #[Assert\NotBlank(message: 'L\'année d\'expérience ne peut pas être vide')]
+    #[Assert\PositiveOrZero(message: 'L\'année d\'expérience doit être positive ou nulle')]
+    private ?int $anneeExperience = null;
 
-    public function getId(): ?int
+    public function getAnneeExperience(): ?int
     {
-        return $this->id;
+        return $this->anneeExperience;
     }
 
-    // ManyToOne relationship with User
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'coachs')]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]//////////important
-    private ?User $user = null;
-
-    public function getUser(): ?User
+    public function setAnneeExperience(int $anneeExperience): static
     {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $Annee_experience = null;
-
-    public function getAnnee_experience(): ?int
-    {
-        return $this->Annee_experience;
-    }
-
-    public function setAnnee_experience(?int $Annee_experience): self
-    {
-        $this->Annee_experience = $Annee_experience;
+        $this->anneeExperience = $anneeExperience;
         return $this;
     }
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $Certificat_valide = null;
 
-    public function isCertificat_valide(): ?bool
+    public function getCertificat_valide(): ?bool
     {
         return $this->Certificat_valide;
     }
+
 
     public function setCertificat_valide(?bool $Certificat_valide): self
     {
@@ -67,17 +44,22 @@ class Coach
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $Specialite = null;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'La spécialité ne peut pas être vide')]
+    #[Assert\Choice(
+        choices: ['musculation', 'yoga', 'gymnastique', 'pilates', 'danse'],
+        message: 'Choisissez une spécialité valide'
+    )]
+    private ?string $specialite = null;
 
     public function getSpecialite(): ?string
     {
-        return $this->Specialite;
+        return $this->specialite;
     }
 
-    public function setSpecialite(?string $Specialite): self
+    public function setSpecialite(string $specialite): static
     {
-        $this->Specialite = $Specialite;
+        $this->specialite = $specialite;
         return $this;
     }
 
@@ -89,23 +71,23 @@ class Coach
         return $this->Note;
     }
 
-    public function setNote(?int $Note): self
+    public function setNote(?int $Note): static
     {
         $this->Note = $Note;
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $CV = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $cv = null;
 
-    public function getCV(): ?string
+    public function getCv(): ?string
     {
-        return $this->CV;
+        return $this->cv;
     }
 
-    public function setCV(string $CV): self
+    public function setCv(?string $cv): static
     {
-        $this->CV = $CV;
+        $this->cv = $cv;
         return $this;
     }
 
@@ -199,29 +181,4 @@ class Coach
         $this->getSeances()->removeElement($seance);
         return $this;
     }
-
-    public function getAnneeExperience(): ?int
-    {
-        return $this->Annee_experience;
-    }
-
-    public function setAnneeExperience(?int $Annee_experience): static
-    {
-        $this->Annee_experience = $Annee_experience;
-
-        return $this;
-    }
-
-    public function isCertificatValide(): ?bool
-    {
-        return $this->Certificat_valide;
-    }
-
-    public function setCertificatValide(?bool $Certificat_valide): static
-    {
-        $this->Certificat_valide = $Certificat_valide;
-
-        return $this;
-    }
-
 }
