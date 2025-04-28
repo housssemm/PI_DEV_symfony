@@ -4,14 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-
-    "content-hash": "29ce9637211bb2bba91d1d9ff956c449",
-
-
-    "content-hash": "087050fe2ee764ebf7639c569cf2e522",
-
-    "content-hash": "004494098f0dfb2f05e73036608daf98",
-
+    "content-hash": "ea1a0b2f4345e1650586ba062e001770",
     "packages": [
         {
             "name": "composer/semver",
@@ -1933,6 +1926,67 @@
             "time": "2025-03-27T12:30:47+00:00"
         },
         {
+            "name": "mailjet/mailjet-apiv3-php",
+            "version": "v1.6.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mailjet/mailjet-apiv3-php.git",
+                "reference": "c31917a8fcf5eb04363aa2af933ab560b0a934ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mailjet/mailjet-apiv3-php/zipball/c31917a8fcf5eb04363aa2af933ab560b0a934ea",
+                "reference": "c31917a8fcf5eb04363aa2af933ab560b0a934ea",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^7.4.4",
+                "php": "^8.1",
+                "psr/http-client": "^1.0",
+                "symfony/validator": "^6.3|^7.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.4",
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpcompatibility/php-compatibility": "*",
+                "phpstan/phpstan": "^2.0",
+                "phpunit/phpunit": "^11.4.0",
+                "squizlabs/php_codesniffer": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Mailjet": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mailjet",
+                    "email": "dev@mailjet.com",
+                    "homepage": "https://dev.mailjet.com"
+                }
+            ],
+            "description": "PHP wrapper for the Mailjet API",
+            "homepage": "https://github.com/mailjet/mailjet-apiv3-php/",
+            "keywords": [
+                "Mailjet",
+                "api",
+                "email",
+                "php",
+                "v3"
+            ],
+            "support": {
+                "issues": "https://github.com/mailjet/mailjet-apiv3-php/issues",
+                "source": "https://github.com/mailjet/mailjet-apiv3-php/tree/v1.6.5"
+            },
+            "time": "2025-04-19T16:48:36+00:00"
+        },
+        {
             "name": "monolog/monolog",
             "version": "3.8.1",
             "source": {
@@ -2101,56 +2155,6 @@
                 "source": "https://github.com/paragonie/constant_time_encoding"
             },
             "time": "2024-05-08T12:36:18+00:00"
-        },
-        {
-            "name": "paragonie/random_compat",
-            "version": "v9.99.100",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/996434e5492cb4c3edcb9168db6fbb1359ef965a",
-                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">= 7"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.*|5.*",
-                "vimeo/psalm": "^1"
-            },
-            "suggest": {
-                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Paragon Initiative Enterprises",
-                    "email": "security@paragonie.com",
-                    "homepage": "https://paragonie.com"
-                }
-            ],
-            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
-            "keywords": [
-                "csprng",
-                "polyfill",
-                "pseudorandom",
-                "random"
-            ],
-            "support": {
-                "email": "info@paragonie.com",
-                "issues": "https://github.com/paragonie/random_compat/issues",
-                "source": "https://github.com/paragonie/random_compat"
-            },
-            "time": "2020-10-15T08:29:30+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -2845,62 +2849,6 @@
             "time": "2023-04-04T09:54:51+00:00"
         },
         {
-            "name": "psr/link",
-            "version": "2.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/link.git",
-                "reference": "84b159194ecfd7eaa472280213976e96415433f7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/link/zipball/84b159194ecfd7eaa472280213976e96415433f7",
-                "reference": "84b159194ecfd7eaa472280213976e96415433f7",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.0.0"
-            },
-            "suggest": {
-                "fig/link-util": "Provides some useful PSR-13 utilities"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Link\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interfaces for HTTP links",
-            "homepage": "https://github.com/php-fig/link",
-            "keywords": [
-                "http",
-                "http-link",
-                "link",
-                "psr",
-                "psr-13",
-                "rest"
-            ],
-            "support": {
-                "source": "https://github.com/php-fig/link/tree/2.0.1"
-            },
-            "time": "2021-03-11T23:00:27+00:00"
-        },
-        {
             "name": "psr/log",
             "version": "3.0.2",
             "source": {
@@ -2993,6 +2941,65 @@
                 "source": "https://github.com/ralouphie/getallheaders/tree/develop"
             },
             "time": "2019-03-08T08:55:37+00:00"
+        },
+        {
+            "name": "stripe/stripe-php",
+            "version": "v17.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stripe/stripe-php.git",
+                "reference": "01ca9b5fdd899b8e4b69f83b85e09d96f6240220"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/01ca9b5fdd899b8e4b69f83b85e09d96f6240220",
+                "reference": "01ca9b5fdd899b8e4b69f83b85e09d96f6240220",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "3.72.0",
+                "phpstan/phpstan": "^1.2",
+                "phpunit/phpunit": "^5.7 || ^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Stripe\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stripe and contributors",
+                    "homepage": "https://github.com/stripe/stripe-php/contributors"
+                }
+            ],
+            "description": "Stripe PHP Library",
+            "homepage": "https://stripe.com/",
+            "keywords": [
+                "api",
+                "payment processing",
+                "stripe"
+            ],
+            "support": {
+                "issues": "https://github.com/stripe/stripe-php/issues",
+                "source": "https://github.com/stripe/stripe-php/tree/v17.1.1"
+            },
+            "time": "2025-04-05T00:09:14+00:00"
         },
         {
             "name": "symfony/asset",
@@ -5061,89 +5068,6 @@
             "time": "2025-02-26T10:51:37+00:00"
         },
         {
-            "name": "symfony/intl",
-            "version": "v6.4.15",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/intl.git",
-                "reference": "b1d5e8d82615b60f229216edfee0b59e2ef66da6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/b1d5e8d82615b60f229216edfee0b59e2ef66da6",
-                "reference": "b1d5e8d82615b60f229216edfee0b59e2ef66da6",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1"
-            },
-            "require-dev": {
-                "symfony/filesystem": "^5.4|^6.0|^7.0",
-                "symfony/finder": "^5.4|^6.0|^7.0",
-                "symfony/var-exporter": "^5.4|^6.0|^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Intl\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/",
-                    "/Resources/data/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bernhard Schussek",
-                    "email": "bschussek@gmail.com"
-                },
-                {
-                    "name": "Eriksen Costa",
-                    "email": "eriksen.costa@infranology.com.br"
-                },
-                {
-                    "name": "Igor Wiedler",
-                    "email": "igor@wiedler.ch"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Provides access to the localization data of the ICU library",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "i18n",
-                "icu",
-                "internationalization",
-                "intl",
-                "l10n",
-                "localization"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/intl/tree/v6.4.15"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2024-11-08T15:28:48+00:00"
-        },
-        {
             "name": "symfony/mailer",
             "version": "v6.4.18",
             "source": {
@@ -5222,6 +5146,72 @@
                 }
             ],
             "time": "2025-01-24T15:27:15+00:00"
+        },
+        {
+            "name": "symfony/mailjet-mailer",
+            "version": "v6.4.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/mailjet-mailer.git",
+                "reference": "92dc190cb9414e9c404eed5551cca2ffb6ddc336"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/mailjet-mailer/zipball/92dc190cb9414e9c404eed5551cca2ffb6ddc336",
+                "reference": "92dc190cb9414e9c404eed5551cca2ffb6ddc336",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/mailer": "^5.4.21|^6.2.7|^7.0"
+            },
+            "require-dev": {
+                "symfony/http-client": "^5.4|^6.0|^7.0",
+                "symfony/webhook": "^6.3|^7.0"
+            },
+            "type": "symfony-mailer-bridge",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Mailer\\Bridge\\Mailjet\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Mailjet Mailer Bridge",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/mailjet-mailer/tree/v6.4.13"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2024-10-18T07:55:54+00:00"
         },
         {
             "name": "symfony/messenger",
@@ -6255,67 +6245,6 @@
             "time": "2024-09-09T11:45:10+00:00"
         },
         {
-            "name": "symfony/process",
-            "version": "v6.4.19",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/process.git",
-                "reference": "7a1c12e87b08ec9c97abdd188c9b3f5a40e37fc3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/7a1c12e87b08ec9c97abdd188c9b3f5a40e37fc3",
-                "reference": "7a1c12e87b08ec9c97abdd188c9b3f5a40e37fc3",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Process\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Executes commands in sub-processes",
-            "homepage": "https://symfony.com",
-            "support": {
-                "source": "https://github.com/symfony/process/tree/v6.4.19"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-02-04T13:35:48+00:00"
-        },
-        {
             "name": "symfony/property-access",
             "version": "v6.4.18",
             "source": {
@@ -6993,104 +6922,6 @@
                 }
             ],
             "time": "2025-01-28T19:24:43+00:00"
-        },
-        {
-            "name": "symfony/serializer",
-            "version": "v6.4.19",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/serializer.git",
-                "reference": "a221b2f6066af304d760cff7a26f201b4fab4aef"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/serializer/zipball/a221b2f6066af304d760cff7a26f201b4fab4aef",
-                "reference": "a221b2f6066af304d760cff7a26f201b4fab4aef",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1",
-                "symfony/deprecation-contracts": "^2.5|^3",
-                "symfony/polyfill-ctype": "~1.8"
-            },
-            "conflict": {
-                "doctrine/annotations": "<1.12",
-                "phpdocumentor/reflection-docblock": "<3.2.2",
-                "phpdocumentor/type-resolver": "<1.4.0",
-                "symfony/dependency-injection": "<5.4",
-                "symfony/property-access": "<5.4",
-                "symfony/property-info": "<5.4.24|>=6,<6.2.11",
-                "symfony/uid": "<5.4",
-                "symfony/validator": "<6.4",
-                "symfony/yaml": "<5.4"
-            },
-            "require-dev": {
-                "doctrine/annotations": "^1.12|^2",
-                "phpdocumentor/reflection-docblock": "^3.2|^4.0|^5.0",
-                "seld/jsonlint": "^1.10",
-                "symfony/cache": "^5.4|^6.0|^7.0",
-                "symfony/config": "^5.4|^6.0|^7.0",
-                "symfony/console": "^5.4|^6.0|^7.0",
-                "symfony/dependency-injection": "^5.4|^6.0|^7.0",
-                "symfony/error-handler": "^5.4|^6.0|^7.0",
-                "symfony/filesystem": "^5.4|^6.0|^7.0",
-                "symfony/form": "^5.4|^6.0|^7.0",
-                "symfony/http-foundation": "^5.4|^6.0|^7.0",
-                "symfony/http-kernel": "^5.4|^6.0|^7.0",
-                "symfony/messenger": "^5.4|^6.0|^7.0",
-                "symfony/mime": "^5.4|^6.0|^7.0",
-                "symfony/property-access": "^5.4.26|^6.3|^7.0",
-                "symfony/property-info": "^5.4.24|^6.2.11|^7.0",
-                "symfony/translation-contracts": "^2.5|^3",
-                "symfony/uid": "^5.4|^6.0|^7.0",
-                "symfony/validator": "^6.4|^7.0",
-                "symfony/var-dumper": "^5.4|^6.0|^7.0",
-                "symfony/var-exporter": "^5.4|^6.0|^7.0",
-                "symfony/yaml": "^5.4|^6.0|^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Serializer\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Handles serializing and deserializing data structures, including object graphs, into array structures or other formats like XML and JSON.",
-            "homepage": "https://symfony.com",
-            "support": {
-                "source": "https://github.com/symfony/serializer/tree/v6.4.19"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-02-24T08:42:36+00:00"
         },
         {
             "name": "symfony/service-contracts",
@@ -8413,6 +8244,59 @@
             "time": "2025-02-13T08:34:43+00:00"
         },
         {
+            "name": "twilio/sdk",
+            "version": "8.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twilio/twilio-php.git",
+                "reference": "a68a13ed8ddc720d5adb580cbc22b4fd80dc6b38"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/a68a13ed8ddc720d5adb580cbc22b4fd80dc6b38",
+                "reference": "a68a13ed8ddc720d5adb580cbc22b4fd80dc6b38",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^6.3 || ^7.0",
+                "phpunit/phpunit": ">=7.0 < 10"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "An HTTP client to execute the API requests"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Twilio\\": "src/Twilio/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Twilio API Team",
+                    "email": "api@twilio.com"
+                }
+            ],
+            "description": "A PHP wrapper for Twilio's API",
+            "homepage": "https://github.com/twilio/twilio-php",
+            "keywords": [
+                "api",
+                "sms",
+                "twilio"
+            ],
+            "support": {
+                "issues": "https://github.com/twilio/twilio-php/issues",
+                "source": "https://github.com/twilio/twilio-php/tree/8.5.0"
+            },
+            "time": "2025-04-07T15:34:07+00:00"
+        },
+        {
             "name": "webmozart/assert",
             "version": "1.11.0",
             "source": {
@@ -8838,61 +8722,11 @@
                 }
             ],
             "time": "2025-02-14T12:21:59+00:00"
-        },
-        {
-            "name": "theseer/tokenizer",
-            "version": "1.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/theseer/tokenizer.git",
-                "reference": "737eda637ed5e28c3413cb1ebe8bb52cbf1ca7a2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/theseer/tokenizer/zipball/737eda637ed5e28c3413cb1ebe8bb52cbf1ca7a2",
-                "reference": "737eda637ed5e28c3413cb1ebe8bb52cbf1ca7a2",
-                "shasum": ""
-            },
-            "require": {
-                "ext-dom": "*",
-                "ext-tokenizer": "*",
-                "ext-xmlwriter": "*",
-                "php": "^7.2 || ^8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
-            "support": {
-                "issues": "https://github.com/theseer/tokenizer/issues",
-                "source": "https://github.com/theseer/tokenizer/tree/1.2.3"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/theseer",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-03-03T12:36:25+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -8900,6 +8734,6 @@
         "ext-ctype": "*",
         "ext-iconv": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
