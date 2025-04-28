@@ -19,9 +19,81 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Mailjet\Client as MailjetClient;
+use Mailjet\Resources;
+use App\Repository\UserRepository;
+
 final class ParticipantEvenementController extends AbstractController{
 
 
+
+
+//
+//
+//    #[Route('/evenement/participer/{evenementId}', name: 'app_participer_evenement')]
+//    public function participerEvenement(
+//        int $evenementId,
+//        EntityManagerInterface $entityManager,
+//        MailerInterface $mailer // Use the injected mailer
+//    ): Response
+//    {
+//        $user = $this->getUser();
+//        $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId);
+//
+//        if (!$evenement) {
+//            $this->addFlash('error', 'Événement non trouvé.');
+//            return $this->redirectToRoute('app_events');
+//        }
+//
+//        // Check existing participation
+//        $existingParticipation = $entityManager->getRepository(Participantevenement::class)->findOneBy([
+//            'user' => $user,
+//            'evenement' => $evenement,
+//        ]);
+//
+//        if ($existingParticipation) {
+//            $this->addFlash('warning', 'Vous êtes déjà inscrit à cet événement.');
+//            return $this->redirectToRoute('app_event_details', ['id' => $evenementId]);
+//        }
+//
+//        // Register participation
+//        $participant = new Participantevenement();
+//        $participant->setUser($user);
+//        $participant->setEvenement($evenement);
+//        $participant->setDateInscription(new \DateTime());
+//
+//        $entityManager->persist($participant);
+//        $entityManager->flush();
+//
+//
+//
+//            // Send email
+//        $email = (new Email())
+//
+//            ->from('houssemm.labidi@gmail.com')
+//
+//            ->to($user->getEmail())
+//           //->to('farah.benyedder@esprit.tn')
+//            ->subject('Confirmation d\'inscription à l\'événement')
+//            ->html("
+//            <h2>Bonjour {$user->getNom()},</h2>
+//            <p>Vous êtes bien inscrit à l'événement <strong>{$evenement->getTitre()}</strong>.</p>
+//            <p>Date Début: {$evenement->getDateDebut()->format('d/m/Y')}</p>
+//            <p>Statut de paiement : EN ATTENTE</p>
+//            <br><p>Merci pour votre confiance !</p>
+//        ");
+//
+//            try {
+//           $mailer->send($email);
+//                $this->addFlash('success', 'Inscription réussie et e-mail de confirmation envoyé ! ');
+//            } catch (\Throwable $e) {
+//                $this->addFlash('error', 'Erreur lors de l\'envoi de l\'e-mail : ' . $e->getMessage());
+//            }
+//
+//            return $this->redirectToRoute('app_event_details', ['id' => $evenementId]);
+//        }
+//
+//
 
 
 
@@ -30,8 +102,9 @@ final class ParticipantEvenementController extends AbstractController{
     public function participerEvenement(
         int $evenementId,
         EntityManagerInterface $entityManager,
-        MailerInterface $mailer // Use the injected mailer
-    ): Response {
+        MailerInterface $mailer
+    ): Response
+    {
         $user = $this->getUser();
         $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId);
 
@@ -40,7 +113,6 @@ final class ParticipantEvenementController extends AbstractController{
             return $this->redirectToRoute('app_events');
         }
 
-        // Check existing participation
         $existingParticipation = $entityManager->getRepository(Participantevenement::class)->findOneBy([
             'user' => $user,
             'evenement' => $evenement,
@@ -51,7 +123,6 @@ final class ParticipantEvenementController extends AbstractController{
             return $this->redirectToRoute('app_event_details', ['id' => $evenementId]);
         }
 
-        // Register participation
         $participant = new Participantevenement();
         $participant->setUser($user);
         $participant->setEvenement($evenement);
@@ -60,10 +131,13 @@ final class ParticipantEvenementController extends AbstractController{
         $entityManager->persist($participant);
         $entityManager->flush();
 
-        // Send email
+        // Log recipient email for debugging
+        $recipientEmail = $user->getEmail();
+        error_log("Sending email to: $recipientEmail");
+
         $email = (new Email())
-            ->from('maissa.maalej3@gmail.com')
-            ->to($user->getEmail())
+            ->from('houssemm.labidi@gmail.com')
+            ->to('houssemm.labidi@gmail.com')
             ->subject('Confirmation d\'inscription à l\'événement')
             ->html("
             <h2>Bonjour {$user->getNom()},</h2>
@@ -75,15 +149,14 @@ final class ParticipantEvenementController extends AbstractController{
 
         try {
             $mailer->send($email);
-            $this->addFlash('success', 'Inscription réussie et e-mail de confirmation envoyé ! ');
+            $this->addFlash('success', 'Inscription réussie et e-mail de confirmation envoyé !');
         } catch (\Throwable $e) {
+            error_log("Email sending failed: " . $e->getMessage());
             $this->addFlash('error', 'Erreur lors de l\'envoi de l\'e-mail : ' . $e->getMessage());
         }
 
         return $this->redirectToRoute('app_event_details', ['id' => $evenementId]);
     }
-
-
     #[Route('/create-checkout-session/{evenementId}', name: 'app_create_checkout_session', methods: ['POST'])]
     public function createCheckoutSession(
         int $evenementId,
