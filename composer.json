@@ -50,7 +50,6 @@
         "twig/twig": "^2.12|^3.0",
         "twilio/sdk": "^8.5"
 
-        "twig/extra-bundle": "*"
 
     },
     "config": {
