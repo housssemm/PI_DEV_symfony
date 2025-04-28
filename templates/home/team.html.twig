@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html lang="zxx">
+{% extends 'base.html.twig' %}
+    {% block title %}<title>Team</title>{% endblock %}
+    {% block stylesheets %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Gym Template">
-    <meta name="keywords" content="Gym, unica, creative, html">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Gym | Template</title>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css?family=Muli:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600,700&display=swap" rel="stylesheet">
+    {% endblock %}
 
-    <!-- Css Styles -->
+
+    {% block css %}
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" href="css/flaticon.css" type="text/css">
@@ -22,9 +17,10 @@
     <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
-</head>
+    {% endblock %}
 
-<body>
+{% block header %}
+
     <!-- Page Preloder -->
     <div id="preloder">
         <div class="loader"></div>
@@ -124,7 +120,9 @@
         </div>
     </header>
     <!-- Header End -->
+    {% endblock %}
 
+    {% block Hero_Section_Begin %}
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb-bg.jpg">
         <div class="container">
@@ -142,7 +140,8 @@
         </div>
     </section>
     <!-- Breadcrumb Section End -->
-
+    {% endblock %}
+    {% block body %}
     <!-- Team Section Begin -->
     <section class="team-section team-page spad">
         <div class="container">
@@ -162,7 +161,7 @@
                     <div class="ts-item set-bg" data-setbg="img/team/team-1.jpg">
                         <div class="ts_text">
                             <h4>Hamza Lassoued</h4>
-                            <span>Gym Trainer</span>
+                            <span>Developer</span>
                             <div class="tt_social">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter"></i></a>
@@ -176,8 +175,8 @@
                 <div class="col-lg-4 col-sm-6">
                     <div class="ts-item set-bg" data-setbg="img/team/team-2.jpg">
                         <div class="ts_text">
-                            <h4>Mayssa Maalej</h4>
-                            <span>Gym Trainer</span>
+                            <h4>Maissa Maalej</h4>
+                            <span>Developer</span>
                             <div class="tt_social">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter"></i></a>
@@ -192,7 +191,7 @@
                     <div class="ts-item set-bg" data-setbg="img/team/team-3.jpg">
                         <div class="ts_text">
                             <h4>Ghada Maalej</h4>
-                            <span>Gym Trainer</span>
+                            <span>Developer</span>
                             <div class="tt_social">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter"></i></a>
@@ -207,7 +206,7 @@
                     <div class="ts-item set-bg" data-setbg="img/team/team-4.jpg">
                         <div class="ts_text">
                             <h4>Baha Arbi</h4>
-                            <span>Gym Trainer</span>
+                            <span>Developer</span>
                             <div class="tt_social">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter"></i></a>
@@ -222,7 +221,7 @@
                     <div class="ts-item set-bg" data-setbg="img/team/team-5.jpg">
                         <div class="ts_text">
                             <h4>Farah Ben Yedder</h4>
-                            <span>Gym Trainer</span>
+                            <span>Developer</span>
                             <div class="tt_social">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter"></i></a>
@@ -237,7 +236,7 @@
                     <div class="ts-item set-bg" data-setbg="img/team/team-6.jpg">
                         <div class="ts_text">
                             <h4>Houssem Labidi</h4>
-                            <span>Gym Trainer</span>
+                            <span>Developer</span>
                             <div class="tt_social">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter"></i></a>
@@ -282,8 +281,10 @@
         </div>
     </div>
     <!-- Get In Touch Section End -->
+    {% endblock %}
 
-    <!-- Footer Section Begin -->
+    {% block footer %}
+        <!-- Footer Section Begin -->
     <section class="footer-section">
         <div class="container">
             <div class="row">
@@ -357,18 +358,10 @@
         </div>
     </section>
     <!-- Footer Section End -->
+    {% endblock %}
 
-    <!-- Search model Begin -->
-    <div class="search-model">
-        <div class="h-100 d-flex align-items-center justify-content-center">
-            <div class="search-close-switch">+</div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
-            </form>
-        </div>
-    </div>
-    <!-- Search model end -->
 
+    {% block js %}
     <!-- Js Plugins -->
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -378,8 +371,7 @@
     <script src="js/jquery.slicknav.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+    {% endblock %}
 
 
-</body>
 
-</html>
