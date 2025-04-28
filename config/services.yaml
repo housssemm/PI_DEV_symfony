@@ -7,6 +7,9 @@
 parameters:
         user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
         cv_directory: '%kernel.project_dir%/public/uploads/cv'
+        stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+        stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+        videos_directory: '%kernel.project_dir%/public/uploads/videos'
 
 services:
     # default configuration for services in *this* file
@@ -24,5 +27,7 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\Service\StripeService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+            $urlGenerator: '@router'

@@ -1,0 +1,46 @@
+body {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.card {
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(255, 123, 0, 0.15);
+}
+
+.card-header {
+    border-radius: 0 !important;
+    font-weight: 600;
+}
+
+.form-control {
+    border-radius: 5px;
+}
+
+.form-control:focus {
+    background-color: #2a2a2a;
+    border-color: #FF7B00;
+    color: #ffffff;
+    box-shadow: 0 0 0 0.2rem rgba(255, 123, 0, 0.25);
+}
+
+.badge {
+    border-radius: 12px;
+    padding: 5px 10px;
+    font-weight: 500;
+}
+
+.rating-stars i {
+    margin-right: 3px;
+    font-size: 1.1em;
+}
+
+.input-group-text {
+    color: #FFAA00;
+}
