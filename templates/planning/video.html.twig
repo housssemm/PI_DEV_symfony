@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{% block title %}Regarder la vidéo{% endblock %}
+
+{% block body %}
+    <style>
+        body {
+            background-color: black;
+        }
+        h1 {
+            color: white;
+            font-size: 2em;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+        }
+        .video-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        video {
+            border: 2px solid white;
+            border-radius: 8px;
+        }
+    </style>
+
+    <h1>Regarder votre séance</h1>
+
+    <div class="video-container">
+        <video id="myVideo" width="640" height="360" controls>
+            <source src="{{ asset(seance.lienVideo) }}" type="video/mp4">
+            Votre navigateur ne supporte pas la lecture vidéo.
+        </video>
+    </div>
+
+    <script>
+        const video = document.getElementById('myVideo');
+
+        function playVideo() {
+            video.play();
+        }
+
+        function pauseVideo() {
+            video.pause();
+        }
+    </script>
+{% endblock %}
