@@ -60,21 +60,24 @@ class Participantevenement
     }
 
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?\DateTimeInterface $date_inscription = null;
 
-    public function getDate_inscription(): ?\DateTimeInterface
+
+    private ?\DateTime $date_inscription = null;
+
+
+    public function getDate_inscription(): ?\DateTime
     {
         return $this->date_inscription;
     }
 
-    public function setDate_inscription(?\DateTimeInterface $date_inscription): self
+    public function setDate_inscription(?\DateTime $date_inscription): self
     {
         $this->date_inscription = $date_inscription;
         return $this;
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $etat_paiement = null;
+    private ?string $etat_paiement = 'EN_ATTENTE';
 
     public function getEtat_paiement(): ?string
     {

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\CoachRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,14 +21,16 @@ class HomeController extends AbstractController
         ]);
     }
     #[Route('/', name: 'app_homee')]
-    public function index1(): Response
+    public function index1(CoachRepository $coachRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
+        $coachs = array_slice($coachRepository->findCoachsByCertificatValide(), 0, 5);
 
         return $this->render('home/home.html.twig', [
             'controller_name' => 'HomeController',
+            'coachs' => $coachs,
         ]);
     }
     #[Route('/team', name: 'app_home_team')]
@@ -41,4 +44,16 @@ class HomeController extends AbstractController
             'controller_name' => 'HomeController',
         ]);
     }
+    #[Route('/coachs', name: 'coach_list')]
+    public function listAllCoachs(CoachRepository $coachRepository): Response
+    {
+        $coachs = $coachRepository->findCoachsByCertificatValide();
+        return $this->render('home/listCoachs.html.twig', [
+            'coachs' => $coachs,
+        ]);
+    }
+
+
+
+
 } 
