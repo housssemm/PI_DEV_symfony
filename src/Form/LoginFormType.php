@@ -25,7 +25,17 @@ class LoginFormType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'Le mot de passe est obligatoire'])
                 ]
-            ]);
+            ])
+        ->add('captcha', Recaptcha3Type::class, [
+        'mapped'       => false,
+        'label'        => false,
+        'action_name'  => 'login',
+        'constraints'  => [
+            new Recaptcha3([
+                'message' => 'Captcha invalide, veuillez réessayer.',
+            ]),
+        ],
+    ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
