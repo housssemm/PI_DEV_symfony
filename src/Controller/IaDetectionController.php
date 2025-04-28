@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 final class IaDetectionController extends AbstractController
 {
-    #[Route('/ia/detection', name: 'app_ia_detection')]
+    #[Route('/pose-detection', name: 'app_ia_detection')]
     public function index(): Response
     {
         return $this->render('ia_detection/index.html.twig');

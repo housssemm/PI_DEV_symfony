@@ -62,10 +62,6 @@ async function resetBackend(backendName) {
  * @param flagConfig An object to store flag-value pairs.
  */
 export async function setBackendAndEnvFlags(flagConfig, backend) {
-  if (!backend) {
-    return;
-  }
-
   if (flagConfig == null) {
     return;
   } else if (typeof flagConfig !== 'object') {
@@ -75,6 +71,7 @@ export async function setBackendAndEnvFlags(flagConfig, backend) {
 
   // Check the validation of flags and values.
   for (const flag in flagConfig) {
+    // TODO: check whether flag can be set as flagConfig[flag].
     if (!(flag in TUNABLE_FLAG_VALUE_RANGE_MAP)) {
       throw new Error(`${flag} is not a tunable or valid environment flag.`);
     }
@@ -88,10 +85,9 @@ export async function setBackendAndEnvFlags(flagConfig, backend) {
 
   tf.env().setFlags(flagConfig);
 
-  const [runtime, backendName] = backend.split('-');
+  const [runtime, $backend] = backend.split('-');
 
   if (runtime === 'tfjs') {
-    await resetBackend(backendName);
+    await resetBackend($backend);
   }
 }
-

@@ -5,20 +5,15 @@ import '@tensorflow/tfjs-backend-webgpu';
 import * as mpPose from '@mediapipe/pose';
 import * as tfjsWasm from '@tensorflow/tfjs-backend-wasm';
 import * as tf from '@tensorflow/tfjs-core';
-
-tfjsWasm.setWasmPaths(
-    `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${
-        tfjsWasm.version_wasm}/dist/`);
-
 import * as posedetection from '@tensorflow-models/pose-detection';
 
-import {Camera} from './camera';
-import {RendererWebGPU} from './renderer_webgpu';
-import {RendererCanvas2d} from './renderer_canvas2d';
-import {setupDatGui} from './option_panel';
-import {STATE} from './params';
-import {setupStats} from './stats_panel';
-import {setBackendAndEnvFlags} from './util';
+import {Camera} from '@pose/camera';
+import {RendererWebGPU} from '@pose/renderer_webgpu';
+import {RendererCanvas2d} from '@pose/renderer_canvas2d';
+import {setupDatGui} from '@pose/option_panel';
+import {STATE} from '@pose/params';
+import {setupStats} from '@pose/stats_panel';
+import {setBackendAndEnvFlags} from '@pose/util';
 
 let detector;
 let camera;
@@ -51,7 +46,7 @@ const leftAngleElement = document.getElementById('left-angle');
 const rightAngleElement = document.getElementById('right-angle');
 const loadingElement = document.getElementById('loading');
 const canvasWrapper = document.querySelector('.canvas-wrapper');
-const repSound = new Audio('/src/beep.mp3');
+const repSound = new Audio('/build/sounds/beep.mp3');
 
 async function createDetector() {
   switch (STATE.model) {
@@ -307,53 +302,91 @@ async function renderPrediction() {
   rafId = requestAnimationFrame(renderPrediction);
 };
 
-async function app() {
-  loadingElement.style.display = 'flex';
+async function init() {
   try {
-    // Gui content will change depending on which model is in the query string.
+    const loadingElement = document.getElementById('loading');
+    
+    // Show loading screen
+    if (loadingElement) {
+      loadingElement.style.display = 'flex';
+    }
+
+    // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    if (!urlParams.has('model')) {
-      urlParams.set('model', 'movenet');
-    }
-
-    // Restore camera selection before GUI setup
-    const savedCameraId = localStorage.getItem('selectedCamera');
-    if (savedCameraId) {
-      STATE.camera.deviceId = savedCameraId;
-    }
-
+    
+    // Setup GUI controls
     await setupDatGui(urlParams);
 
+    // Setup performance stats
     stats = setupStats();
-    const isWebGPU = STATE.backend === 'tfjs-webgpu';
-    const importVideo = (urlParams.get('importVideo') === 'true') && isWebGPU;
-
+    
+    // Initialize camera
     camera = await Camera.setup(STATE.camera);
+    if (!camera) {
+      throw new Error('Failed to initialize camera');
+    }
 
+    // Ensure backend is set before initialization
+    if (!STATE.backend) {
+      STATE.backend = 'tfjs-webgl'; // Set default backend if none is set
+    }
+
+    // Setup backend and initialize TensorFlow
     await setBackendAndEnvFlags(STATE.flags, STATE.backend);
     await tf.ready();
+    
+    // Create pose detector
     detector = await createDetector();
+    if (!detector) {
+      throw new Error('Failed to create detector');
+    }
+
+    // Setup canvas
     const canvas = document.getElementById('output');
     canvas.width = camera.video.width;
     canvas.height = camera.video.height;
+    
+    // Initialize renderer
+    const isWebGPU = STATE.backend === 'tfjs-webgpu';
     useGpuRenderer = (urlParams.get('gpuRenderer') === 'true') && isWebGPU;
-    if (useGpuRenderer) {
-      renderer = new RendererWebGPU(canvas, importVideo);
-    } else {
-      renderer = new RendererCanvas2d(canvas);
+    renderer = useGpuRenderer ? 
+      new RendererWebGPU(canvas) : 
+      new RendererCanvas2d(canvas);
+
+    // Hide loading screen when everything is ready
+    if (loadingElement) {
+      loadingElement.style.display = 'none';
     }
 
+    // Start detection loop
     renderPrediction();
+
   } catch (error) {
-    console.error(error);
-    alert('Error initializing the app: ' + error.message);
-  } finally {
-    loadingElement.style.display = 'none';
+    console.error('Error during initialization:', error);
+    const errorElement = document.createElement('div');
+    errorElement.className = 'error';
+    errorElement.textContent = `Error: ${error.message}`;
+    document.body.appendChild(errorElement);
+    
+    // Hide loading screen on error
+    if (loadingElement) {
+      loadingElement.style.display = 'none';
+    }
   }
 }
 
-app();
+// Make sure we call init when the document is loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 
 if (useGpuRenderer) {
   renderer.dispose();
 }
+
+
+
+
+

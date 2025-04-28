@@ -12,14 +12,9 @@ export const VIDEO_SIZE = {
 };
 export const STATE = {
   camera: {targetFPS: 60, deviceId: ''},
-  backend: 'tfjs-webgl', // Set a default backend
+  backend: '',
   flags: {},
   modelConfig: {},
-  model: posedetection.SupportedModels.MoveNet, // Use the actual model enum
-  isModelChanged: false,
-  isBackendChanged: false,
-  isFlagChanged: false,
-  isTargetFPSChanged: false,
 };
 export const BLAZEPOSE_CONFIG = {
   maxPoses: 1,
@@ -91,5 +86,3 @@ export const TUNABLE_FLAG_NAME_MAP = {
   WEBGL_RENDER_FLOAT32_CAPABLE: 'enable float32',
   WEBGL_FLUSH_THRESHOLD: 'GL flush wait time(ms)',
 };
-
-

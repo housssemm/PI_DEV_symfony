@@ -23,23 +23,68 @@ export async function setupDatGui(urlParams) {
 
   // The camera folder contains options for video settings.
   const cameraFolder = gui.addFolder('Camera');
-  const modelFolder = gui.addFolder('Model');
 
-  // Set default model if not already set
-  if (!params.STATE.model) {
-    params.STATE.model = posedetection.SupportedModels.MoveNet;
+  // Add camera device selector
+  const cameras = await Camera.getDevices();
+  const cameraNames = {};
+  cameras.forEach((camera) => {
+    cameraNames[camera.label || `Camera ${camera.deviceId.substr(0, 7)}...`] = camera.deviceId;
+  });
+
+  // Restore camera selection from localStorage if available
+  const savedCameraId = localStorage.getItem('selectedCamera');
+  if (savedCameraId && Object.values(cameraNames).includes(savedCameraId)) {
+    params.STATE.camera.deviceId = savedCameraId;
   }
 
-  // Set default backend if not already set
-  if (!params.STATE.backend) {
-    params.STATE.backend = params.MODEL_BACKEND_MAP[params.STATE.model][0];
+  const deviceController = cameraFolder.add(
+    params.STATE.camera, 'deviceId',
+    Object.assign({'Default (environment)': ''}, cameraNames)
+  );
+  deviceController.name('Camera Device');
+  deviceController.onChange((deviceId) => {
+    localStorage.setItem('selectedCamera', deviceId);
+    params.STATE.isTargetFPSChanged = true;
+  });
+
+  const fpsController = cameraFolder.add(params.STATE.camera, 'targetFPS');
+  fpsController.onFinishChange((_) => {
+    params.STATE.isTargetFPSChanged = true;
+  });
+  cameraFolder.open();
+
+  // The model folder contains options for model selection.
+  const modelFolder = gui.addFolder('Model');
+
+  const model = urlParams.get('model');
+  let type = urlParams.get('type');
+  const backendFromURL = urlParams.get('backend');
+
+  switch (model) {
+    case 'posenet':
+      params.STATE.model = posedetection.SupportedModels.PoseNet;
+      break;
+    case 'movenet':
+      params.STATE.model = posedetection.SupportedModels.MoveNet;
+      if (type !== 'lightning' && type !== 'thunder' && type !== 'multipose') {
+        // Nulify invalid value.
+        type = null;
+      }
+      break;
+    case 'blazepose':
+      params.STATE.model = posedetection.SupportedModels.BlazePose;
+      if (type !== 'full' && type !== 'lite' && type !== 'heavy') {
+        // Nulify invalid value.
+        type = null;
+      }
+      break;
+    default:
+      alert(`${urlParams.get('model')}`);
+      break;
   }
 
   const modelController = modelFolder.add(
-    params.STATE,
-    'model',
-    Object.values(posedetection.SupportedModels)
-  );
+      params.STATE, 'model', Object.values(posedetection.SupportedModels));
 
   modelController.onChange(_ => {
     params.STATE.isModelChanged = true;
@@ -47,11 +92,16 @@ export async function setupDatGui(urlParams) {
     showBackendConfigs(backendFolder);
   });
 
-  showModelConfigs(modelFolder);
+  showModelConfigs(modelFolder, type);
+
   modelFolder.open();
 
-  backendFolder = gui.addFolder('Backend');
+  backendFolder = gui.addFolder('more');
+  params.STATE.backend = backendFromURL;
+
   showBackendConfigs(backendFolder);
+
+  // backendFolder.open();
 
   return gui;
 }
@@ -331,4 +381,3 @@ async function showFlagSettings(folderController, backendName) {
   // Show flag settings for the new backend.
   showBackendFlagSettings(folderController, backendName);
 }
-
