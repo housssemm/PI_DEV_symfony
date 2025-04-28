@@ -11,6 +11,15 @@ parameters:
         stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
         videos_directory: '%kernel.project_dir%/public/uploads/videos'
 
+
+        twilio_account_sid: '%env(TWILIO_ACCOUNT_SID)%'
+        twilio_auth_token: '%env(TWILIO_AUTH_TOKEN)%'
+        twilio_phone_number: '%env(TWILIO_PHONE_NUMBER)%'
+
+
+        mailjet_api_key: '%env(MAILJET_API_KEY)%'
+        mailjet_api_secret: '%env(MAILJET_API_SECRET)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:

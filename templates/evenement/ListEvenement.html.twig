@@ -1,3 +1,4 @@
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Liste des événements
@@ -441,7 +442,9 @@
 	</style>
 {% endblock %}
 {% block Hero_Section_Begin %}
-<section class="breadcrumb-section set-bg" data-setbg="img/event.jpg">
+
+
+	<section class="breadcrumb-section set-bg" data-setbg="img/event.jpg">
 	<div class="container1">
 		<div class="row1">
 			<div class="col-lg-12 text-center">
@@ -523,22 +526,24 @@
 
 		<div class="events-section">
 			<h1 class="page-title">Liste des événements</h1>
-{#			<a href="{{ path('app_add_event') }}" class="add-button">#}
-{#				<i class="bi bi-plus-circle"></i>#}
-{#				Ajouter un événement#}
-{#			</a>#}
-{#			<div class="text-center my-4">#}
-{#				<a href="{{ path('app_nearby_events') }}" class="map-button">#}
-{#					Voir la carte des événements proches#}
-{#				</a>#}
-{#			</div>#}
+
+
 			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-				<a href="{{ path('app_add_event') }}" class="add-button">
-					<i class="bi bi-plus-circle"></i>  Ajouter un événement
-				</a>
+
+
+				{% if isCreateurEvenement %}
+					<a href="{{ path('app_add_event') }}" class="add-button">
+						<i class="bi bi-plus-circle"></i> Ajouter un événement
+					</a>
+				{% endif %}
 				<a href="{{ path('app_nearby_events') }}" class="map-button">
 					<i class="fas fa-map-marked-alt"></i> Voir la carte des événements proches
 				</a>
+				{% if not isCreateurEvenement %}
+					<a href="{{ path('app_mes_evenements') }}" class="add-button">
+						<i class="bi bi-plus-circle"></i> mes evenements
+					</a>
+				{% endif %}
 			</div>
 
 			{% for event in list %}
@@ -586,6 +591,7 @@
 								<i class="bi bi-eye"></i>
 								Voir
 							</a>
+							{% if isCreateurEvenement %}
 							<a href="{{ path('app_update_event', {'id': event.id}) }}" class="btn btn-edit">
 								<i class="bi bi-pencil"></i>
 								Modifier
@@ -596,6 +602,7 @@
 									<i class="bi bi-trash"></i>
 									Supprimer
 								</button>
+								{% endif %}
 							</form>
 						</div>
 					</div>
