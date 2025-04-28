@@ -416,7 +416,7 @@ class AdminController extends AbstractController
 
                     // Vérifier que getNom() existe, sinon utiliser une valeur par défaut
                     $nom = method_exists($user, 'getNom') ? $user->getNom() : 'Utilisateur';
-                    $message = sprintf('Bonjour %s, votre inscription a été validée ! Connectez-vous sur notre plateforme.', $nom);
+                    $message = sprintf('Bonjour %s, votre inscription a été validée, vous etes officiellement membre de la communauté Coachini ! Connectez-vous sur notre plateforme.', $nom);
                     $smsSent = $smsSender->sendSms($telephone, $message);
 
                     if (!$smsSent) {

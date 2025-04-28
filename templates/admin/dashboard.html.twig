@@ -514,17 +514,371 @@
 {#</body>#}
 {#</html>#}
 
+{#{% extends 'base1.html.twig' %}#}
+{#<!DOCTYPE html>#}
+{#<html lang="fr">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>Tableau de Bord Admin</title>#}
+{#    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">#}
+{#    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">#}
+{#    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>#}
+{#    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>#}
+{#    <style>#}
+{#        body {#}
+{#            background-color: #1a1a1a;#}
+{#            color: white;#}
+{#            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;#}
+{#        }#}
+{#        .container {#}
+{#            margin-top: 50px;#}
+{#        }#}
+{#        .card {#}
+{#            background-color: #2d2d2d;#}
+{#            border: none;#}
+{#            border-radius: 10px;#}
+{#            margin-bottom: 20px;#}
+{#            transition: transform 0.3s ease, box-shadow 0.3s ease;#}
+{#        }#}
+{#        .card:hover {#}
+{#            transform: translateY(-5px);#}
+{#            box-shadow: 0 8px 16px rgba(255, 107, 1, 0.3);#}
+{#        }#}
+{#        .card-header {#}
+{#            background-color: #ff6b01;#}
+{#            color: white;#}
+{#            font-weight: bold;#}
+{#        }#}
+{#        .card-body {#}
+{#            color: white;#}
+{#        }#}
+{#        .card-title {#}
+{#            color: white;#}
+{#        }#}
+{#        .card-text {#}
+{#            color: white;#}
+{#        }#}
+{#        .chart-container {#}
+{#            position: relative;#}
+{#            height: 40vh;#}
+{#            width: 80vw;#}
+{#        }#}
+{#        .btn-validate {#}
+{#            background-color: #28a745;#}
+{#            color: white;#}
+{#        }#}
+{#        .btn-reject {#}
+{#            background-color: #dc3545;#}
+{#            color: white;#}
+{#        }#}
+{#        /* Ajout de préfixes pour compatibilité */#}
+{#        .card {#}
+{#            user-select: none;#}
+{#            -webkit-user-select: none; /* Pour Safari */#}
+{#        }#}
+{#        @media print {#}
+{#            body {#}
+{#                color-adjust: economy;#}
+{#                print-color-adjust: economy; /* Pour Chrome, Edge */#}
+{#            }#}
+{#        }#}
+{#    </style>#}
+{#</head>#}
+{#<body>#}
+{#<div class="container">#}
+{#    <h1 class="text-center mb-4">Tableau de Bord Administrateur</h1>#}
+{#    <a href="{{ path('app_home') }}" class="btn" style="background-color: #F58400; color: white;">#}
+{#    </a>#}
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord Admin</title>
+{#    {% for label, messages in app.flashes %}#}
+{#        {% for message in messages %}#}
+{#            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">#}
+{#                {{ message }}#}
+{#                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Fermer"></button>#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#    {% endfor %}#}
+
+{#    <div class="row mb-5">#}
+{#        <div class="col-md-3">#}
+{#            <div class="card">#}
+{#                <div class="card-header">Adhérents</div>#}
+{#                <div class="card-body">#}
+{#                    <h2 class="card-title" id="adherentCount">0</h2>#}
+{#                    <p class="card-text">Nombre total d'adhérents</p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-md-3">#}
+{#            <div class="card">#}
+{#                <div class="card-header">Coachs</div>#}
+{#                <div class="card-body">#}
+{#                    <h2 class="card-title" id="coachCount">0</h2>#}
+{#                    <p class="card-text">Nombre de coachs validés</p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-md-3">#}
+{#            <div class="card">#}
+{#                <div class="card-header">Créateurs d'événements</div>#}
+{#                <div class="card-body">#}
+{#                    <h2 class="card-title" id="createurCount">0</h2>#}
+{#                    <p class="card-text">Nombre de créateurs validés</p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-md-3">#}
+{#            <div class="card">#}
+{#                <div class="card-header">Investisseurs</div>#}
+{#                <div class="card-body">#}
+{#                    <h2 class="card-title" id="investisseurCount">0</h2>#}
+{#                    <p class="card-text">Nombre d'investisseurs validés</p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+{#    <div class="row mb-5">#}
+{#        <div class="col-md-8">#}
+{#            <div class="chart-container" style="width: 100%;">#}
+{#                <canvas id="userChart"></canvas>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-md-4 text-center">#}
+{#            <h2 style="color: #ff8c00; font-size: 2.5rem;">Total Utilisateurs</h2>#}
+{#            <p id="totalUsers" style="font-size: 3.5rem; font-weight: bold;">0</p>#}
+{#        </div>#}
+{#    </div>#}
+
+{#    <h2 class="text-center mb-4">Demandes de Validation</h2>#}
+
+{#    <!-- Section Coachs -->#}
+{#    <h3 class="text-center mb-3">Coachs</h3>#}
+{#    <div class="row">#}
+{#        {% for user in users %}#}
+{#            {% if user.getDiscriminator() == 'coach' and not user.certificat_valide %}#}
+{#                <div class="col-md-4">#}
+{#                    <div class="card">#}
+{#                        <div class="card-header">Coach</div>#}
+{#                        <div class="card-body">#}
+{#                            {% if user.image is empty %}#}
+{#                                <p class="card-text">Aucune image</p>#}
+{#                            {% endif %}#}
+{#                            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>#}
+{#                            <p class="card-text">Email: {{ user.email }}</p>#}
+{#                            <p class="card-text">Spécialité: {{ user.specialite }}</p>#}
+{#                            <p class="card-text">Années d’expérience: {{ user.anneeExperience }}</p>#}
+{#                            <p class="card-text">CV:#}
+{#                                {% if user.cv %}#}
+{#                                    <a href="{{ asset('uploads/cv/' ~ user.cv) }}" target="_blank">Voir le CV</a>#}
+{#                                {% else %}#}
+{#                                    Non fourni#}
+{#                                {% endif %}#}
+{#                            </p>#}
+{#                            <p class="card-text">Note: {{ user.note ?? 'Non attribuée' }}</p>#}
+{#                            <div class="d-flex justify-content-between">#}
+{#                                <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">#}
+{#                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">#}
+{#                                    <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Coach')">Valider</button>#}
+{#                                </form>#}
+{#                                <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">#}
+{#                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">#}
+{#                                    <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>#}
+{#                                </form>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#    </div>#}
+
+{#    <!-- Section Investisseurs -->#}
+{#    <h3 class="text-center mb-3">Investisseurs de produits</h3>#}
+{#    <div class="row">#}
+{#        {% for user in users %}#}
+{#            {% if user.getDiscriminator() == 'investisseur_produit' and not user.certificatValide %}#}
+{#                <div class="col-md-4">#}
+{#                    <div class="card">#}
+{#                        <div class="card-header">Investisseur</div>#}
+{#                        <div class="card-body">#}
+{#                            {% if user.image is empty %}#}
+{#                                <p class="card-text">Aucune image</p>#}
+{#                            {% endif %}#}
+{#                            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>#}
+{#                            <p class="card-text">Email: {{ user.email }}</p>#}
+{#                            <p class="card-text">Nom de l’entreprise: {{ user.nomEntreprise }}</p>#}
+{#                            <p class="card-text">Description: {{ user.descriptionInvestisseur }}</p>#}
+{#                            <p class="card-text">Adresse: {{ user.adresseInvestisseur }}</p>#}
+{#                            <p class="card-text">Téléphone: {{ user.telephoneInvestisseur ?? 'N/A' }}</p>#}
+{#                            <div class="d-flex justify-content-between">#}
+{#                                <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">#}
+{#                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">#}
+{#                                    <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Investisseur')">Valider</button>#}
+{#                                </form>#}
+{#                                <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">#}
+{#                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">#}
+{#                                    <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>#}
+{#                                </form>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#    </div>#}
+
+{#    <!-- Section Créateurs d'événements -->#}
+{#    <h3 class="text-center mb-3">Créateurs d'événements</h3>#}
+{#    <div class="row">#}
+{#        {% for user in users %}#}
+{#            {% if user.getDiscriminator() == 'createur_evenement' and not user.certificatValide %}#}
+{#                <div class="col-md-4">#}
+{#                    <div class="card">#}
+{#                        <div class="card-header">Créateur d'événements</div>#}
+{#                        <div class="card-body">#}
+{#                            {% if user.image is empty %}#}
+{#                                <p class="card-text">Aucune image</p>#}
+{#                            {% endif %}#}
+{#                            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>#}
+{#                            <p class="card-text">Email: {{ user.email }}</p>#}
+{#                            <p class="card-text">Nom de l’organisation: {{ user.nomOrganisation }}</p>#}
+{#                            <p class="card-text">Description: {{ user.descriptionCreateur }}</p>#}
+{#                            <p class="card-text">Adresse: {{ user.adresseCreateur }}</p>#}
+{#                            <p class="card-text">Téléphone: {{ user.telephoneCreateur ?? 'N/A' }}</p>#}
+{#                            <div class="d-flex justify-content-between">#}
+{#                                <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">#}
+{#                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">#}
+{#                                    <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Créateur d\'événements')">Valider</button>#}
+{#                                </form>#}
+{#                                <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">#}
+{#                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">#}
+{#                                    <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>#}
+{#                                </form>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#    </div>#}
+{#</div>#}
+
+{#<script>#}
+{#    function confirmValidation(event, userType) {#}
+{#        event.preventDefault();#}
+{#        const form = event.target.closest('form');#}
+{#        const message = userType === 'Coach'#}
+{#            ? 'Voulez-vous valider cet utilisateur ?'#}
+{#            : 'Voulez-vous valider cet utilisateur et envoyer un SMS de confirmation ?';#}
+
+{#        Swal.fire({#}
+{#            title: 'Confirmer la validation',#}
+{#            text: message,#}
+{#            icon: 'question',#}
+{#            showCancelButton: true,#}
+{#            confirmButtonColor: '#28a745',#}
+{#            cancelButtonColor: '#dc3545',#}
+{#            confirmButtonText: 'Oui, valider',#}
+{#            cancelButtonText: 'Non, annuler'#}
+{#        }).then((result) => {#}
+{#            if (result.isConfirmed) {#}
+{#                form.submit();#}
+{#            }#}
+{#        });#}
+{#        return false;#}
+{#    }#}
+
+{#    function confirmRejection(event) {#}
+{#        event.preventDefault();#}
+{#        const form = event.target.closest('form');#}
+
+{#        Swal.fire({#}
+{#            title: 'Confirmer le rejet',#}
+{#            text: 'Voulez-vous rejeter et supprimer cet utilisateur ?',#}
+{#            icon: 'warning',#}
+{#            showCancelButton: true,#}
+{#            confirmButtonColor: '#dc3545',#}
+{#            cancelButtonColor: '#6c757d',#}
+{#            confirmButtonText: 'Oui, rejeter',#}
+{#            cancelButtonText: 'Non, annuler'#}
+{#        }).then((result) => {#}
+{#            if (result.isConfirmed) {#}
+{#                form.submit();#}
+{#            }#}
+{#        });#}
+{#        return false;#}
+{#    }#}
+
+{#    function animateCounter(elementId, endValue, duration) {#}
+{#        let start = 0;#}
+{#        const stepTime = Math.abs(Math.floor(duration / endValue));#}
+{#        const element = document.getElementById(elementId);#}
+
+{#        const counter = setInterval(() => {#}
+{#            start += 1;#}
+{#            element.textContent = start;#}
+{#            if (start >= endValue) {#}
+{#                clearInterval(counter);#}
+{#                element.textContent = endValue;#}
+{#            }#}
+{#        }, stepTime);#}
+{#    }#}
+
+{#    window.onload = function() {#}
+{#        animateCounter('adherentCount', {{ adherentCount }}, 500);#}
+{#        animateCounter('coachCount', {{ coachCount }}, 500);#}
+{#        animateCounter('createurCount', {{ createurCount }}, 500);#}
+{#        animateCounter('investisseurCount', {{ investisseurCount }}, 500);#}
+{#        animateCounter('totalUsers', {{ totalUsers }}, 500);#}
+{#    };#}
+
+{#    const ctx = document.getElementById('userChart').getContext('2d');#}
+{#    const userChart = new Chart(ctx, {#}
+{#        type: 'bar',#}
+{#        data: {#}
+{#            labels: ['Adhérents', 'Coachs', 'Créateurs', 'Investisseurs'],#}
+{#            datasets: [{#}
+{#                label: 'Nombre d\'utilisateurs',#}
+{#                data: [{{ adherentCount }}, {{ coachCount }}, {{ createurCount }}, {{ investisseurCount }}],#}
+{#                backgroundColor: [#}
+{#                    'rgba(255, 99, 132, 0.2)',#}
+{#                    'rgba(54, 162, 235, 0.2)',#}
+{#                    'rgba(255, 206, 86, 0.2)',#}
+{#                    'rgba(75, 192, 192, 0.2)'#}
+{#                ],#}
+{#                borderColor: [#}
+{#                    'rgba(255, 99, 132, 1)',#}
+{#                    'rgba(54, 162, 235, 1)',#}
+{#                    'rgba(255, 206, 86, 1)',#}
+{#                    'rgba(75, 192, 192, 1)'#}
+{#                ],#}
+{#                borderWidth: 1#}
+{#            }]#}
+{#        },#}
+{#        options: {#}
+{#            indexAxis: 'y',#}
+{#            scales: {#}
+{#                x: {#}
+{#                    beginAtZero: true#}
+{#                }#}
+{#            }#}
+{#        }#}
+{#    });#}
+{#</script>#}
+{#</body>#}
+{#</html>#}
+
+
+{% extends 'base1.html.twig' %}
+
+{% block title %}Tableau de Bord Administrateur{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background-color: #1a1a1a;
@@ -572,301 +926,304 @@
             background-color: #dc3545;
             color: white;
         }
-        /* Ajout de préfixes pour compatibilité */
         .card {
             user-select: none;
-            -webkit-user-select: none; /* Pour Safari */
+            -webkit-user-select: none;
         }
         @media print {
             body {
                 color-adjust: economy;
-                print-color-adjust: economy; /* Pour Chrome, Edge */
+                print-color-adjust: economy;
             }
         }
     </style>
-</head>
-<body>
-<div class="container">
-    <h1 class="text-center mb-4">Tableau de Bord Administrateur</h1>
-    <a href="{{ path('app_home') }}" class="btn" style="background-color: #F58400; color: white;">
-        <i class="fas fa-home"></i> Accueil
-    </a>
+{% endblock %}
 
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Fermer"></button>
-            </div>
+{% block page_title %}Tableau de Bord Administrateur{% endblock %}
+{% block breadcrumb %}Tableau de Bord{% endblock %}
+
+{% block body %}
+    <div class="container">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Fermer"></button>
+                </div>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
 
-    <div class="row mb-5">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">Adhérents</div>
-                <div class="card-body">
-                    <h2 class="card-title" id="adherentCount">0</h2>
-                    <p class="card-text">Nombre total d'adhérents</p>
+        <div class="row mb-5">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">Adhérents</div>
+                    <div class="card-body">
+                        <h2 class="card-title" id="adherentCount">0</h2>
+                        <p class="card-text">Nombre total d'adhérents</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">Coachs</div>
+                    <div class="card-body">
+                        <h2 class="card-title" id="coachCount">0</h2>
+                        <p class="card-text">Nombre de coachs validés</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">Créateurs d'événements</div>
+                    <div class="card-body">
+                        <h2 class="card-title" id="createurCount">0</h2>
+                        <p class="card-text">Nombre de créateurs validés</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">Investisseurs</div>
+                    <div class="card-body">
+                        <h2 class="card-title" id="investisseurCount">0</h2>
+                        <p class="card-text">Nombre d'investisseurs validés</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">Coachs</div>
-                <div class="card-body">
-                    <h2 class="card-title" id="coachCount">0</h2>
-                    <p class="card-text">Nombre de coachs validés</p>
+
+        <div class="row mb-5">
+            <div class="col-md-8">
+                <div class="chart-container" style="width: 100%;">
+                    <canvas id="userChart"></canvas>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">Créateurs d'événements</div>
-                <div class="card-body">
-                    <h2 class="card-title" id="createurCount">0</h2>
-                    <p class="card-text">Nombre de créateurs validés</p>
-                </div>
+            <div class="col-md-4 text-center">
+                <h2 style="color: #ff8c00; font-size: 2.5rem;">Total Utilisateurs</h2>
+                <p id="totalUsers" style="font-size: 3.5rem; font-weight: bold;">0</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">Investisseurs</div>
-                <div class="card-body">
-                    <h2 class="card-title" id="investisseurCount">0</h2>
-                    <p class="card-text">Nombre d'investisseurs validés</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row mb-5">
-        <div class="col-md-8">
-            <div class="chart-container" style="width: 100%;">
-                <canvas id="userChart"></canvas>
-            </div>
-        </div>
-        <div class="col-md-4 text-center">
-            <h2 style="color: #ff8c00; font-size: 2.5rem;">Total Utilisateurs</h2>
-            <p id="totalUsers" style="font-size: 3.5rem; font-weight: bold;">0</p>
-        </div>
-    </div>
+        <h2 class="text-center mb-4">Demandes de Validation</h2>
 
-    <h2 class="text-center mb-4">Demandes de Validation</h2>
-
-    <!-- Section Coachs -->
-    <h3 class="text-center mb-3">Coachs</h3>
-    <div class="row">
-        {% for user in users %}
-            {% if user.getDiscriminator() == 'coach' and not user.certificat_valide %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">Coach</div>
-                        <div class="card-body">
-                            {% if user.image is empty %}
-                                <p class="card-text">Aucune image</p>
-                            {% endif %}
-                            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
-                            <p class="card-text">Email: {{ user.email }}</p>
-                            <p class="card-text">Spécialité: {{ user.specialite }}</p>
-                            <p class="card-text">Années d’expérience: {{ user.anneeExperience }}</p>
-                            <p class="card-text">CV:
-                                {% if user.cv %}
-                                    <a href="{{ asset('uploads/cv/' ~ user.cv) }}" target="_blank">Voir le CV</a>
-                                {% else %}
-                                    Non fourni
+        <!-- Section Coachs -->
+        <h3 class="text-center mb-3">Coachs</h3>
+        <div class="row">
+            {% for user in users %}
+                {% if user.getDiscriminator() == 'coach' and not user.certificat_valide %}
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Coach</div>
+                            <div class="card-body">
+                                {% if user.image is empty %}
+                                    <p class="card-text">Aucune image</p>
                                 {% endif %}
-                            </p>
-                            <p class="card-text">Note: {{ user.note ?? 'Non attribuée' }}</p>
-                            <div class="d-flex justify-content-between">
-                                <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">
-                                    <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Coach')">Valider</button>
-                                </form>
-                                <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">
-                                    <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>
-                                </form>
+                                <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
+                                <p class="card-text">Email: {{ user.email }}</p>
+                                <p class="card-text">Spécialité: {{ user.specialite }}</p>
+                                <p class="card-text">Années d’expérience: {{ user.anneeExperience }}</p>
+                                <p class="card-text">CV:
+                                    {% if user.cv %}
+                                        <a href="{{ asset('Uploads/cv/' ~ user.cv) }}" target="_blank">Voir le CV</a>
+                                    {% else %}
+                                        Non fourni
+                                    {% endif %}
+                                </p>
+                                <p class="card-text">Note: {{ user.note ?? 'Non attribuée' }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">
+                                        <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Coach')">Valider</button>
+                                    </form>
+                                    <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">
+                                        <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
 
-    <!-- Section Investisseurs -->
-    <h3 class="text-center mb-3">Investisseurs de produits</h3>
-    <div class="row">
-        {% for user in users %}
-            {% if user.getDiscriminator() == 'investisseur_produit' and not user.certificatValide %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">Investisseur</div>
-                        <div class="card-body">
-                            {% if user.image is empty %}
-                                <p class="card-text">Aucune image</p>
-                            {% endif %}
-                            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
-                            <p class="card-text">Email: {{ user.email }}</p>
-                            <p class="card-text">Nom de l’entreprise: {{ user.nomEntreprise }}</p>
-                            <p class="card-text">Description: {{ user.descriptionInvestisseur }}</p>
-                            <p class="card-text">Adresse: {{ user.adresseInvestisseur }}</p>
-                            <p class="card-text">Téléphone: {{ user.telephoneInvestisseur ?? 'N/A' }}</p>
-                            <div class="d-flex justify-content-between">
-                                <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">
-                                    <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Investisseur')">Valider</button>
-                                </form>
-                                <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">
-                                    <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>
-                                </form>
+        <!-- Section Investisseurs -->
+        <h3 class="text-center mb-3">Investisseurs de produits</h3>
+        <div class="row">
+            {% for user in users %}
+                {% if user.getDiscriminator() == 'investisseur_produit' and not user.certificatValide %}
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Investisseur</div>
+                            <div class="card-body">
+                                {% if user.image is empty %}
+                                    <p class="card-text">Aucune image</p>
+                                {% endif %}
+                                <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
+                                <p class="card-text">Email: {{ user.email }}</p>
+                                <p class="card-text">Nom de l’entreprise: {{ user.nomEntreprise }}</p>
+                                <p class="card-text">Description: {{ user.descriptionInvestisseur }}</p>
+                                <p class="card-text">Adresse: {{ user.adresseInvestisseur }}</p>
+                                <p class="card-text">Téléphone: {{ user.telephoneInvestisseur ?? 'N/A' }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">
+                                        <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Investisseur')">Valider</button>
+                                    </form>
+                                    <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">
+                                        <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
 
-    <!-- Section Créateurs d'événements -->
-    <h3 class="text-center mb-3">Créateurs d'événements</h3>
-    <div class="row">
-        {% for user in users %}
-            {% if user.getDiscriminator() == 'createur_evenement' and not user.certificatValide %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">Créateur d'événements</div>
-                        <div class="card-body">
-                            {% if user.image is empty %}
-                                <p class="card-text">Aucune image</p>
-                            {% endif %}
-                            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
-                            <p class="card-text">Email: {{ user.email }}</p>
-                            <p class="card-text">Nom de l’organisation: {{ user.nomOrganisation }}</p>
-                            <p class="card-text">Description: {{ user.descriptionCreateur }}</p>
-                            <p class="card-text">Adresse: {{ user.adresseCreateur }}</p>
-                            <p class="card-text">Téléphone: {{ user.telephoneCreateur ?? 'N/A' }}</p>
-                            <div class="d-flex justify-content-between">
-                                <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">
-                                    <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Créateur d\'événements')">Valider</button>
-                                </form>
-                                <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">
-                                    <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>
-                                </form>
+        <!-- Section Créateurs d'événements -->
+        <h3 class="text-center mb-3">Créateurs d'événements</h3>
+        <div class="row">
+            {% for user in users %}
+                {% if user.getDiscriminator() == 'createur_evenement' and not user.certificatValide %}
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Créateur d'événements</div>
+                            <div class="card-body">
+                                {% if user.image is empty %}
+                                    <p class="card-text">Aucune image</p>
+                                {% endif %}
+                                <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
+                                <p class="card-text">Email: {{ user.email }}</p>
+                                <p class="card-text">Nom de l’organisation: {{ user.nomOrganisation }}</p>
+                                <p class="card-text">Description: {{ user.descriptionCreateur }}</p>
+                                <p class="card-text">Adresse: {{ user.adresseCreateur }}</p>
+                                <p class="card-text">Téléphone: {{ user.telephoneCreateur ?? 'N/A' }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <form action="{{ path('admin_validate_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('admin_validate_user' ~ user.id) }}">
+                                        <button type="submit" class="btn btn-validate" onclick="return confirmValidation(event, 'Créateur d\'événements')">Valider</button>
+                                    </form>
+                                    <form action="{{ path('admin_reject_user', {'id': user.id}) }}" method="post" style="display:inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('admin_reject_user' ~ user.id) }}">
+                                        <button type="submit" class="btn btn-reject" onclick="return confirmRejection(event)">Rejeter</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
-        {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
-</div>
+{% endblock %}
 
-<script>
-    function confirmValidation(event, userType) {
-        event.preventDefault();
-        const form = event.target.closest('form');
-        const message = userType === 'Coach'
-            ? 'Voulez-vous valider cet utilisateur ?'
-            : 'Voulez-vous valider cet utilisateur et envoyer un SMS de confirmation ?';
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function confirmValidation(event, userType) {
+            event.preventDefault();
+            const form = event.target.closest('form');
+            const message = userType === 'Coach'
+                ? 'Voulez-vous valider cet utilisateur ?'
+                : 'Voulez-vous valider cet utilisateur et envoyer un SMS de confirmation ?';
 
-        Swal.fire({
-            title: 'Confirmer la validation',
-            text: message,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#dc3545',
-            confirmButtonText: 'Oui, valider',
-            cancelButtonText: 'Non, annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
-        });
-        return false;
-    }
+            Swal.fire({
+                title: 'Confirmer la validation',
+                text: message,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#dc3545',
+                confirmButtonText: 'Oui, valider',
+                cancelButtonText: 'Non, annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+            return false;
+        }
 
-    function confirmRejection(event) {
-        event.preventDefault();
-        const form = event.target.closest('form');
+        function confirmRejection(event) {
+            event.preventDefault();
+            const form = event.target.closest('form');
 
-        Swal.fire({
-            title: 'Confirmer le rejet',
-            text: 'Voulez-vous rejeter et supprimer cet utilisateur ?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Oui, rejeter',
-            cancelButtonText: 'Non, annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
-        });
-        return false;
-    }
+            Swal.fire({
+                title: 'Confirmer le rejet',
+                text: 'Voulez-vous rejeter et supprimer cet utilisateur ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Oui, rejeter',
+                cancelButtonText: 'Non, annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+            return false;
+        }
 
-    function animateCounter(elementId, endValue, duration) {
-        let start = 0;
-        const stepTime = Math.abs(Math.floor(duration / endValue));
-        const element = document.getElementById(elementId);
+        function animateCounter(elementId, endValue, duration) {
+            let start = 0;
+            const stepTime = Math.abs(Math.floor(duration / endValue));
+            const element = document.getElementById(elementId);
 
-        const counter = setInterval(() => {
-            start += 1;
-            element.textContent = start;
-            if (start >= endValue) {
-                clearInterval(counter);
-                element.textContent = endValue;
-            }
-        }, stepTime);
-    }
+            const counter = setInterval(() => {
+                start += 1;
+                element.textContent = start;
+                if (start >= endValue) {
+                    clearInterval(counter);
+                    element.textContent = endValue;
+                }
+            }, stepTime);
+        }
 
-    window.onload = function() {
-        animateCounter('adherentCount', {{ adherentCount }}, 500);
-        animateCounter('coachCount', {{ coachCount }}, 500);
-        animateCounter('createurCount', {{ createurCount }}, 500);
-        animateCounter('investisseurCount', {{ investisseurCount }}, 500);
-        animateCounter('totalUsers', {{ totalUsers }}, 500);
-    };
+        window.onload = function() {
+            animateCounter('adherentCount', {{ adherentCount }}, 500);
+            animateCounter('coachCount', {{ coachCount }}, 500);
+            animateCounter('createurCount', {{ createurCount }}, 500);
+            animateCounter('investisseurCount', {{ investisseurCount }}, 500);
+            animateCounter('totalUsers', {{ totalUsers }}, 500);
+        };
 
-    const ctx = document.getElementById('userChart').getContext('2d');
-    const userChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Adhérents', 'Coachs', 'Créateurs', 'Investisseurs'],
-            datasets: [{
-                label: 'Nombre d\'utilisateurs',
-                data: [{{ adherentCount }}, {{ coachCount }}, {{ createurCount }}, {{ investisseurCount }}],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            scales: {
-                x: {
-                    beginAtZero: true
+        const ctx = document.getElementById('userChart').getContext('2d');
+        const userChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Adhérents', 'Coachs', 'Créateurs', 'Investisseurs'],
+                datasets: [{
+                    label: 'Nombre d\'utilisateurs',
+                    data: [{{ adherentCount }}, {{ coachCount }}, {{ createurCount }}, {{ investisseurCount }}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
-</script>
-</body>
-</html>
+        });
+    </script>
+{% endblock %}
+
