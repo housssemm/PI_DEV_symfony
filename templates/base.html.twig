@@ -185,13 +185,16 @@
 
 {#                            <li><a href="./class-details.html">Produit</a></li>#}
                             {% if is_granted('ROLE_INVESTISSEUR') %}
-                                <li><a href="{{ path('app_afficher_produit') }}">Produit</a></li>
-                                {% if app.request.attributes.get('_route') == 'app_afficher_produit' %}
+                                {% if app.request.attributes.get('_route') in ['app_afficher_produit', 'app_afficher_categorie'] %}
+                                    <li><a href="{{ path('app_afficher_produit') }}">Produit</a></li>
                                     <li><a href="{{ path('app_afficher_categorie') }}">Categorie</a></li>
+                                {% else %}
+                                    <li><a href="{{ path('app_afficher_produit') }}">Produit</a></li>
                                 {% endif %}
-                            {% elseif is_granted('ROLE_ADHERENT') %}
+                            {% elseif is_granted('ROLE_ADHERENT') or is_granted('ROLE_COACH') %}
                                 <li><a href="{{ path('app_afficher_panier') }}">Produit</a></li>
                             {% endif %}
+
 
                             <li><a href="{{ path('app_events') }}">Evénement</a></li>
                             <li><a href="{{ path('offre_list') }}">Offre</a></li>
@@ -278,6 +281,86 @@
 {% endblock %}
 
 
+
+{#{% block footer %}#}
+{#    <!-- Footer Section Begin -->#}
+{#    <section class="footer-section">#}
+{#        <div class="container">#}
+{#            <div class="row">#}
+{#                <div class="col-lg-4">#}
+{#                    <div class="fs-about">#}
+{#                        <div class="fa-logo">#}
+
+{#                            <a href="#"><img src="{{ asset('img/logoo1.png') }}" alt=""></a>#}
+
+{#                            <a href="#"><img src="{{asset('img/logoo.png')}}" alt=""></a>#}
+
+{#                        </div>#}
+{#                        <p>Coachini est une plateforme innovante dédiée aux coachs et aux adhérents, offrant des séances personnalisées, un suivi efficace et une gestion simplifiée des entraînements. </p>#}
+{#                        <div class="fa-social">#}
+{#                            <a href="#"><i class="fa fa-facebook"></i></a>#}
+{#                            <a href="#"><i class="fa fa-twitter"></i></a>#}
+{#                            <a href="#"><i class="fa fa-youtube-play"></i></a>#}
+{#                            <a href="#"><i class="fa fa-instagram"></i></a>#}
+{#                            <a href="#"><i class="fa  fa-envelope-o"></i></a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-2 col-md-3 col-sm-6">#}
+{#                    <div class="fs-widget">#}
+{#                        <h4>Useful links</h4>#}
+{#                        <ul>#}
+{#                            <li><a href="#">About</a></li>#}
+{#                            <li><a href="#">Blog</a></li>#}
+{#                            <li><a href="#">Classes</a></li>#}
+{#                            <li><a href="#">Contact</a></li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-2 col-md-3 col-sm-6">#}
+{#                    <div class="fs-widget">#}
+{#                        <h4>Support</h4>#}
+{#                        <ul>#}
+{#                            <li><a href="#">Login</a></li>#}
+{#                            <li><a href="#">My account</a></li>#}
+{#                            <li><a href="#">Subscribe</a></li>#}
+{#                            <li><a href="#">Contact</a></li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-4 col-md-6">#}
+{#                    <div class="fs-widget">#}
+{#                        <h4>Tips & Guides</h4>#}
+{#                        <div class="fw-recent">#}
+{#                            <h6><a href="#">Physical fitness may help prevent depression, anxiety</a></h6>#}
+{#                            <ul>#}
+{#                                <li>3 min read</li>#}
+{#                                <li>20 Comment</li>#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                        <div class="fw-recent">#}
+{#                            <h6><a href="#">Fitness: The best exercise to lose belly fat and tone up...</a></h6>#}
+{#                            <ul>#}
+{#                                <li>3 min read</li>#}
+{#                                <li>20 Comment</li>#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="row">#}
+{#                <div class="col-lg-12 text-center">#}
+{#                    <div class="copyright-text">#}
+{#                        <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->#}
+{#                            Copyright ©<script>document.write(new Date().getFullYear());</script> All rights reserved | by <a href="https://colorlib.com" target="_blank">Team Coachini</a>#}
+{#                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </section>#}
+{#    <!-- Footer Section End -->#}
+{#{% endblock %}#}
 {% block footer %}
     <!-- Footer Section Begin -->
     <section class="footer-section">
@@ -381,6 +464,7 @@
             }, 5000);
         });
 
+        // Gestion de la popup de déconnexion pour le menu principal et mobile
         const logoutBtn = document.getElementById('logout-btn');
         const logoutBtnMobile = document.getElementById('logout-btn-mobile');
 
@@ -407,7 +491,7 @@
             }
         }
 
-    });
+    <script src="{{asset('js/jquery-3.3.1.min.js')}}"></script>
     <script src="{{asset('js/bootstrap.min.js')}}"></script>
     <script src="{{asset('js/jquery.magnific-popup.min.js')}}"></script>
     <script src="{{asset('js/masonry.pkgd.min.js')}}"></script>
@@ -418,13 +502,16 @@
     <script src="{{asset('js/chatbot.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.js"></script>
 
-
 {% endblock %}
 
 {% block javascripts %}
-
+            {{ encore_entry_script_tags('app') }}
+    <!-- Les scripts JavaScript sont inclus ici -->
 {% endblock %}
 
+
+        attachLogoutHandler(logoutBtn);
+        attachLogoutHandler(logoutBtnMobile);
     });
 </script>
 <div class="chatbot chatbot--closed">

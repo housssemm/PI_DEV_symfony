@@ -7,8 +7,10 @@ use App\Entity\Planning;
 use App\Entity\Seance;
 use App\Form\SeanceType;
 use App\Repository\SeanceRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\Persistence\ManagerRegistry;
@@ -50,6 +52,17 @@ class SeanceController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid() )
         {
+            $videoFile = $form->get('VideoFile')->getData();
+            if ($videoFile) {
+                $newFilename = uniqid().'.'.$videoFile->guessExtension();
+                $videoFile->move(
+                    $this->getParameter('videos_directory'), // Il faut configurer ce paramètre
+                    $newFilename
+                );
+                $seance->setLienVideo('/uploads/videos/'.$newFilename);
+            }
+
+
             $em = $doctrine->getManager();
             $em->persist($seance);
             $em->flush();
@@ -83,6 +96,23 @@ class SeanceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $videoFile = $form->get('VideoFile')->getData(); // ⚡ ici aussi : 'videoFile' minuscule
+
+            if ($videoFile) {
+                $newFilename = uniqid().'.'.$videoFile->guessExtension();
+
+                try {
+                    $videoFile->move(
+                        $this->getParameter('videos_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // Log ou message d'erreur
+                }
+
+                $seance->setLienVideo('/uploads/videos/' . $newFilename);
+            }
+
             $doctrine->getManager()->flush();
             $this->addFlash('success', 'séance modifié avec succès!');
             return $this->redirectToRoute('app_afficher_plan');
@@ -110,6 +140,7 @@ class SeanceController extends AbstractController
 
             $formatted = array_map(function($seance) {
                 return [
+                    'id'         => $seance->getId(),
                     'titre' => $seance->getTitre() ?? 'Séance sans nom',
                     'date' => $seance->getDate()->format('d/m/Y'),
                     'heureDebut' => $seance->getHeureDebut()?->format('H:i') ?? '--:--',
@@ -120,6 +151,8 @@ class SeanceController extends AbstractController
                         'nom' => $seance->getAdherent()->getNom() ?? 'Non attribué',
                         'prenom' => $seance->getAdherent()->getPrenom() ?? ''
                     ],
+                    'lienVideo'  => $seance->getLienVideo(),
+                    'videoPath'  => $this->generateUrl('seance_video', ['id' => $seance->getId()]),
                     'deletePath' => $this->generateUrl('app_seance_delete', ['id' => $seance->getId()]),
                     'editPath' => $this->generateUrl('app_seance_update', ['id' => $seance->getId()])
                 ];
@@ -151,6 +184,46 @@ class SeanceController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('app_seance_admiin');
     }
+
+    #[Route('/seance/video/{id<\d+>}', name: 'seance_video')]
+    public function voirVideo(int $id, SeanceRepository $seanceRepository): Response
+    {
+        $seance = $seanceRepository->find($id);
+
+        if (!$seance) {
+            throw $this->createNotFoundException('Séance non trouvée');
+        }
+
+        return $this->render('planning/video.html.twig', [
+            'seance' => $seance,
+        ]);
+    }
+    #[Route('/planningAdherent/events-json', name: 'planningAdherent_events_json')]
+    public function getEvents(EntityManagerInterface $entityManager): JsonResponse
+    {
+        $seances = $entityManager->getRepository(Seance::class)->findAll();
+
+        $events = [];
+
+        foreach ($seances as $seance) {
+            $events[] = [
+                'title' => $seance->getTitre(), // Only the session name, e.g., "Conference"
+                'start' => $seance->getDate()->format('Y-m-d') . 'T' . $seance->getHeureDebut()->format('H:i:s'),
+                'end' => $seance->getDate()->format('Y-m-d') . 'T' . $seance->getHeureFin()->format('H:i:s'),
+                'allDay' => false,
+                'color' => '#F58400',
+                'extendedProps' => [
+                    'description' => $seance->getDescription(),
+                    'timeRange' => $seance->getHeureDebut()->format('H:i') . ' - ' . $seance->getHeureFin()->format('H:i'), // Add time range here
+                ]
+            ];
+        }
+
+        return $this->json($events);
+    }
+
+
+
 
 
 

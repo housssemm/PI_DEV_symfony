@@ -27,12 +27,24 @@ final class ProduitController extends AbstractController
         return $this->render("produit/index.html.twig",
             ["produits"=>$produits]);
     }
-    #[Route('/afficherProduitAdmin', name : 'app_afficher_produitAdmin' )]
-    public function afficherProduitAdmin(ProduitRepository $rep) : Response
+    #[Route('/afficherProduitAdmin', name: 'app_afficher_produitAdmin')]
+    public function afficherProduitAdmin(ProduitRepository $produitRepository): Response
     {
-        $produits = $rep->findAll();
-        return $this->render("produit/AdminProduit.html.twig",
-            ["produits"=>$produits]);
+        // Get all products
+        $produits = $produitRepository->findAll();
+
+        // Get statistics by category
+        $statsByCategory = $produitRepository->createQueryBuilder('p')
+            ->select('c.nom AS categorie, COUNT(p.id) AS nombre')
+            ->leftJoin('p.categorie', 'c')
+            ->groupBy('c.nom')
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('produit/AdminProduit.html.twig', [
+            'produits' => $produits,
+            'statsByCategory' => $statsByCategory
+        ]);
     }
     #[Route('/ajouterProduit', name: 'app_ajouter_produit')]
     public function AjouterProduit(ManagerRegistry $doctrine, Request $request): Response
@@ -73,17 +85,26 @@ final class ProduitController extends AbstractController
         $this->addFlash('success', 'Produit supprimé avec succès.');
         return $this->redirectToRoute('app_afficher_produit');
     }
-    #[Route('/supprimerProduitAdmin/{id}',name:'app_supprimer_produitAdmin')]
-    public function SupprimerProduitAdmin($id,ProduitRepository $repoproduit,ManagerRegistry $doctrine): Response
+    #[Route('/supprimerProduitAdmin/{id}', name: 'app_supprimer_produitAdmin')]
+    public function SupprimerProduitAdmin($id, ProduitRepository $repoproduit, ManagerRegistry $doctrine): Response
     {
-        $categorie=$repoproduit->find($id);
-        $em=$doctrine->getManager();
-        $em->remove($categorie);
+        // Récupérer le produit par son ID
+        $produit = $repoproduit->find($id);
+        // Vérifier si le produit existe
+        if (!$produit) {
+            $this->addFlash('error', 'Produit non trouvé.');
+            return $this->redirectToRoute('app_afficher_produitAdmin');
+        }
+        // Récupérer le gestionnaire d'entités
+        $em = $doctrine->getManager();
+        // Supprimer le produit
+        $em->remove($produit);
         $em->flush();
-
         $this->addFlash('success', 'Produit supprimé avec succès.');
+
         return $this->redirectToRoute('app_afficher_produitAdmin');
     }
+
     #[Route('/modifierProduit/{id}', name: 'app_modifier_produit')]
     public function ModifierProduit(ManagerRegistry $doctrine, Request $request, $id, ProduitRepository $repoproduit): Response
     {

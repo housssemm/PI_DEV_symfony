@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0, user-scalable=no" />
+    <title>Exercise Detection - AI Powered Tracking</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="stats"></div>
+    <div id="main">
+      <div id="rep-counter">
+        <div class="label">Exercise Count</div>
+        <div class="count">0</div>
+        <div class="angle">Angle: 0°</div>
+      </div>
+      <div class="container">
+        <div class="canvas-wrapper">
+          <canvas id="output"></canvas>
+          <video id="video" playsinline></video>
+        </div>
+      </div>
+    </div>
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <div class="message">Loading AI Model...</div>
+    </div>
+  </body>
+</html>
+

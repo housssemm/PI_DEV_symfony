@@ -42,20 +42,33 @@
 # config/services.yaml
 
 parameters:
-  # Répertoires d’uploads
-  user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
-  cv_directory:          '%kernel.project_dir%/public/uploads/cv'
+        user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
+        cv_directory: '%kernel.project_dir%/public/uploads/cv'
+        stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+        stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+        videos_directory: '%kernel.project_dir%/public/uploads/videos'
+
+
+        twilio_account_sid: '%env(TWILIO_ACCOUNT_SID)%'
+        twilio_auth_token: '%env(TWILIO_AUTH_TOKEN)%'
+        twilio_phone_number: '%env(TWILIO_PHONE_NUMBER)%'
+
+
+        mailjet_api_key: '%env(MAILJET_API_KEY)%'
+        mailjet_api_secret: '%env(MAILJET_API_SECRET)%'
+        stripe.public_key: '%env(STRIPE_PUBLIC)%'
+        stripe.secret_key: '%env(STRIPE_SECRET)%'
 
   # Clés ReCAPTCHA (inchangées)
   RECAPTCHA_SECRET_KEY:  '%env(string:RECAPTCHA3_SECRET)%'
   RECAPTCHA_SITE_KEY:    '%env(string:RECAPTCHA3_KEY)%'
 
 services:
-  # 1) Defaults appliqués à tous les services déclarés en-dessous
-  _defaults:
-    autowire:      true
-    autoconfigure: true
-    public:       false
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: false
 
     # 2) Bind global pour les arguments de SmsSender
     bind:
@@ -81,3 +94,19 @@ services:
       - '../src/DependencyInjection/'
       - '../src/Entity/'
       - '../src/Kernel.php'
+
+    App\Service\StripeService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET)%'
+
+    App\Service\TwilioService:
+      arguments:
+        $accountSid: '%env(TWILIO_ACCOUNT_SID)%'
+        $authToken: '%env(TWILIO_AUTH_TOKEN)%'
+        $fromNumber: '%env(TWILIO_FROM)%'
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+    App\Service\StripeService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+            $urlGenerator: '@router'
