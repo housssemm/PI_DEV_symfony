@@ -22,6 +22,7 @@
                     center: 'title',
                     end: 'dayGridMonth,timeGridWeek'
                 },
+                events: '/planningAdherent/events-json',
                 dateClick: function(info) {
                     const dateStr = info.dateStr;
                     const container = document.getElementById('seances-list');
@@ -39,41 +40,52 @@
                         })
                         .then(data => {
                             container.innerHTML = data.map(seance => `
-                             <div class="seance-card ${seance.type.toLowerCase().replace('_', '-')}" data-id="${seance.id}">
-                              <div class="card-header">
-                             <h3 class="title">${seance.titre}</h3>
-                            <span class="badge ${seance.type === 'EN_DIRECT' ? 'live' : 'recorded'}">
-                               ${seance.type === 'EN_DIRECT' ? '🔴 EN DIRECT' : '⏺ ENREGISTRE'}
-                             </span>
-                            </div>
+        <div class="seance-card ${seance.type.toLowerCase().replace('_', '-')}" data-id="${seance.id}">
+            <div class="card-header">
+                <h3 class="title">${seance.titre}</h3>
+                <span class="badge ${seance.type === 'EN_DIRECT' ? 'live' : 'recorded'}">
+                    ${seance.type === 'EN_DIRECT' ? '🔴 EN DIRECT' : '⏺ ENREGISTRÉ'}
+                </span>
+            </div>
 
-                            <div class="card-body">
-                            <div class="meta-info">
-                             <div class="date-time">
-                              <span class="date">📅 ${seance.date}</span>
-                              <span class="time">⌚ ${seance.heureDebut} - ${seance.heureFin}</span>
-                                 </div>
-                             </div>
-
-                                <div class="description">
-                           📝 ${seance.description || 'Aucune description'}
-                                </div>
-
-                             <div class="participants">
-                                <div class="coach">
-                                  👨 ${seance.coach}
-                                 </div>
-                          </div>
-                          <div class="actions" style="text-align: right; margin-top: 10px;">
-                          <button class="btn" style="background-color: #ff6600; color: white" onclick="window.location.href='/seance/participer/${seance.id}'">
-                              Participer
-                            </button>
+            <div class="card-body">
+                <div class="meta-info">
+                    <div class="date-time">
+                        <span class="date">📅 ${seance.date}</span>
+                        <span class="time">⌚ ${seance.heureDebut} - ${seance.heureFin}</span>
+                    </div>
                 </div>
-                        </div>
-                     </div>
+
+                <div class="description">
+                    📝 ${seance.description || 'Aucune description'}
+                </div>
+
+                <div class="participants">
+                    <div class="coach">
+                        👨 ${seance.coach}
+                    </div>
+                </div>
+
+               <div class="actions">
+    <!-- Si la séance est en direct -->
+    ${seance.type === 'EN_DIRECT' ? `
+        <button class="btn-modify" onclick="window.open('${seance.lienVideo}', '_blank')">
+            <i class="bi bi-camera-video"></i> Participer
+        </button>
+    ` : `
+        <button class="btn-modify" onclick="window.location.href='/seance/video/${seance.id}'">
+            <i class="bi bi-play-circle"></i> Regarder la vidéo
+        </button>
+    `}
+</div>
+
+
+            </div>
+        </div>
     `).join('');
                         })
-                        .catch(error => {
+
+                            .catch(error => {
                             container.innerHTML = `<div class="error animate__animated animate__shakeX">⚠️ ${error.message}</div>`;
                         });
                 }

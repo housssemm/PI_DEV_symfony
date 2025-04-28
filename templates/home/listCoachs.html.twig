@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block Hero_Section_Begin %}
+    <section class="breadcrumb-section set-bg" data-setbg="{{ asset('img/breadcrumb-bg.jpg') }}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2 style="margin-bottom: 10px;">Nos Coachs d'Élite pour Vos Ambitions</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block body %}
+    <section class="team-section spad">
+        <div class="container">
+            <!-- Titre principal -->
+            <div class="text-center mb-5">
+                <h2 class="section-title" style="color: whitesmoke">Des Experts à Vos Côtés</h2>
+            </div>
+            <div class="row">
+                {% for coach in coachs %}
+                    <div class="col-lg-4 mb-4">
+                        <a href="{{ path('payer_coach', {'id': coach.id}) }}" style="text-decoration: none; color: inherit;">
+                            <div class="ts-item set-bg" data-setbg="{{ asset('img/' ~ coach.image) }}">
+                                <div class="ts_text text-center">
+                                    <h4>{{ coach.nom }} {{ coach.prenom }}</h4>
+                                    <span><strong>Spécialité :</strong> {{ coach.specialite }}</span><br>
+                                    <span>{{ coach.anneeExperience == 0 ? 'Débutant' : 'Expérience : ' ~ coach.anneeExperience ~ ' an' ~ (coach.anneeExperience > 1 ? 's' : '') }}</span><br>
+                                    <span><strong>Note :</strong> {{ coach.Note is not null ? coach.Note : 'Pas encore noté' }}/5</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

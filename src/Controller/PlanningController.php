@@ -3,6 +3,7 @@
 namespace App\Controller;
 use App\Entity\Coach;
 use App\Entity\Planning;
+use App\Entity\Seance;
 use App\Form\PlanningFormType;
 use App\Repository\PlanningRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +38,7 @@ class PlanningController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $em = $doctrine->getManager();
             $em->persist($planning);
             $em->flush();
@@ -85,9 +87,8 @@ class PlanningController extends AbstractController
             'form'     => $form->createView(),
             'planning' => $planning,
         ]);
-
-
     }
+
 
 
 
