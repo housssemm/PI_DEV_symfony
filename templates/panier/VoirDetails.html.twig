@@ -2,147 +2,13 @@
 
 {% block title %}Produits Sport & Fitness{% endblock %}
 
-{% block header %}
+{% block Hero_Section_Begin %}
+    <!-- Hero Section Begin -->
     <style>
         body{
             background: #151515;
         }
     </style>
-    <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
-
-    <!-- Offcanvas Menu Section Begin -->
-    <div class="offcanvas-menu-overlay"></div>
-    <div class="offcanvas-menu-wrapper">
-        <div class="canvas-close">
-            <i class="fa fa-close"></i>
-        </div>
-        <div class="canvas-search search-switch">
-            <i class="fa fa-search"></i>
-        </div>
-        <nav class="canvas-menu mobile-menu">
-            <ul>
-
-                <li><a href="{{ path('app_home') }}">Home</a></li>
-                <li><a href="{{ path('app_about') }}">About Us</a></li>
-                <li><a href="{{ path('app_classes') }}">Classes</a></li>
-                <li><a href="{{ path('app_services') }}">Services</a></li>
-                <li><a href="{{ path('app_team') }}">Our Team</a></li>
-                {% if app.user %}
-                    {#                    <li><a href="{{ path('app_profile') }}">Mon Profil</a></li>#}
-                    <li><a href="{{ path('app_logout') }}" id="logout-btn-mobile">Déconnexion</a></li>
-                {% else %}
-                    <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                    <li><a href="{{ path('app_r') }}">Inscription</a></li>
-                {% endif %}
-                <li><a href="#">Pages</a>
-                    <ul class="dropdown">
-                        <li><a href="{{ path('app_about') }}">About us</a></li>
-                        <li><a href="{{ path('app_timetable') }}">Classes timetable</a></li>
-                        <li><a href="{{ path('bmi_calculator') }}">Bmi calculate</a></li>
-                        <li><a href="{{ path('app_team') }}">Mon Profile</a></li>
-                        <li><a href="{{ path('app_team') }}">Our team</a></li>
-                        <li><a href="{{ path('app_gallery') }}">Gallery</a></li>
-                        <li><a href="{{ path('app_blog') }}">Our blog</a></li>
-                        <li><a href="{{ path('app_404') }}">404</a></li>
-                    </ul>
-                </li>
-                <li><a href="{{ path('app_contact') }}">Contact</a></li>
-
-                <li><a href="./index.html">Home</a></li>
-                <li><a href="./about-us.html">Planning</a></li>
-                <li><a href="./classes.html">Produit</a></li>
-                <li><a href="./services.html">Evenement</a></li>
-                <li><a href="./team.html">Réclamation</a></li>
-                <li><a href="./contact.html">Offre</a></li>
-
-            </ul>
-        </nav>
-        <div id="mobile-menu-wrap"></div>
-        <div class="canvas-social">
-            <a href="#"><i class="fa fa-facebook"></i></a>
-            <a href="#"><i class="fa fa-twitter"></i></a>
-            <a href="#"><i class="fa fa-youtube-play"></i></a>
-            <a href="#"><i class="fa fa-instagram"></i></a>
-        </div>
-    </div>
-    <!-- Offcanvas Menu Section End -->
-
-    <!-- Header Section Begin -->
-    <header class="header-section">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="logoo">
-                        <a href="./index.html">
-                            <img src="{{ asset('img/logoo.png') }}" alt="">
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <nav class="nav-menu">
-                        <ul>
-
-                            <li><a href="{{ path('app_home') }}">Home</a></li>
-                            <li><a href="{{ path('app_about') }}">About Us</a></li>
-                            <li><a href="{{ path('app_classes') }}">Classes</a></li>
-                            <li><a href="{{ path('app_services') }}">Services</a></li>
-                            <li><a href="{{ path('app_team') }}">Our Team</a></li>
-                            {% if app.user %}
-                                {#                                <li><a href="{{ path('app_profile') }}">Mon Profil</a></li>#}
-                                <li><a href="{{ path('app_logout') }}" id="logout-btn">Déconnexion</a></li>
-                            {% else %}
-                                <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                                <li><a href="{{ path('app_r') }}">Inscription</a></li>
-                            {% endif %}
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./about-us.html">About us</a></li>
-                                    <li><a href="./class-timetable.html">Classes timetable</a></li>
-                                    <li><a href="./bmi-calculator.html">Bmi calculate</a></li>
-                                    <li><a href="./team.html">Our team</a></li>
-                                    <li><a href="./gallery.html">Gallery</a></li>
-                                    <li><a href="./blog.html">Our blog</a></li>
-                                    <li><a href="./404.html">404</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="./contact.html">Contact</a></li>
-
-                            <li><a href="./about-us.html">Planning</a></li>
-                            <li class="active"><a href="/pageAdherent">Articles Achétés</a></li>
-                            <li><a href="./services.html">Evénement</a></li>
-                            <li><a href="./team.html">Offre</a></li>
-                            <li><a href="./contact.html">Réclamation</a></li>
-
-                        </ul>
-                    </nav>
-                </div>
-                <div class="col-lg-3">
-                    <div class="top-option">
-                        <div class="to-search search-switch">
-                            <i class="fa fa-search"></i>
-                        </div>
-                        <div class="to-social">
-                            <a href="#"><i class="fa fa-facebook"></i></a>
-                            <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-youtube-play"></i></a>
-                            <a href="#"><i class="fa fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="canvas-open">
-                <i class="fa fa-bars"></i>
-            </div>
-        </div>
-    </header>
-    <!-- Header End -->
-{% endblock %}
-
-{% block Hero_Section_Begin %}
-    <!-- Hero Section Begin -->
     <section class="breadcrumb-section" style="background-image: url('{{ asset('img/image7.png') }}');">
     <div class="container">
             <div class="row">
@@ -169,7 +35,7 @@
 {% block body %}
     <link rel="stylesheet" href="{{ asset('css/voirdetails.css') }}">
     <div class="breadcrumb-text" style="text-align: center; color: white;margin-top: 70px">
-        <h2 style="color:white; display: inline-flex; align-items: center;">Details de produit</h2>
+        <h2 style="color:white; display: inline-flex; align-items: center;margin-bottom: 50px">Details de produit</h2>
     </div>
 
     <div class="container-fluid min-vh-100 d-flex flex-column justify-content-center">
@@ -214,19 +80,50 @@
                 <div class="d-flex gap-3" >
                     <!-- Bouton Retour aux produits -->
                     <a href="{{ path('app_afficher_panier') }}" class="btn btn-retour mt-4" style="margin-right: 25px;">
-                        <i class="fa fa-arrow-left me-2" style="margin-right:5px"></i><strong>Retour aux produits</strong>
+                        <i class="fa fa-arrow-left me-2" style="margin-right:5px"></i>Retour aux produits
                     </a>
                     <!-- Bouton Voir Panier -->
                     <a href="{{ path('afficher_produit_au_panier') }}" class="btn btn-retour mt-4" style="width: 200px">
-                        <i class="fa fa-shopping-cart me-2" style="margin-right:5px"></i><strong>Voir Panier</strong>
+                        <i class="fa fa-shopping-cart me-2" style="margin-right:5px"></i>Voir Panier
                     </a>
                 </div>
 
             </div>
         </div>
+        {# Section des produits recommandés #}
+    <div id="recommendedResults">
+        <div class="product-container-wrapper">
+            <h3 class="text-center text-light mb-4 "style="margin-top: 65px;margin-bottom: 100px;font-weight: bold">Produits Recommandés</h3>  <!-- Titre ajouté ici -->
+            <div class="product-container d-flex flex-wrap justify-content-center" style="margin-top:50px ">
+                {% for rec in recommendations %}
+                    <div class="product-item col-12 col-sm-6 col-md-4 col-lg-2 mb-4">
+                        <div class="card h-100 text-center bg-dark text-light text-decoration-none position-relative">
+                            {# Image du produit #}
+                            <img src="{{ asset('img/' ~ rec.image) }}"
+                                 class="card-img-top"
+                                 alt="{{ rec.nom }}">
+
+                            <div class="card-body">
+                                <h5 class="card-title" style="color: white;">{{ rec.nom }}</h5>
+                                <p class="card-text"
+                                   style="font-size: 1.2em; color: #ffffff; font-family: 'Roboto', sans-serif;">
+                                    {{ rec.etat > 0 ? 'En Stock' : 'Rupture de stock' }}
+                                </p>
+                                <p class="card-text"
+                                   style="font-size: 1.2em; color: #ffffff; font-family: 'Roboto', sans-serif;">
+                                    {{ rec.prix }} DT
+                                </p>
+                                <a href="{{ path('ajouter_produit_au_panier', { 'id': rec.id }) }}" class="btn btn-hover-animated"
+                                   style="background-color: #ff7300; font-size: 14px; padding: 8px 15px;color: white;font-weight: bold;">
+                                    <i class="fa fa-cart-plus" style="margin-right: 8px;"></i>Voir Détails
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center text-light">Aucune recommandation disponible.</p>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}
-
-
-
-
