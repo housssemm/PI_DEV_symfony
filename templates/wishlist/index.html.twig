@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ma Wishlist{% endblock %}
+
+{% block Hero_Section_Begin %}
+<!-- Hero Section Begin -->
+<style>
+    body{
+        background: #151515;
+    }
+</style>
+<link rel="stylesheet" href="css/stylepanier.css">
+<section class="breadcrumb-section set-bg" data-setbg="img/image7.png">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb-text">
+                    <h2>Liste de Souhait</h2>
+                    <div class="bt-option">
+                        <a href="./index.html"><i class="fa fa-home"></i>&nbsp;Home</a>
+                        <span><i class="fa fa-shopping-cart" style="margin-right: 5px;"></i>Ma Liste de Souhait </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block body %}
+    <h1 class="text-center my-4 text-light">Ma Wishlist</h1>
+    {% if produits is empty %}
+        <p class="text-center text-light" >Votre liste de souhaits est vide.</p>
+    {% else %}
+        <div class="product-container-wrapper">
+        <div class="product-container">
+            {% for produit in produits %}
+                <div class="product-item" style="margin-bottom: 100px">
+                    <div class="card h-100 text-center bg-dark text-light text-decoration-none position-relative">
+                        <img src="{{ asset('img/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.nom }}">
+                        <div class="card-body">
+                            <h5 class="card-title" style="color: white;">{{ produit.nom }}</h5>
+                            <p class="card-text" style="font-size: 1.2em; color: #ffffff; font-family: 'Roboto', sans-serif;">
+                                {{ produit.etat == 1 ? 'En Rupture' : 'En Stock' }}
+                            </p>
+                            <p class="card-text" style="font-size: 1.2em; color: #ffffff; font-family: 'Roboto', sans-serif;">{{ produit.prix }} DT</p>
+                            <a href="{{ path('ajouter_produit_au_panier', { 'id': produit.id }) }}"class="btn btn-hover-animated" style="background-color: #ff7300; font-size: 14px; padding: 8px 15px;">
+                                <i class="fa fa-cart-plus" style="margin-right: 8px;"></i>Voir Details
+                            </a>
+                            <a href="{{ path('supprimer_produit_de_wishlist', { 'id': produit.id }) }}"
+                               class="btn btn-danger"
+                               style="font-size: 14px; padding: 8px 15px;background-color: red"
+                               onclick="return confirm('Voulez-vous vraiment supprimer ce produit de votre liste de souhaits ?');">
+                                <i class="fa fa-trash" style="margin-right: 8px;"></i>Supprimer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-center text-light">Aucun produit trouvé pour cette catégorie.</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <!-- Bouton Retour à la liste des produits -->
+    <div class="text-center mt-4">
+        <a href="{{ path('app_afficher_panier') }}" class="btn btn-light" style="font-size: 14px; padding: 8px 15px; background-color: #ff6200; color: white;margin-bottom: 40px">
+            <i class="fa fa-arrow-left" style="margin-right: 8px;"></i>Retour à la liste des produits
+        </a>
+    </div>
+    </div>
+{% endblock %}

@@ -183,13 +183,16 @@
 
 {#                            <li><a href="./class-details.html">Produit</a></li>#}
                             {% if is_granted('ROLE_INVESTISSEUR') %}
-                                <li><a href="{{ path('app_afficher_produit') }}">Produit</a></li>
-                                {% if app.request.attributes.get('_route') == 'app_afficher_produit' %}
+                                {% if app.request.attributes.get('_route') in ['app_afficher_produit', 'app_afficher_categorie'] %}
+                                    <li><a href="{{ path('app_afficher_produit') }}">Produit</a></li>
                                     <li><a href="{{ path('app_afficher_categorie') }}">Categorie</a></li>
+                                {% else %}
+                                    <li><a href="{{ path('app_afficher_produit') }}">Produit</a></li>
                                 {% endif %}
-                            {% elseif is_granted('ROLE_ADHERENT') %}
+                            {% elseif is_granted('ROLE_ADHERENT') or is_granted('ROLE_COACH') %}
                                 <li><a href="{{ path('app_afficher_panier') }}">Produit</a></li>
                             {% endif %}
+
 
                             <li><a href="{{ path('app_events') }}">Evénement</a></li>
                             <li><a href="{{ path('offre_list') }}">Offre</a></li>
@@ -486,7 +489,7 @@
             }
         }
 
-    <script src="{{asset('js/jquery-3.3.1.min.js')}}"> </script>
+    <script src="{{asset('js/jquery-3.3.1.min.js')}}"></script>
     <script src="{{asset('js/bootstrap.min.js')}}"></script>
     <script src="{{asset('js/jquery.magnific-popup.min.js')}}"></script>
     <script src="{{asset('js/masonry.pkgd.min.js')}}"></script>
