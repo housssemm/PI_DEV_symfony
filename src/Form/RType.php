@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
-class R extends AbstractType
+class RType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

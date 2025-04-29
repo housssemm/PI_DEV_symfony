@@ -22,6 +22,8 @@
         "core-js": "^3.33.3",
         "jquery": "^3.7.1",
         "regenerator-runtime": "^0.14.0",
+        "twilio": "^5.5.2"
+        "regenerator-runtime": "^0.14.0",
         "scatter-gl": "^0.0.13"
     },
     "devDependencies": {
@@ -31,6 +33,7 @@
         "@babel/preset-env": "^7.23.3",
         "@symfony/webpack-encore": "^4.4.0",
         "autoprefixer": "^10.4.21",
+        "file-loader": "^6.0.0",
         "postcss": "^8.4.31",
         "postcss-loader": "^8.1.0",
         "sass": "^1.87.0",
