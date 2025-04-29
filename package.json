@@ -33,6 +33,7 @@
         "@babel/preset-env": "^7.23.3",
         "@symfony/webpack-encore": "^4.4.0",
         "autoprefixer": "^10.4.21",
+        "file-loader": "^6.0.0",
         "postcss": "^8.4.31",
         "postcss-loader": "^8.1.0",
         "sass": "^1.87.0",
