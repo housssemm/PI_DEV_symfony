@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css?family=Muli:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600,700&display=swap" rel="stylesheet">
     {% block stylesheets %}
+{#            {{ encore_entry_link_tags('app') }}#}
         <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.css" rel="stylesheet">
     {% endblock %}
 
@@ -486,7 +487,7 @@
             }
         }
 
-    <script src="{{asset('js/jquery-3.3.1.min.js')}}"> </script>
+    <script src="{{asset('js/jquery-3.3.1.min.js')}}"></script>
     <script src="{{asset('js/bootstrap.min.js')}}"></script>
     <script src="{{asset('js/jquery.magnific-popup.min.js')}}"></script>
     <script src="{{asset('js/masonry.pkgd.min.js')}}"></script>
@@ -499,6 +500,7 @@
 {% endblock %}
 
 {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
     <!-- Les scripts JavaScript sont inclus ici -->
 {% endblock %}
 
