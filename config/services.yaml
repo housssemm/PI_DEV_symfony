@@ -7,18 +7,21 @@
 parameters:
         user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
         cv_directory: '%kernel.project_dir%/public/uploads/cv'
-        stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
-        stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+        #maissa
+        #stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+        #stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+        #
         videos_directory: '%kernel.project_dir%/public/uploads/videos'
 
-
-        twilio_account_sid: '%env(TWILIO_ACCOUNT_SID)%'
-        twilio_auth_token: '%env(TWILIO_AUTH_TOKEN)%'
-        twilio_phone_number: '%env(TWILIO_PHONE_NUMBER)%'
+#baha
+        #twilio_account_sid: '%env(TWILIO_ACCOUNT_SID)%'
+        #twilio_auth_token: '%env(TWILIO_AUTH_TOKEN)%'
+        #twilio_phone_number: '%env(TWILIO_PHONE_NUMBER)%'
 
 
         mailjet_api_key: '%env(MAILJET_API_KEY)%'
         mailjet_api_secret: '%env(MAILJET_API_SECRET)%'
+        #ghada
         stripe.public_key: '%env(STRIPE_PUBLIC)%'
         stripe.secret_key: '%env(STRIPE_SECRET)%'
 
@@ -37,11 +40,11 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
+#ghada
     App\Service\StripeService:
         arguments:
             $stripeSecretKey: '%env(STRIPE_SECRET)%'
-
+#ghada
     App\Service\TwilioService:
       arguments:
         $accountSid: '%env(TWILIO_ACCOUNT_SID)%'
@@ -49,7 +52,8 @@ services:
         $fromNumber: '%env(TWILIO_FROM)%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    App\Service\StripeService:
-        arguments:
-            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
-            $urlGenerator: '@router'
+    #maissa
+    #App\Service\StripeService:
+        #arguments:
+            #$stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+            #$urlGenerator: '@router'
