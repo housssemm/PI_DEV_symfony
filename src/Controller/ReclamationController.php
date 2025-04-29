@@ -390,7 +390,7 @@ class ReclamationController extends AbstractController
                     
                     error_log('Reclamation and reponse saved to database');
 
-                    // Verify adherent has an email
+                    // ***** Verify adherent has an email ****
                     $adherent = $reclamation->getAdherent();
                     $adherentEmail = $adherent ? $adherent->getEmail() : null;
                     
