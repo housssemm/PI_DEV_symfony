@@ -7,8 +7,8 @@
 parameters:
         user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
         cv_directory: '%kernel.project_dir%/public/uploads/cv'
-        stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
-        stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+#        stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+#        stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
         videos_directory: '%kernel.project_dir%/public/uploads/videos'
 
 
@@ -19,8 +19,9 @@ parameters:
 
         mailjet_api_key: '%env(MAILJET_API_KEY)%'
         mailjet_api_secret: '%env(MAILJET_API_SECRET)%'
-        stripe.public_key: '%env(STRIPE_PUBLIC)%'
-        stripe.secret_key: '%env(STRIPE_SECRET)%'
+        #ghada
+        stripe.public: '%env(STRIPE_PUBLIC)%'
+        stripe.secret: '%env(STRIPE_SECRET)%'
 
 services:
     # default configuration for services in *this* file
@@ -37,7 +38,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
+  #ghada
     App\Service\StripeService:
         arguments:
             $stripeSecretKey: '%env(STRIPE_SECRET)%'
@@ -49,7 +50,8 @@ services:
         $fromNumber: '%env(TWILIO_FROM)%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    App\Service\StripeService:
-        arguments:
-            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
-            $urlGenerator: '@router'
+    #maissa
+#    App\Service\StripeService:
+#        arguments:
+#            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+#            $urlGenerator: '@router'

@@ -201,6 +201,7 @@
       <path value="$PROJECT_DIR$/vendor/twilio/sdk" />
       <path value="$PROJECT_DIR$/vendor/symfony/mime" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/vendor/symfony/webpack-encore-bundle" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
@@ -209,7 +210,6 @@
       <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="e27e668a-2ce5-443f-8022-355db1841f50" timeout="60000" />
     </PhpStan_settings>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
   <component name="PhpStanOptionsConfiguration">
     <option name="transferred" value="true" />
   </component>
