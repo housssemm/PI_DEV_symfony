@@ -132,22 +132,16 @@ parameters:
   #maissa
   stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
   stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
-
-
   twilio_account_sid: '%env(TWILIO_ACCOUNT_SID)%'
   twilio_auth_token: '%env(TWILIO_AUTH_TOKEN)%'
   twilio_phone_number: '%env(TWILIO_PHONE_NUMBER)%'
+
+
+
   #farah
   mailjet_api_key: '%env(MAILJET_API_KEY)%'
   mailjet_api_secret: '%env(MAILJET_API_SECRET)%'
-#
-#  mailjet.api_key: '%env(string:MAILJET_API_KEY)%'
-#  mailjet.api_secret: '%env(string:MAILJET_API_SECRET)%'
-#  mailjet_api_key: '%env(MAILJET_API_KEY)%'
-#  mailjet_api_secret: '%env(MAILJET_API_SECRET)%'
 
-#  stripe_public: '%env(STRIPE_PUBLIC)%'
-#  stripe_secret: '%env(STRIPE_SECRET)%'
 
   RECAPTCHA_SECRET_KEY: '%env(RECAPTCHA3_SECRET)%'
   RECAPTCHA_SITE_KEY: '%env(RECAPTCHA3_KEY)%'
@@ -157,26 +151,10 @@ services:
     autowire: true      # Injecte automatiquement les dépendances dans vos services.
     autoconfigure: true # Enregistre automatiquement vos services comme commandes, abonnés d'événements, etc.
     public: false
-
-  # Client Mailjet
-#  Mailjet\Client:
-#    arguments:
-#      $key:      '%env(MAILJET_API_KEY)%'
-#      $secret:   '%env(MAILJET_API_SECRET)%'
-#      $settings:
-#        version: 'v3.1'
-#  Mailjet\Client:
-#    arguments:
-#      $key: '%env(string:MAILJET_APIKEY)%'
-#      $secret: '%env(string:MAILJET_SECRET)%'
-#      $settings:
-#        version: 'v3.1'
-#  Mailjet\Client:
-#    arguments:
-#      $key: '%mailjet.api_key%'
-#      $secret: '%mailjet.api_secret%'
-#      $settings:
-#        version: 'v3.1'
+    bind:
+      $sid: '%env(string:TWILIO_ACCOUNT_SID)%'
+      $authToken: '%env(string:TWILIO_AUTH_TOKEN)%'
+      $fromNumber: '%env(string:TWILIO_PHONE_NUMBER)%'
   #farah
   Mailjet\Client:
     arguments:

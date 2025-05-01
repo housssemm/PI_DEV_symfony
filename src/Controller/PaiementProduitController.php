@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\PanierproduitRepository;
 use App\Repository\PanierRepository;
+use App\Service\SmsSender;
 use App\Service\StripeService;
 use App\Service\TwilioService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -99,10 +100,108 @@ class PaiementProduitController extends AbstractController
             return new JsonResponse(['error' => $e->getMessage()], 500);
         }
     }
+//
+//    #[Route('/paiement/success', name: 'paiement_success', methods: ['GET'])]
+//    public function success(Request $request, PanierproduitRepository $panierProduitRepo, PanierRepository $panierRepo, EntityManagerInterface $entityManager, NotifierInterface $notifier, TwilioService $twilioService,SmsSender $smsSender): Response
+//    {
+//        $piId = $request->query->get('payment_intent');
+//        if (!$piId) {
+//            $this->addFlash('error', 'ID du PaymentIntent manquant.');
+//            return $this->redirectToRoute('app_home');
+//        }
+//
+//        try {
+//            // Vérifier le statut du PaymentIntent
+//            $pi = $this->stripeService->retrievePaymentIntent($piId);
+//            if ($pi->status !== 'succeeded') {
+//                $this->addFlash('error', 'Le paiement n’a pas été validé.');
+//                return $this->redirectToRoute('app_afficher_panier');
+//            }
+//
+//            // Récupérer le numéro de téléphone depuis les métadonnées
+//            $phone = $pi->metadata['phone'] ?? null;
+//            if (!$phone) {
+//                $this->logger->error('Numéro de téléphone non trouvé dans les métadonnées du PaymentIntent.');
+//                $this->addFlash('warning', 'Numéro de téléphone manquant dans les métadonnées.');
+//            } else {
+//                $this->logger->info('Numéro de téléphone utilisé pour l’envoi du SMS : ' . $phone);
+//            }
+//
+//            $user = $this->getUser();
+//            $panier = $panierRepo->findPanierByUser($user);
+//            if (!$panier) {
+//                $this->addFlash('error', 'Aucun panier trouvé.');
+//                return $this->redirectToRoute('app_afficher_panier');
+//            }
+//
+//            $items = $panierProduitRepo->findBy(['panier' => $panier]);
+//            $total = 0;
+//            $lines = ["✅ Votre commande a été payée :"];
+//            foreach ($items as $it) {
+//                $qty = $it->getQuantite();
+//                $prix = $it->getProduit()->getPrix();
+//                $sub = $qty * $prix;
+//                $total += $sub;
+//                $it->setEtatPaiement('Payé');
+//
+//                // Mise à jour du stock du produit
+//                $produit = $it->getProduit();
+//                $currentStock = $produit->getQuantite();
+//                if ($currentStock < $qty) {
+//                    $this->logger->error('Stock insuffisant pour le produit : ' . $produit->getNom());
+//                    $this->addFlash('error', 'Stock insuffisant pour le produit : ' . $produit->getNom());
+//                    return $this->redirectToRoute('app_afficher_panier');
+//                }
+//                $produit->setQuantite($currentStock - $qty);
+//                $entityManager->persist($produit);
+//
+//                $lines[] = sprintf("%s x%d = %s DT", $it->getProduit()->getNom(), $qty, number_format($sub, 2));
+//            }
+//            $lines[] = sprintf("Total : %s DT", number_format($total, 2));
+//            $lines[] = "Le : " . (new \DateTime())->format('d/m/Y H:i');
+//
+//            $entityManager->flush();
+//              }
+//            try {
+//                // Ajouter le préfixe international (ex. +33 pour la France)
+//                if (!str_starts_with($phone, '+')) {
+//                    $phone = '+216' . $phone; // Ajuste selon le pays
+//                }
+//
+//                // Vérifier que getNom() existe, sinon utiliser une valeur par défaut
+//                $nom = method_exists($user, 'getNom') ? $user->getNom() : 'Utilisateur';
+//                $message = sprintf('Bonjour %s, votre inscription a été validée, vous etes officiellement membre de la communauté Coachini ! Connectez-vous sur notre plateforme.', $nom);
+//                $smsSent = $smsSender->sendSms($phone, $message);
+//
+//                if (!$smsSent) {
+//                    $this->addFlash('warning', 'Utilisateur validé, mais le SMS n\'a pas pu être envoyé.');
+//                }
+//            } catch (\Exception $e) {
+//                $this->addFlash('warning', 'Utilisateur validé, mais une erreur est survenue lors de l\'envoi du SMS : ' . $e->getMessage());
+//
+//
+//             else {
+//                $this->addFlash('warning', 'Aucun numéro de téléphone fourni ; pas de SMS envoyé.');
+//            }
+//
+//
+//        } catch (\Exception $e) {
+//            $this->addFlash('error', 'Erreur lors de la validation du paiement : ' . $e->getMessage());
+//            return $this->redirectToRoute('app_afficher_panier');
+//        }
+//
+
 
     #[Route('/paiement/success', name: 'paiement_success', methods: ['GET'])]
-    public function success(Request $request, PanierproduitRepository $panierProduitRepo, PanierRepository $panierRepo, EntityManagerInterface $entityManager, NotifierInterface $notifier, TwilioService $twilioService): Response
-    {
+    public function success(
+        Request $request,
+        PanierproduitRepository $panierProduitRepo,
+        PanierRepository $panierRepo,
+        EntityManagerInterface $entityManager,
+        NotifierInterface $notifier,
+        TwilioService $twilioService,
+        SmsSender $smsSender
+    ): Response {
         $piId = $request->query->get('payment_intent');
         if (!$piId) {
             $this->addFlash('error', 'ID du PaymentIntent manquant.');
@@ -154,51 +253,41 @@ class PaiementProduitController extends AbstractController
                 $produit->setQuantite($currentStock - $qty);
                 $entityManager->persist($produit);
 
-                $lines[] = sprintf("%s x%d = %s DT", $it->getProduit()->getNom(), $qty, number_format($sub, 2));
+                $lines[] = sprintf("%s x%d = %s DT", $produit->getNom(), $qty, number_format($sub, 2));
             }
+
             $lines[] = sprintf("Total : %s DT", number_format($total, 2));
             $lines[] = "Le : " . (new \DateTime())->format('d/m/Y H:i');
-
             $entityManager->flush();
 
-            $smsSentNotifier = false;
-            $smsSentApi = false;
+            // Envoi du SMS si le numéro est disponible
             if ($phone) {
-                if (!preg_match('/^\+\d{8,15}$/', $phone)) {
-                    $this->logger->error('Numéro de téléphone invalide : ' . $phone);
-                    $this->addFlash('warning', 'Le numéro de téléphone est invalide. Le SMS n’a pas été envoyé.');
-                } else {
-                    $this->logger->info('TWILIO_FROM utilisé : ' . $_ENV['TWILIO_FROM'] ?? 'Non défini');
-
-//                    // Tentative avec Symfony Notifier
-//                    try {
-//                        $notification = (new Notification('Votre commande', ['sms']))
-//                            ->content(implode("\n", $lines));
-//                        $recipient = new Recipient('', $phone);
-//                        $notifier->send($notification, $recipient);
-//                        $this->logger->info('SMS envoyé avec succès via Symfony Notifier à ' . $phone);
-//                        $smsSentNotifier = true;
-//                    } catch (\Exception $e) {
-//                        $this->logger->error('Erreur lors de l’envoi du SMS via Symfony Notifier : ' . $e->getMessage());
-//                        $this->addFlash('warning', 'Le SMS via Symfony Notifier n’a pas pu être envoyé : ' . $e->getMessage());
-//                    }
-
-                    // Tentative avec l’API Twilio
-                    try {
-                        $messageSid = $twilioService->sendSms($phone, implode("\n", $lines));
-                        $this->logger->info('SMS envoyé via l’API Twilio avec SID : ' . $messageSid);
-                        $smsSentApi = true;
-                    } catch (\Exception $e) {
-                        $this->logger->error('Erreur lors de l’envoi du SMS via l’API Twilio : ' . $e->getMessage());
-                        $this->addFlash('warning', 'Le SMS via l’API Twilio n’a pas pu être envoyé : ' . $e->getMessage());
+                try {
+                    // Ajouter le préfixe international si manquant
+                    if (!str_starts_with($phone, '+')) {
+                        $phone = '+216' . $phone; // Ajuster selon votre pays
                     }
+
+                    $nom = method_exists($user, 'getNom') ? $user->getNom() : 'Utilisateur';
+                    $message = sprintf(
+                        'Bonjour %s, votre inscription a été validée, vous êtes officiellement membre de la communauté Coachini ! Connectez-vous sur notre plateforme.',
+                        $nom
+                    );
+
+                    $smsSent = $smsSender->sendSms($phone, $message);
+                    if (!$smsSent) {
+                        $this->addFlash('warning', 'Utilisateur validé, mais le SMS n\'a pas pu être envoyé.');
+                    }
+                } catch (\Exception $e) {
+                    $this->addFlash('warning', 'Utilisateur validé, mais une erreur est survenue lors de l\'envoi du SMS : ' . $e->getMessage());
                 }
             } else {
                 $this->addFlash('warning', 'Aucun numéro de téléphone fourni ; pas de SMS envoyé.');
             }
 
-            $this->addFlash('success', 'Paiement validé' . ($smsSentNotifier || $smsSentApi ? ' et SMS envoyé !' : ' !'));
-            return $this->redirectToRoute('app_afficher_panier');
+            $this->addFlash('success', 'Paiement validé avec succès !');
+            return $this->redirectToRoute('app_home');
+
         } catch (\Exception $e) {
             $this->addFlash('error', 'Erreur lors de la validation du paiement : ' . $e->getMessage());
             return $this->redirectToRoute('app_afficher_panier');

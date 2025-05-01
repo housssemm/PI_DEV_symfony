@@ -281,7 +281,7 @@
 
                     if (paymentIntent.status === 'succeeded') {
                         console.log('Paiement réussi, redirection...');
-                        window.location.href = '{{ path('paiement_success') }}?payment_intent=' + paymentIntent.id;
+                        window.location.href = '{{ path('paiement_successs') }}?payment_intent=' + paymentIntent.id;
                     } else if (paymentIntent.status === 'requires_action') {
                         // Gérer les cas comme 3D Secure
                         const { error: actionError } = await stripe.handleCardAction(clientSecret);
@@ -301,7 +301,7 @@
 
                         if (updatedIntent.status === 'succeeded') {
                             console.log('Paiement réussi après 3D Secure, redirection...');
-                            window.location.href = '{{ path('paiement_success') }}?payment_intent=' + updatedIntent.id;
+                            window.location.href = '{{ path('paiement_successs') }}?payment_intent=' + updatedIntent.id;
                         } else {
                             displayError.textContent = 'Paiement non complété. Statut: ' + updatedIntent.status;
                             submitButton.disabled = false;
