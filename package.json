@@ -22,9 +22,8 @@
         "core-js": "^3.33.3",
         "jquery": "^3.7.1",
         "regenerator-runtime": "^0.14.0",
+        "scatter-gl": "^0.0.13",
         "twilio": "^5.5.2"
-        "regenerator-runtime": "^0.14.0",
-        "scatter-gl": "^0.0.13"
     },
     "devDependencies": {
         "@babel/core": "^7.23.3",

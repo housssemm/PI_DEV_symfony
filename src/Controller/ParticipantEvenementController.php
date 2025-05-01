@@ -136,7 +136,7 @@ final class ParticipantEvenementController extends AbstractController{
         error_log("Sending email to: $recipientEmail");
 
         $email = (new Email())
-            ->from('maissa.maalej3@gmail.com')
+            ->from('farah.benyedder@esprit.tn')
             ->to('houssemm.labidi@gmail.com')
             ->subject('Confirmation d\'inscription à l\'événement')
             ->html("
