@@ -1,0 +1,38 @@
+{% extends 'base2.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('pose_detection') }}
+{% endblock %}
+
+{% block body %}
+<div id="stats"></div>
+<div id="main">
+    <div id="rep-counter">
+        <div class="label">Bicep Curls</div>
+        <div class="count">0</div>
+    </div>
+    <div class="container">
+        <div class="canvas-wrapper">
+            <canvas id="output"></canvas>
+            <video id="video" playsinline style="
+                    -webkit-transform: scaleX(-1);
+                    transform: scaleX(-1);
+                    visibility: hidden;
+                    width: auto;
+                    height: auto;">
+            </video>
+        </div>
+        <div id="scatter-gl-container"></div>
+    </div>
+</div>
+    <div id="loading" class="loading"></div>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
+    {{ encore_entry_script_tags('pose_detection') }}
+{% endblock %}

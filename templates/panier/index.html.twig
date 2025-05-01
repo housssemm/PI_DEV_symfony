@@ -2,147 +2,272 @@
 
 {% block title %}Produits Sport & Fitness{% endblock %}
 
-{% block header %}
+{% block javascripts %}
+    {{ parent() }}
+    <style>
+        /* ========== ICONS ========== */
+        .shake { animation: shake 0.5s; }
+        @keyframes shake {
+            0%   { transform: rotate(0deg); }
+            25%  { transform: rotate(-10deg); }
+            50%  { transform: rotate(10deg); }
+            75%  { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .icons-container {
+            display: inline-flex !important;
+            align-items: center;
+            gap: 15px;
+            margin-right: 20px;
+            vertical-align: middle;
+        }
+        .icon-wrapper {
+            position: relative;
+            top: 3px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .icon-wrapper i {
+            font-size: 1.6rem;
+        }
+        .icon-count {
+            position: absolute;
+            top: -6px;
+            right: -10px;
+            background-color: #ff7300;
+            color: #fff;
+            border-radius: 50%;
+            width: 17px;
+            height: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .cart-icon :hover{
+            color: #ffa73b; /* Orange clair */
+            animation: shake 0.5s;
+        }
+        .wishlist-icon {
+            color: white; /* Orange */
+            text-decoration: none; /* Supprime le soulignement du lien */
+        }
+
+        /* Couleur lors du survol */
+        .wishlist-icon:hover {
+            color: #ffa73b; /* Orange clair */
+            animation: shake 0.5s;
+        }
+
+        /* Couleur de l'icône elle-même */
+        .wishlist-icon i {
+            color: inherit; /* Hérite de la couleur du parent */
+        }
+
+        /* Couleur au survol de l'icône elle-même */
+        .wishlist-icon:hover i {
+            color: inherit; /* Hérite de la couleur du parent au survol */
+        }
+
+        /* ========== SIDEBAR ========== */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transition: right 0.4s ease;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .close-sidebar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: transparent;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .close-sidebar:hover {
+            color: #ff6503;
+        }
+
+        .cart-content {
+            padding-top: 40px;
+        }
+        .cart-content h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .cart-item img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .cart-item .details {
+            flex: 1;
+            margin-left: 15px;
+            font-size: 0.9rem; /* Réduire la taille de la police des détails */
+        }
+
+        .cart-item .product-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 0.95rem; /* Réduire légèrement la taille de la police du nom */
+        }
+
+        .cart-item .product-quantity {
+            color: #666;
+            font-size: 0.85rem; /* Réduire la taille de la police de la quantité */
+            font-weight: bold;
+        }
+
+        .cart-item .price {
+            font-weight: bold;
+            color: #ff7300;
+            font-size: 1rem; /* Réduire la taille de la police du prix */
+        }
+
+        /* ========== MONTANT TOTAL ========== */
+        .total {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 25px; /* Réduire la taille de la police du montant total */
+        }
+
+        .total strong {
+            font-size: 17px; /* Réduire la taille de la police du montant total fort */
+            color: #ff6503;
+        }
+        .view-cart {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .view-cart-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ff7300;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .view-cart-btn:hover {
+            background-color: #ffa040;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchContainer = document.querySelector('.to-search');
+            if (!searchContainer) {
+                console.error('.to-search introuvable');
+                return;
+            }
+            // 1) Icônes HTML
+            const iconsHtml = `
+            <div class="icons-container">
+               <a href="{{ path('voir_wishlist') }}" class="wishlist-icon icon-wrapper">
+                    <i class="fa fa-heart"></i>
+                    <span class="icon-count">{{ produitsWishlist|length }}</span></a>
+                <a class="cart-icon icon-wrapper">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span class="icon-count">{{ produitsPanier|length }}</span>
+                </a>
+            </div>`;
+
+            // 2) Sidebar HTML
+            const sidebarHtml = `
+    <div class="cart-sidebar">
+        <button class="close-sidebar">&times;</button>
+        <div class="cart-content">
+            <h3>Votre Panier</h3>
+            {% for p in produitsPanier %}
+                <div class="cart-item">
+                    <img src="{{ asset('img/' ~ p.produit.image) }}" alt="{{ p.produit.nom }}">
+                    <div class="details">
+                        <p class="product-name">{{ p.produit.nom }}</p>
+                       <p class="product-quantity">Quantité : {{ p.quantite }}</p>
+                        <p class="price">{{ (p.quantite * p.produit.prix)|number_format(2) }} DT</p>
+                    </div>
+                    <a href="{{ path('supprimer_produit_panier', {'id': p.id}) }}" style="margin-left:19px;color:red;"><i class="fa fa-trash"></i></a>
+                </div>
+                <hr>
+            {% endfor %}
+            <div class="total">
+                <p><strong>Total : {{ montantTotal|number_format(2) }} DT</strong></p>
+            </div>
+             <div class="view-cart">
+                <a href="{{ path('afficher_produit_au_panier') }}" class="view-cart-btn">
+                    <i class="fa fa-shopping-cart"></i> Voir le Panier
+                </a>
+                </div>
+            </div>
+            </div>`;
+            // On insère icônes + sidebar juste avant la recherche
+            searchContainer.insertAdjacentHTML('beforebegin', iconsHtml + sidebarHtml);
+
+            // Delay pour s'assurer que tout est dans le DOM
+            setTimeout(() => {
+                const cartIcon = document.querySelector('.cart-icon');
+                const cartSidebar = document.querySelector('.cart-sidebar');
+                const closeSidebar = document.querySelector('.close-sidebar');
+
+                if (!cartIcon || !cartSidebar || !closeSidebar) {
+                    console.error('Éléments de la sidebar manquants');
+                    return;
+                }
+
+                // Toggle sidebar
+                cartIcon.addEventListener('click', e => {
+                    e.preventDefault();
+                    cartSidebar.classList.toggle('open');
+                });
+
+                document.addEventListener('click', e => {
+                    if (!cartSidebar.contains(e.target) &&
+                        !cartIcon.contains(e.target) &&
+                        !closeSidebar.contains(e.target)) {
+                        cartSidebar.classList.remove('open');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+{% block Hero_Section_Begin %}
+    <!-- Hero Section Begin -->
     <style>
         body{
             background: #151515;
         }
     </style>
-    <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
-
-    <!-- Offcanvas Menu Section Begin -->
-    <div class="offcanvas-menu-overlay"></div>
-    <div class="offcanvas-menu-wrapper">
-        <div class="canvas-close">
-            <i class="fa fa-close"></i>
-        </div>
-        <div class="canvas-search search-switch">
-            <i class="fa fa-search"></i>
-        </div>
-        <nav class="canvas-menu mobile-menu">
-            <ul>
-
-                <li><a href="{{ path('app_home') }}">Home</a></li>
-                <li><a href="{{ path('app_about') }}">About Us</a></li>
-                <li><a href="{{ path('app_classes') }}">Classes</a></li>
-                <li><a href="{{ path('app_services') }}">Services</a></li>
-                <li><a href="{{ path('app_team') }}">Our Team</a></li>
-                {% if app.user %}
-                    {#                    <li><a href="{{ path('app_profile') }}">Mon Profil</a></li>#}
-                    <li><a href="{{ path('app_logout') }}" id="logout-btn-mobile">Déconnexion</a></li>
-                {% else %}
-                    <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                    <li><a href="{{ path('app_r') }}">Inscription</a></li>
-                {% endif %}
-                <li><a href="#">Pages</a>
-                    <ul class="dropdown">
-                        <li><a href="{{ path('app_about') }}">About us</a></li>
-                        <li><a href="{{ path('app_timetable') }}">Classes timetable</a></li>
-                        <li><a href="{{ path('bmi_calculator') }}">Bmi calculate</a></li>
-                        <li><a href="{{ path('app_team') }}">Mon Profile</a></li>
-                        <li><a href="{{ path('app_team') }}">Our team</a></li>
-                        <li><a href="{{ path('app_gallery') }}">Gallery</a></li>
-                        <li><a href="{{ path('app_blog') }}">Our blog</a></li>
-                        <li><a href="{{ path('app_404') }}">404</a></li>
-                    </ul>
-                </li>
-                <li><a href="{{ path('app_contact') }}">Contact</a></li>
-
-                <li><a href="./index.html">Home</a></li>
-                <li><a href="./about-us.html">Planning</a></li>
-                <li><a href="./classes.html">Produit</a></li>
-                <li><a href="./services.html">Evenement</a></li>
-                <li><a href="./team.html">Réclamation</a></li>
-                <li><a href="./contact.html">Offre</a></li>
-
-            </ul>
-        </nav>
-        <div id="mobile-menu-wrap"></div>
-        <div class="canvas-social">
-            <a href="#"><i class="fa fa-facebook"></i></a>
-            <a href="#"><i class="fa fa-twitter"></i></a>
-            <a href="#"><i class="fa fa-youtube-play"></i></a>
-            <a href="#"><i class="fa fa-instagram"></i></a>
-        </div>
-    </div>
-    <!-- Offcanvas Menu Section End -->
-
-    <!-- Header Section Begin -->
-    <header class="header-section">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="logoo">
-                        <a href="./index.html">
-                            <img src="{{ asset('img/logoo.png') }}" alt="">
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <nav class="nav-menu">
-                        <ul>
-
-                            <li><a href="{{ path('app_home') }}">Home</a></li>
-                            <li><a href="{{ path('app_about') }}">About Us</a></li>
-                            <li><a href="{{ path('app_classes') }}">Classes</a></li>
-                            <li><a href="{{ path('app_services') }}">Services</a></li>
-                            <li><a href="{{ path('app_team') }}">Our Team</a></li>
-                            {% if app.user %}
-                                {#                                <li><a href="{{ path('app_profile') }}">Mon Profil</a></li>#}
-                                <li><a href="{{ path('app_logout') }}" id="logout-btn">Déconnexion</a></li>
-                            {% else %}
-                                <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                                <li><a href="{{ path('app_r') }}">Inscription</a></li>
-                            {% endif %}
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./about-us.html">About us</a></li>
-                                    <li><a href="./class-timetable.html">Classes timetable</a></li>
-                                    <li><a href="./bmi-calculator.html">Bmi calculate</a></li>
-                                    <li><a href="./team.html">Our team</a></li>
-                                    <li><a href="./gallery.html">Gallery</a></li>
-                                    <li><a href="./blog.html">Our blog</a></li>
-                                    <li><a href="./404.html">404</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="./contact.html">Contact</a></li>
-
-                            <li><a href="./about-us.html">Planning</a></li>
-                            <li class="active"><a href="/pageAdherent">Articles Achétés</a></li>
-                            <li><a href="./services.html">Evénement</a></li>
-                            <li><a href="./team.html">Offre</a></li>
-                            <li><a href="./contact.html">Réclamation</a></li>
-
-                        </ul>
-                    </nav>
-                </div>
-                <div class="col-lg-3">
-                    <div class="top-option">
-                        <div class="to-search search-switch">
-                            <i class="fa fa-search"></i>
-                        </div>
-                        <div class="to-social">
-                            <a href="#"><i class="fa fa-facebook"></i></a>
-                            <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-youtube-play"></i></a>
-                            <a href="#"><i class="fa fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="canvas-open">
-                <i class="fa fa-bars"></i>
-            </div>
-        </div>
-    </header>
-    <!-- Header End -->
-{% endblock %}
-
-{% block Hero_Section_Begin %}
-    <!-- Hero Section Begin -->
     <link rel="stylesheet" href="css/stylepanier.css">
     <section class="breadcrumb-section set-bg" data-setbg="img/image7.png">
         <div class="container">
@@ -319,7 +444,17 @@
                     <div class="product-container">
                         {% for produit in produits %}
                             <div class="product-item">
-                                <div class="card h-100 text-center bg-dark text-light">
+                                <style>
+                                    .wishlists-icon:hover .icon-circle i {
+                                        color: #e40000 !important;
+                                    }
+                                </style>
+                                <div class="card h-100 text-center bg-dark text-light text-decoration-none position-relative">
+                                    <a href="{{ path('ajouter_produit_en_wishlist', { 'id': produit.id }) }}" class="wishlists-icon position-absolute top-0 end-0 m-2 text-decoration-none" title="Ajouter aux favoris" style="z-index: 2; transition: all 0.3s ease; transform: translateX(-9px) translateY(-16px); font-size: 21px;" aria-label="Ajouter aux favoris">
+                                        <div class="icon-circle">
+                                            <i class="fa fa-heart text-light fs-5"></i>
+                                        </div>
+                                    </a>
                                     <img src="{{ asset('img/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.nom }}">
                                     <div class="card-body">
                                         <h5 class="card-title" style="color: white;">{{ produit.nom }}</h5>
@@ -327,7 +462,7 @@
                                             {{ produit.etat == 1 ? 'En Rupture' : 'En Stock' }}
                                         </p>
                                         <p class="card-text" style="font-size: 1.2em; color: #ffffff; font-family: 'Roboto', sans-serif;">{{ produit.prix }} DT</p>
-                                        <a href="{{ path('ajouter_produit_au_panier', { 'id': produit.id }) }}" class="btn btn-light" style="background-color: #ff7300; font-size: 14px; padding: 8px 15px;">
+                                        <a href="{{ path('ajouter_produit_au_panier', { 'id': produit.id }) }}" class="btn btn-hover-animated" style="background-color: #ff7300; font-size: 14px; padding: 8px 15px;">
                                             <i class="fa fa-cart-plus" style="margin-right: 8px;"></i>Voir Details</a>
                                     </div>
                                 </div>
@@ -340,7 +475,6 @@
             </div>
         </div>
     </section>
-
     <!-- Script Ajax -->
     <script>
         document.getElementById('searchInput').addEventListener('input', function() {
@@ -372,12 +506,6 @@
             window.location.href = '/pageAdherent?categorie_id=' + categorieId; // Redirige vers la même page avec le filtre
         }
     </script>
-
-
-
-
-
-
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -415,17 +543,108 @@
             updateButtons();
         });
     </script>
+    <style>
+        /* Style général du bouton */
+        .btn-hover-animated {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 25px;
+        }
+
+        .btn-hover-animated:hover {
+            background-color: #218838;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Icône avec effet d'étincelle */
+        .btn-hover-animated .fa-cart-plus {
+            transition: transform 0.6s ease, color 0.4s ease;
+            display: inline-block;
+            color: white;
+        }
+
+        .btn-hover-animated:hover .fa-cart-plus {
+            transform: scale(1.3) rotate(15deg);
+            color: #ffd83b;
+        }
+
+        /* Effet de particules */
+        .btn-hover-animated::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 70%);
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            z-index: 0;
+        }
+
+        .btn-hover-animated:hover::before {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        /* Particules dynamiques */
+        .btn-hover-animated::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 3px;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: particles 1.5s infinite;
+        }
+
+        @keyframes particles {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(calc(-50% + 20px), calc(-50% - 20px)) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* Texte avec effet de soulignement */
+        .btn-hover-animated span {
+            margin-left: 10px;
+            position: relative;
+            transition: color 0.4s ease-in-out;
+        }
+
+        .btn-hover-animated:hover span {
+            color: #ffd83b;
+        }
+
+        .btn-hover-animated span::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #ffd83b;
+            transition: width 0.3s ease-in-out;
+        }
+        .btn-hover-animated:hover span::after {
+            width: 100%;
+        }
+    </style>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-

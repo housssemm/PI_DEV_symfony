@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Evenement;
 use App\Form\EvenementFormType;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Psr\Log\LoggerInterface;
 final class EvenementController extends AbstractController
@@ -24,8 +25,13 @@ final class EvenementController extends AbstractController
     }
 
     #[Route('/events', name: 'app_events')]
-    public function listEvenement(EvenementRepository $evenementRepository): Response
+    public function listEvenement(EvenementRepository $evenementRepository,Security $security): Response
     {
+        // Récupérer l'utilisateur connecté
+        $loggedInUser = $security->getUser();
+        $loggedInUser->getDiscriminator();
+        $isCreateurEvenement = $loggedInUser instanceof \App\Entity\CreateurEvenement;
+
         $request = Request::createFromGlobals();
         $queryBuilder = $evenementRepository->createQueryBuilder('e');
 
@@ -80,6 +86,8 @@ final class EvenementController extends AbstractController
 
         return $this->render('evenement/ListEvenement.html.twig', [
             'list' => $list,
+
+            'isCreateurEvenement' => $isCreateurEvenement,
         ]);
     }
 
@@ -325,43 +333,12 @@ final class EvenementController extends AbstractController
         return $this->redirectToRoute('app_events');
     }
 
-//    #[Route('/events/add', name: 'app_add_event')]
-//    public function add(Request $request, EntityManagerInterface $em): Response
-//    {
-//        $event = new Evenement();
-//
-//        // Crée le formulaire basé sur le type EvenementFormType
-//        $form = $this->createForm(EvenementFormType::class, $event);
-//
-//        // Gère la requête (hydrate l'objet + vérifie s'il y a soumission)
-//        $form->handleRequest($request);
-//
-//        // Si le formulaire est soumis et valide
-//        if ($form->isSubmitted() && $form->isValid()) {
-//
-//            // Gère l'image uploadée
-//            $imageFile = $form->get('image')->getData();
-//            if ($imageFile) {
-//                $imageContent = file_get_contents($imageFile->getPathname());
-//                $event->setImage($imageContent);
-//            }
-//
-//            $em->persist($event);
-//            $em->flush();
-//
-//            $this->addFlash('success', 'L\'événement a été ajouté avec succès.');
-//            return $this->redirectToRoute('app_events');
-//        }
-//
-//        // Rend la vue avec le formulaire
-//        return $this->render('evenement/AddEvenement.html.twig', [
-//            'form' => $form->createView(),
-//        ]);
-//    }
 
     #[Route('/events/add', name: 'app_add_event')]
-    public function add(Request $request, EntityManagerInterface $em): Response
+    public function add(Request $request, EntityManagerInterface $em ): Response
     {
+
+
         $event = new Evenement();
         $event->setEtat('ACTIF'); // Set the etat to 'ACTIF' by default
 
@@ -395,8 +372,12 @@ final class EvenementController extends AbstractController
     }
 
     #[Route('/event/{id}', name: 'app_event_details')]
-    public function eventDetails(Evenement $event): Response
+    public function eventDetails(Evenement $event,Security $security): Response
     {
+        $loggedInUser = $security->getUser();
+        $loggedInUser->getDiscriminator();
+        $isCreateurEvenement = $loggedInUser instanceof \App\Entity\CreateurEvenement;
+
         // Convert image to base64 for display
         $image = $event->getImage();
         if ($image) {
@@ -404,7 +385,8 @@ final class EvenementController extends AbstractController
         }
 
         return $this->render('evenement/EventDetails.html.twig', [
-            'event' => $event
+            'event' => $event,
+            'isCreateurEvenement' => $isCreateurEvenement,
         ]);
     }
 

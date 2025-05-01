@@ -40,4 +40,13 @@ class CoachRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findCoachsByCertificatValide(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.Certificat_valide = :valide')
+            ->setParameter('valide', true)
+            ->getQuery()
+            ->getResult();
+    }
+
 }
