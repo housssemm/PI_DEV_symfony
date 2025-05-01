@@ -25,7 +25,15 @@ use App\Repository\UserRepository;
 
 final class ParticipantEvenementController extends AbstractController{
 
+    private $mailjet;
+    public function __construct(
+        MailjetClient $mailjet,
 
+
+    ) {
+        $this->mailjet = $mailjet;
+
+    }
 
 
 //
@@ -97,6 +105,69 @@ final class ParticipantEvenementController extends AbstractController{
 
 
 
+//
+//    #[Route('/evenement/participer/{evenementId}', name: 'app_participer_evenement')]
+//    public function participerEvenement(
+//        int $evenementId,
+//        EntityManagerInterface $entityManager,
+//        MailerInterface $mailer
+//    ): Response
+//    {
+//        $user = $this->getUser();
+//        $evenement = $entityManager->getRepository(Evenement::class)->find($evenementId);
+//
+//        if (!$evenement) {
+//            $this->addFlash('error', 'Événement non trouvé.');
+//            return $this->redirectToRoute('app_events');
+//        }
+//
+//        $existingParticipation = $entityManager->getRepository(Participantevenement::class)->findOneBy([
+//            'user' => $user,
+//            'evenement' => $evenement,
+//        ]);
+//
+//        if ($existingParticipation) {
+//            $this->addFlash('warning', 'Vous êtes déjà inscrit à cet événement.');
+//            return $this->redirectToRoute('app_event_details', ['id' => $evenementId]);
+//        }
+//
+//        $participant = new Participantevenement();
+//        $participant->setUser($user);
+//        $participant->setEvenement($evenement);
+//        $participant->setDateInscription(new \DateTime());
+//
+//        $entityManager->persist($participant);
+//        $entityManager->flush();
+//
+//        // Log recipient email for debugging
+//        $recipientEmail = $user->getEmail();
+//        error_log("Sending email to: $recipientEmail");
+//
+//        $email = (new Email())
+//            ->from('farahbenyedderr@gmail.com')
+//            ->to('houssemm.labidi@gmail.com')
+//            ->subject('Confirmation d\'inscription à l\'événement')
+//            ->html("
+//            <h2>Bonjour {$user->getNom()},</h2>
+//            <p>Vous êtes bien inscrit à l'événement <strong>{$evenement->getTitre()}</strong>.</p>
+//            <p>Date Début: {$evenement->getDateDebut()->format('d/m/Y')}</p>
+//            <p>Statut de paiement : EN ATTENTE</p>
+//            <br><p>Merci pour votre confiance !</p>
+//        ");
+//
+//        try {
+//            $mailer->send($email);
+//            $this->addFlash('success', 'Inscription réussie et e-mail de confirmation envoyé !');
+//        } catch (\Throwable $e) {
+//            error_log("Email sending failed: " . $e->getMessage());
+//            $this->addFlash('error', 'Erreur lors de l\'envoi de l\'e-mail : ' . $e->getMessage());
+//        }
+//
+//        return $this->redirectToRoute('app_event_details', ['id' => $evenementId]);
+//    }
+
+
+
 
     #[Route('/evenement/participer/{evenementId}', name: 'app_participer_evenement')]
     public function participerEvenement(
@@ -134,25 +205,57 @@ final class ParticipantEvenementController extends AbstractController{
         // Log recipient email for debugging
         $recipientEmail = $user->getEmail();
         error_log("Sending email to: $recipientEmail");
-
-        $email = (new Email())
-            ->from('farah.benyedder@esprit.tn')
-            ->to('houssemm.labidi@gmail.com')
-            ->subject('Confirmation d\'inscription à l\'événement')
-            ->html("
-            <h2>Bonjour {$user->getNom()},</h2>
-            <p>Vous êtes bien inscrit à l'événement <strong>{$evenement->getTitre()}</strong>.</p>
-            <p>Date Début: {$evenement->getDateDebut()->format('d/m/Y')}</p>
-            <p>Statut de paiement : EN ATTENTE</p>
-            <br><p>Merci pour votre confiance !</p>
-        ");
+//
+//        $email = (new Email())
+//            ->from('farahbenyedderr@gmail.com')
+//            ->to('houssemm.labidi@gmail.com')
+//            ->subject('Confirmation d\'inscription à l\'événement')
+//            ->html("
+//            <h2>Bonjour {$user->getNom()},</h2>
+//            <p>Vous êtes bien inscrit à l'événement <strong>{$evenement->getTitre()}</strong>.</p>
+//            <p>Date Début: {$evenement->getDateDebut()->format('d/m/Y')}</p>
+//            <p>Statut de paiement : EN ATTENTE</p>
+//            <br><p>Merci pour votre confiance !</p>
+//        ");
+//
+//        try {
+//            $mailer->send($email);
+//            $this->addFlash('success', 'Inscription réussie et e-mail de confirmation envoyé !');
+//        } catch (\Throwable $e) {
+//            error_log("Email sending failed: " . $e->getMessage());
+//            $this->addFlash('error', 'Erreur lors de l\'envoi de l\'e-mail : ' . $e->getMessage());
+//        }
 
         try {
-            $mailer->send($email);
-            $this->addFlash('success', 'Inscription réussie et e-mail de confirmation envoyé !');
-        } catch (\Throwable $e) {
-            error_log("Email sending failed: " . $e->getMessage());
-            $this->addFlash('error', 'Erreur lors de l\'envoi de l\'e-mail : ' . $e->getMessage());
+            $body = [
+                'Messages' => [
+                    [
+                        'From' => [
+                            'Email' => 'farahbenyedderr@gmail.com',
+                            'Name' => 'Coachini',
+                        ],
+                        'To' => [
+                            [
+                                'Email' => $recipientEmail,
+                            ],
+                        ],
+                        'TemplateID' => 6765931,
+                        'TemplateLanguage' => true,
+                        'Subject' => 'Votre code de récupération Coachini',
+                        'Variables' => [
+                            'CODE' => 'hhhhhhhhhhhhh',
+                        ],
+                    ],
+                ],
+            ];
+
+            $response = $this->mailjet->post(Resources::$Email, ['body' => $body]);
+
+            if (!$response->success()) {
+                return $this->json(['error' => 'Échec de l’envoi de l’e-mail via Mailjet : ' . json_encode($response->getData())], 500);
+            }
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Échec de l’envoi de l’e-mail : ' . $e->getMessage()], 500);
         }
 
         return $this->redirectToRoute('app_event_details', ['id' => $evenementId]);
@@ -399,11 +502,11 @@ final class ParticipantEvenementController extends AbstractController{
                 $image = $evenement->getImage();
                 if ($image) {
                     // Debug output - check if image exists and its size
-                    dump([
-                        'event_id' => $evenement->getId(),
-                        'image_size' => strlen($image),
-                        'first_bytes' => substr($image, 0, 50)
-                    ]);
+//                    dump([
+//                        'event_id' => $evenement->getId(),
+//                        'image_size' => strlen($image),
+//                        'first_bytes' => substr($image, 0, 50)
+//                    ]);
 
                     $evenement->setBase64Image(base64_encode($image));
                 }
