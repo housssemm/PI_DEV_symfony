@@ -40,6 +40,7 @@
 
         .btn {
             transition: all 0.3s ease-in-out;
+            position: relative;
         }
 
         .btn:hover {
@@ -47,6 +48,11 @@
             color: #FFFFFF;
             transform: translateY(-2px);
             box-shadow: 0px 4px 12px rgba(255, 122, 0, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .text-highlight {
@@ -57,6 +63,25 @@
             background-color: #252525;
             color: #FFFFFF;
             border: 1px solid red;
+        }
+
+        .spinner {
+            display: none;
+            border: 2px solid #FFFFFF;
+            border-top: 2px solid #FF7B00;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
         }
     </style>
 {% endblock %}
@@ -91,36 +116,41 @@
             <div class="col-lg-6">
                 <input type="hidden" id="stripe-public-key" value="{{ publicKey }}">
 
-                <form id="payment-form">
-                    <!-- Champ téléphone ajouté -->
+                <form id="payment-form" aria-labelledby="payment-form-title">
+                    <h3 id="payment-form-title" class="sr-only">Formulaire de paiement</h3>
                     <div class="form-group mb-4">
                         <label class="font-weight-bold" for="phone-number">Votre numéro de téléphone</label>
                         <input id="phone-number" name="phone" type="tel"
-                               class="form-control" placeholder="+216XXXXXXXX" required>
+                               class="form-control" placeholder="+216XXXXXXXX" required
+                               aria-describedby="phone-number-help">
+                        <small id="phone-number-help" class="form-text text-muted">Entrez votre numéro avec l'indicatif (ex. +21612345678).</small>
                     </div>
 
                     <div class="form-group mb-4">
                         <label class="font-weight-bold">Informations de paiement</label>
-                        <div id="card-number-element" class="form-control"></div>
-                        <div id="card-expiry-element" class="form-control mt-2"></div>
-                        <div id="card-cvc-element" class="form-control mt-2"></div>
+                        <div id="card-number-element" class="form-control" aria-label="Numéro de carte"></div>
+                        <div id="card-expiry-element" class="form-control mt-2" aria-label="Date d'expiration"></div>
+                        <div id="card-cvc-element" class="form-control mt-2" aria-label="Code CVC"></div>
                     </div>
 
                     <div class="form-group mb-4">
                         <label class="font-weight-bold" for="cardholder-name">Nom du titulaire</label>
-                        <input id="cardholder-name" type="text" class="form-control" placeholder="John Doe" required>
+                        <input id="cardholder-name" type="text" class="form-control" placeholder="John Doe" required
+                               aria-describedby="cardholder-name-help">
+                        <small id="cardholder-name-help" class="form-text text-muted">Nom tel qu'il apparaît sur la carte.</small>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-3 p-3" style="background-color: #2A2A2A; border-radius: 8px;">
                         <span class="font-weight-bold">Total à payer :</span>
-                        <span class="h4 mb-0 text-highlight">{{ total|number_format(2) }} DT</span>
+                        <span class="h4 mb-0 text-hidden">{{ total|number_format(2) }} DT</span>
                     </div>
 
                     <button type="submit" class="btn btn-block py-3 font-weight-bold" style="background: #FF7B00; border: none; color: #000;">
-                        <i class="fa fa-lock mr-2"></i> Payer maintenant
+                        <span class="spinner" id="payment-spinner"></span>
+                        <span id="payment-button-text"><i class="fa fa-lock mr-2"></i> Payer maintenant</span>
                     </button>
 
-                    <div id="card-errors" class="text-danger mt-2"></div>
+                    <div id="card-errors" class="text-danger mt-2" role="alert"></div>
                 </form>
             </div>
         </div>
@@ -130,6 +160,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://unpkg.com/libphonenumber-js@1.10.53/bundle/libphonenumber-js.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const stripe = Stripe(document.getElementById('stripe-public-key').value);
@@ -140,14 +171,16 @@
             };
             const cardNumber = elements.create('cardNumber', { style });
             const cardExpiry = elements.create('cardExpiry', { style });
-            const cardCvc    = elements.create('cardCvc',    { style });
+            const cardCvc = elements.create('cardCvc', { style });
             cardNumber.mount('#card-number-element');
             cardExpiry.mount('#card-expiry-element');
             cardCvc.mount('#card-cvc-element');
 
-            const displayError  = document.getElementById('card-errors');
-            const form          = document.getElementById('payment-form');
-            const submitButton  = form.querySelector('button[type="submit"]');
+            const displayError = document.getElementById('card-errors');
+            const form = document.getElementById('payment-form');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const spinner = document.getElementById('payment-spinner');
+            const buttonText = document.getElementById('payment-button-text');
 
             [cardNumber, cardExpiry, cardCvc].forEach(el => {
                 el.on('change', event => {
@@ -158,21 +191,58 @@
             form.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 submitButton.disabled = true;
+                spinner.style.display = 'inline-block';
+                buttonText.style.opacity = '0.5';
+                displayError.textContent = ''; // Réinitialiser les messages d'erreur
 
-                const phone           = document.getElementById('phone-number').value;
-                const cardholderName  = document.getElementById('cardholder-name').value;
+                const phone = document.getElementById('phone-number').value;
+                const cardholderName = document.getElementById('cardholder-name').value;
+
+                // Valider le numéro de téléphone avec libphonenumber-js
+                try {
+                    const parsedNumber = libphonenumber.parsePhoneNumber(phone);
+                    if (!parsedNumber.isValid()) {
+                        displayError.textContent = 'Le numéro de téléphone est invalide. Exemple : +21612345678';
+                        submitButton.disabled = false;
+                        spinner.style.display = 'none';
+                        buttonText.style.opacity = '1';
+                        return;
+                    }
+                    console.log('Numéro de téléphone valide : ' + parsedNumber.format('E.164'));
+                } catch (err) {
+                    displayError.textContent = 'Le numéro de téléphone est invalide. Entrez un numéro avec l\'indicatif (ex. +21612345678)';
+                    submitButton.disabled = false;
+                    spinner.style.display = 'none';
+                    buttonText.style.opacity = '1';
+                    return;
+                }
 
                 try {
-                    // 1) Création du PaymentIntent
+                    // Création du PaymentIntent
                     const resp = await fetch('/panier/create-payment-intent', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ total: {{ total }}, phone: phone })
+                        body: JSON.stringify({ phone: phone })
                     });
-                    const { clientSecret, error } = await resp.json();
-                    if (error) throw new Error(error);
 
-                    // 2) Confirmation du paiement
+                    // Vérifier si la réponse est bien du JSON
+                    const contentType = resp.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        const text = await resp.text();
+                        console.error('Réponse non JSON reçue : ', text);
+                        throw new Error('Réponse serveur invalide (non JSON)');
+                    }
+
+                    const { clientSecret, error } = await resp.json();
+                    if (error) {
+                        displayError.textContent = error; // Afficher l'erreur spécifique du serveur
+                        submitButton.disabled = false;
+                        spinner.style.display = 'none';
+                        buttonText.style.opacity = '1';
+                        return;
+                    }
+
+                    // Confirmation du paiement
                     const result = await stripe.confirmCardPayment(clientSecret, {
                         payment_method: {
                             card: cardNumber,
@@ -186,10 +256,12 @@
                         window.location.href = `/paiement/success?payment_intent=${result.paymentIntent.id}`;
                     }
                 } catch (err) {
-                    console.error(err);
-                    displayError.textContent = 'Une erreur est survenue.';
+                    console.error('Erreur lors du paiement : ', err);
+                    displayError.textContent = 'Une erreur est survenue : ' + err.message;
                 } finally {
                     submitButton.disabled = false;
+                    spinner.style.display = 'none';
+                    buttonText.style.opacity = '1';
                 }
             });
         });

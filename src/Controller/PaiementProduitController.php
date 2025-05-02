@@ -12,25 +12,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Notifier\Message\SmsMessage;
-use Symfony\Component\Notifier\Notification\Notification;
-use Symfony\Component\Notifier\NotifierInterface;
-use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use libphonenumber\PhoneNumberUtil;
+use libphonenumber\NumberParseException;
 
 class PaiementProduitController extends AbstractController
 {
     private StripeService $stripeService;
     private Security $security;
     private LoggerInterface $logger;
+    private TwilioService $twilioService;
 
-    public function __construct(StripeService $stripeService, Security $security, LoggerInterface $logger)
+    public function __construct(StripeService $stripeService, Security $security, LoggerInterface $logger, TwilioService $twilioService)
     {
         $this->stripeService = $stripeService;
-        $this->security      = $security;
-        $this->logger        = $logger;
+        $this->security = $security;
+        $this->logger = $logger;
+        $this->twilioService = $twilioService;
     }
+
     #[Route('/panier/payer', name: 'panier_payer', methods: ["GET"])]
     public function payerPanier(PanierproduitRepository $panierproduitRepo, PanierRepository $panierRepo): Response
     {
@@ -47,7 +48,6 @@ class PaiementProduitController extends AbstractController
         }
 
         $items = $panierproduitRepo->findBy(['panier' => $panier]);
-
         $total = 0;
         foreach ($items as $it) {
             $total += $it->getQuantite() * $it->getProduit()->getPrix();
@@ -64,12 +64,15 @@ class PaiementProduitController extends AbstractController
     }
 
     #[Route('/panier/create-payment-intent', name: 'panier_create_payment_intent', methods: ["POST"])]
-    public function createPaymentIntent(Request $request, PanierproduitRepository $panierproduitpRepo, PanierRepository $panierRepo, LoggerInterface $logger): JsonResponse
+    public function createPaymentIntent(Request $request, PanierproduitRepository $panierproduitRepo, PanierRepository $panierRepo): JsonResponse
     {
-        // Récupérer le JSON envoyé par JS
         $data = $request->toArray();
         $phone = $data['phone'] ?? null;
-        $logger->info('createPaymentIntent - phone reçu : ' . $phone);
+        $this->logger->info('createPaymentIntent - phone reçu : ' . ($phone ?? 'null'));
+
+        if (!$phone) {
+            return new JsonResponse(['error' => 'Numéro de téléphone manquant'], 400);
+        }
 
         $user = $this->getUser();
         $panier = $panierRepo->findPanierByUser($user);
@@ -77,8 +80,7 @@ class PaiementProduitController extends AbstractController
             return new JsonResponse(['error' => 'Panier vide'], 400);
         }
 
-        $items = $panierproduitpRepo->findBy(['panier' => $panier]);
-
+        $items = $panierproduitRepo->findBy(['panier' => $panier]);
         $amount = 0;
         foreach ($items as $it) {
             $amount += $it->getQuantite() * $it->getProduit()->getPrix() * 100;
@@ -88,10 +90,7 @@ class PaiementProduitController extends AbstractController
             $paymentIntent = $this->stripeService->createPaymentIntent(
                 (int)$amount,
                 'eur',
-                [
-                    'userId' => $user->getId(),
-                    'phone' => $phone // Store the phone number in metadata
-                ]
+                ['userId' => $user->getId(), 'phone' => $phone]
             );
             return new JsonResponse(['clientSecret' => $paymentIntent->client_secret]);
         } catch (\Exception $e) {
@@ -101,41 +100,37 @@ class PaiementProduitController extends AbstractController
     }
 
     #[Route('/paiement/success', name: 'paiement_success', methods: ['GET'])]
-    public function success(Request $request, PanierproduitRepository $panierProduitRepo, PanierRepository $panierRepo, EntityManagerInterface $entityManager, NotifierInterface $notifier, TwilioService $twilioService): Response
+    public function success(Request $request, PanierproduitRepository $panierProduitRepo, PanierRepository $panierRepo, EntityManagerInterface $entityManager): Response
     {
         $piId = $request->query->get('payment_intent');
         if (!$piId) {
+            $this->logger->error('ID du PaymentIntent manquant dans la requête.');
             $this->addFlash('error', 'ID du PaymentIntent manquant.');
             return $this->redirectToRoute('app_home');
         }
 
         try {
-            // Vérifier le statut du PaymentIntent
             $pi = $this->stripeService->retrievePaymentIntent($piId);
             if ($pi->status !== 'succeeded') {
+                $this->logger->warning('Statut du paiement non réussi : ' . $pi->status, [
+                    'payment_intent' => $piId,
+                ]);
                 $this->addFlash('error', 'Le paiement n’a pas été validé.');
                 return $this->redirectToRoute('app_afficher_panier');
-            }
-
-            // Récupérer le numéro de téléphone depuis les métadonnées
-            $phone = $pi->metadata['phone'] ?? null;
-            if (!$phone) {
-                $this->logger->error('Numéro de téléphone non trouvé dans les métadonnées du PaymentIntent.');
-                $this->addFlash('warning', 'Numéro de téléphone manquant dans les métadonnées.');
-            } else {
-                $this->logger->info('Numéro de téléphone utilisé pour l’envoi du SMS : ' . $phone);
             }
 
             $user = $this->getUser();
             $panier = $panierRepo->findPanierByUser($user);
             if (!$panier) {
+                $this->logger->error('Aucun panier trouvé pour l’utilisateur : ' . $user->getId(), [
+                    'payment_intent' => $piId,
+                ]);
                 $this->addFlash('error', 'Aucun panier trouvé.');
                 return $this->redirectToRoute('app_afficher_panier');
             }
 
             $items = $panierProduitRepo->findBy(['panier' => $panier]);
             $total = 0;
-            $lines = ["✅ Votre commande a été payée :"];
             foreach ($items as $it) {
                 $qty = $it->getQuantite();
                 $prix = $it->getProduit()->getPrix();
@@ -143,64 +138,94 @@ class PaiementProduitController extends AbstractController
                 $total += $sub;
                 $it->setEtatPaiement('Payé');
 
-                // Mise à jour du stock du produit
                 $produit = $it->getProduit();
                 $currentStock = $produit->getQuantite();
                 if ($currentStock < $qty) {
-                    $this->logger->error('Stock insuffisant pour le produit : ' . $produit->getNom());
-                    $this->addFlash('error', 'Stock insuffisant pour le produit : ' . $produit->getNom());
+                    $this->logger->error('Stock insuffisant pour : ' . $produit->getNom() . ' (Requis : ' . $qty . ', Disponible : ' . $currentStock . ')', [
+                        'payment_intent' => $piId,
+                        'user_id' => $user->getId(),
+                    ]);
+                    $this->addFlash('error', 'Stock insuffisant pour : ' . $produit->getNom());
                     return $this->redirectToRoute('app_afficher_panier');
                 }
                 $produit->setQuantite($currentStock - $qty);
                 $entityManager->persist($produit);
-
-                $lines[] = sprintf("%s x%d = %s DT", $it->getProduit()->getNom(), $qty, number_format($sub, 2));
             }
-            $lines[] = sprintf("Total : %s DT", number_format($total, 2));
-            $lines[] = "Le : " . (new \DateTime())->format('d/m/Y H:i');
 
             $entityManager->flush();
 
-            $smsSentNotifier = false;
-            $smsSentApi = false;
-            if ($phone) {
-                if (!preg_match('/^\+\d{8,15}$/', $phone)) {
-                    $this->logger->error('Numéro de téléphone invalide : ' . $phone);
-                    $this->addFlash('warning', 'Le numéro de téléphone est invalide. Le SMS n’a pas été envoyé.');
-                } else {
-                    $this->logger->info('TWILIO_FROM utilisé : ' . $_ENV['TWILIO_FROM'] ?? 'Non défini');
+            // Use default phone number if not provided
+            $phone = $pi->metadata['phone'] ?? '+21621542305';
+            $this->logger->info('Phone number used: ' . $phone);
 
-//                    // Tentative avec Symfony Notifier
-//                    try {
-//                        $notification = (new Notification('Votre commande', ['sms']))
-//                            ->content(implode("\n", $lines));
-//                        $recipient = new Recipient('', $phone);
-//                        $notifier->send($notification, $recipient);
-//                        $this->logger->info('SMS envoyé avec succès via Symfony Notifier à ' . $phone);
-//                        $smsSentNotifier = true;
-//                    } catch (\Exception $e) {
-//                        $this->logger->error('Erreur lors de l’envoi du SMS via Symfony Notifier : ' . $e->getMessage());
-//                        $this->addFlash('warning', 'Le SMS via Symfony Notifier n’a pas pu être envoyé : ' . $e->getMessage());
-//                    }
+            $smsSent = false;
+            $phoneUtil = PhoneNumberUtil::getInstance();
+            try {
+                $parsedNumber = $phoneUtil->parse($phone, null);
+                if ($phoneUtil->isValidNumber($parsedNumber)) {
+                    $phone = $phoneUtil->format($parsedNumber, \libphonenumber\PhoneNumberFormat::E164);
+                    $this->logger->info('Numéro de téléphone valide pour envoi SMS : ' . $phone, [
+                        'payment_intent' => $piId,
+                        'user_id' => $user->getId(),
+                    ]);
 
-                    // Tentative avec l’API Twilio
-                    try {
-                        $messageSid = $twilioService->sendSms($phone, implode("\n", $lines));
-                        $this->logger->info('SMS envoyé via l’API Twilio avec SID : ' . $messageSid);
-                        $smsSentApi = true;
-                    } catch (\Exception $e) {
-                        $this->logger->error('Erreur lors de l’envoi du SMS via l’API Twilio : ' . $e->getMessage());
-                        $this->addFlash('warning', 'Le SMS via l’API Twilio n’a pas pu être envoyé : ' . $e->getMessage());
+                    $receiveSms = method_exists($user, 'isReceiveSms') ? $user->isReceiveSms() : true;
+                    if ($receiveSms) {
+                        $message = $this->buildOrderConfirmationMessage($items, $total);
+                        try {
+                            $messageSid = $this->twilioService->sendSms($phone, $message);
+                            $this->logger->info('SMS envoyé avec succès via Twilio', [
+                                'sid' => $messageSid,
+                                'user_id' => $user->getId(),
+                                'payment_intent' => $piId,
+                                'phone' => $phone,
+                            ]);
+                            if (method_exists($panier, 'setSmsSid')) {
+                                $panier->setSmsSid($messageSid);
+                                $entityManager->persist($panier);
+                                $entityManager->flush();
+                            }
+                            $smsSent = true;
+                        } catch (\Exception $e) {
+                            $this->logger->error('Échec de l’envoi SMS : ' . $e->getMessage(), [
+                                'user_id' => $user->getId(),
+                                'payment_intent' => $piId,
+                                'phone' => $phone,
+                                'error_code' => $e->getCode(),
+                            ]);
+                            $this->addFlash('warning', 'Erreur lors de l’envoi du SMS.');
+                        }
+                    } else {
+                        $this->logger->info('SMS non envoyé : utilisateur a désactivé les notifications SMS', [
+                            'user_id' => $user->getId(),
+                            'payment_intent' => $piId,
+                            'phone' => $phone,
+                        ]);
+                        $this->addFlash('warning', 'SMS non envoyé : notifications SMS désactivées.');
                     }
+                } else {
+                    $this->logger->warning('Numéro de téléphone invalide : ' . $phone, [
+                        'payment_intent' => $piId,
+                        'user_id' => $user->getId(),
+                    ]);
+                    $this->addFlash('warning', 'Numéro de téléphone invalide ; SMS non envoyé.');
                 }
-            } else {
-                $this->addFlash('warning', 'Aucun numéro de téléphone fourni ; pas de SMS envoyé.');
+            } catch (NumberParseException $e) {
+                $this->logger->warning('Erreur de parsing du numéro : ' . $phone . ' - ' . $e->getMessage(), [
+                    'payment_intent' => $piId,
+                    'user_id' => $user->getId(),
+                ]);
+                $this->addFlash('warning', 'Numéro de téléphone invalide ; SMS non envoyé.');
             }
 
-            $this->addFlash('success', 'Paiement validé' . ($smsSentNotifier || $smsSentApi ? ' et SMS envoyé !' : ' !'));
+            $this->addFlash('success', 'Paiement validé' . ($smsSent ? ' et SMS envoyé !' : ' !'));
             return $this->redirectToRoute('app_afficher_panier');
         } catch (\Exception $e) {
-            $this->addFlash('error', 'Erreur lors de la validation du paiement : ' . $e->getMessage());
+            $this->logger->error('Erreur lors de la validation du paiement : ' . $e->getMessage(), [
+                'payment_intent' => $piId,
+                'user_id' => $user->getId(),
+            ]);
+            $this->addFlash('error', 'Erreur validation paiement : ' . $e->getMessage());
             return $this->redirectToRoute('app_afficher_panier');
         }
     }
@@ -210,5 +235,19 @@ class PaiementProduitController extends AbstractController
     {
         $this->addFlash('error', 'Le paiement a été annulé.');
         return $this->redirectToRoute('app_afficher_panier');
+    }
+
+    private function buildOrderConfirmationMessage(array $items, float $total): string
+    {
+        $lines = ["✅ Votre commande a été payée :"];
+        foreach ($items as $it) {
+            $qty = $it->getQuantite();
+            $prix = $it->getProduit()->getPrix();
+            $sub = $qty * $prix;
+            $lines[] = sprintf("%s x%d = %s DT", $it->getProduit()->getNom(), $qty, number_format($sub, 2));
+        }
+        $lines[] = sprintf("Total : %s DT", number_format($total, 2));
+        $lines[] = "Le : " . (new \DateTime())->format('d/m/Y H:i');
+        return implode("\n", $lines);
     }
 }

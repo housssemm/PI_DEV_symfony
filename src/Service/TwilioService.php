@@ -2,14 +2,14 @@
 
 namespace App\Service;
 
-use Psr\Log\LoggerInterface;
 use Twilio\Rest\Client;
+use Psr\Log\LoggerInterface;
 
 class TwilioService
 {
-    private Client $client;
-    private string $fromNumber;
-    private LoggerInterface $logger;
+    private $client;
+    private $fromNumber;
+    private $logger;
 
     public function __construct(string $accountSid, string $authToken, string $fromNumber, LoggerInterface $logger)
     {
@@ -18,20 +18,19 @@ class TwilioService
         $this->logger = $logger;
     }
 
-    public function sendSms(string $to, string $body): string
+    public function sendSms(string $to, string $message): string
     {
-        $message = $this->client->messages->create(
-            $to,
-            [
+        $this->logger->info('Tentative d’envoi SMS à : ' . $to . ' avec message : ' . $message);
+        try {
+            $message = $this->client->messages->create($to, [
                 'from' => $this->fromNumber,
-                'body' => $body,
-            ]
-        );
-
-        // Loguer les détails du message
-        $this->logger->info('Statut du SMS envoyé via API Twilio : ' . $message->status);
-        $this->logger->info('SID du message : ' . $message->sid);
-
-        return $message->sid; // Retourner le SID pour un suivi ultérieur si nécessaire
+                'body' => $message,
+            ]);
+            $this->logger->info('SMS envoyé avec SID : ' . $message->sid);
+            return $message->sid;
+        } catch (\Exception $e) {
+            $this->logger->error('Erreur lors de l’envoi SMS à ' . $to . ' : ' . $e->getMessage() . ' (Code : ' . $e->getCode() . ')');
+            throw new \Exception('Échec de l’envoi SMS : ' . $e->getMessage(), $e->getCode(), $e);
+        }
     }
 }
