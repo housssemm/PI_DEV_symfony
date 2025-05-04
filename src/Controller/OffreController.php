@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Twilio\Rest\Client;
-
+use Symfony\Component\Security\Core\Security;
 
 #[Route('/offre')]
 final class OffreController extends AbstractController
@@ -46,8 +46,12 @@ final class OffreController extends AbstractController
 
 
     #[Route('/list', name: 'offre_list')]
-    public function list(Request $request, OffreRepository $offreRepository): Response
+    public function list(Request $request, OffreRepository $offreRepository,Security $security): Response
     {
+        $loggedInUser = $security->getUser();
+        $loggedInUser->getDiscriminator();
+        $isinv = $loggedInUser instanceof \App\Entity\InvestisseurProduit;
+
         $nom = $request->query->get('nom');
         $date = $request->query->get('date');
         $tri = $request->query->get('tri');
@@ -69,6 +73,7 @@ final class OffreController extends AbstractController
         return $this->render('offre/ListOffre.html.twig', [
             'offres' => $offres,
             'offres_json' => json_encode($offresJson), // Passer les événements à Twig
+            'isinv' => $isinv,
         ]);
     }
 
@@ -131,7 +136,7 @@ final class OffreController extends AbstractController
                 );
 
                 $twilio->messages->create(
-                    '+21656452244', // Mon numéro de téléphone
+                    '+21627700219', // Mon numéro de téléphone
                     [
                         'from' => $this->getParameter('twilio_phone_number'),
                         'body' => 'Nouvelle offre produit ajoutée : ' . $offre->getNom() . ' !'
