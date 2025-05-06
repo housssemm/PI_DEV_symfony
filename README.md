@@ -35,7 +35,7 @@ To install Coachini locally, follow these steps:
 3. **Set up the environment**:
     - Copy the `.env.example` file to `.env` and configure your database settings (e.g., MySQL credentials).
    ```bash
-   cp .env.example .env
+   cp .env
    ```
 
 4. **Set up the database**:

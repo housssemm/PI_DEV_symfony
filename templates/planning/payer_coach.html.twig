@@ -4,7 +4,7 @@
 
 {% block Hero_Section_Begin %}
     <section class="breadcrumb-section set-bg" data-setbg="{{ asset('img/breadcrumb-bg.jpg') }}">
-        <div class="container" >
+        <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb-text">
@@ -24,12 +24,13 @@
                 <div class="col-lg-6 mb-4">
                     <div class="card border-0 shadow" style="background-color: #1e1e1e;">
                         <div class="card-header" style="background: linear-gradient(135deg, #FF7B00 0%, #FFAA00 100%); color: #000;">
-                            <h4 class="mb-0">{{ coach.nom }} {{ coach.prenom }}</h4>
+                            <h4 class="mb-0">{{ coach.nom is defined ? coach.nom : 'Nom non défini' }}
+                                {{ coach.prenom is defined ? coach.prenom : '' }}</h4>
                         </div>
                         <div style="height: 300px; overflow: hidden;">
-                            <img src="{{ asset('img/' ~ coach.image) }}"
+                            <img src="{{ coach.image is defined ? asset('img/' ~ coach.image) : asset('img/default.jpg') }}"
                                  class="w-100 h-100 object-fit-cover"
-                                 alt="Photo de {{ coach.nom }}"
+                                 alt="Photo de {{ coach.nom is defined ? coach.nom : 'coach' }}"
                                  style="object-position: top center;">
                         </div>
                         <div class="card-body text-white">
@@ -48,19 +49,27 @@
                             <ul class="list-group list-group-flush bg-transparent">
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-dark">
                                     <span><i class="fas fa-dumbbell mr-2" style="color: #FF7B00;"></i>Spécialité</span>
-                                    <span class="badge" style="background: linear-gradient(135deg, #FF7B00 0%, #FFAA00 100%); color: #000;">{{ coach.specialite }}</span>
+                                    <span class="badge" style="background: linear-gradient(135deg, #FF7B00 0%, #FFAA00 100%); color: #000;">
+                                    {{ coach.specialite is defined ? coach.specialite : 'Non défini' }}
+                                </span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-dark">
                                     <span><i class="fas fa-calendar-alt mr-2" style="color: #FF7B00;"></i>Expérience</span>
-                                    <span class="badge" style="background: linear-gradient(135deg, #FF7B00 0%, #FFAA00 100%); color: #000;">{{ coach.anneeExperience }} an{{ coach.anneeExperience > 1 ? 's' : '' }}</span>
+                                    <span class="badge" style="background: linear-gradient(135deg, #FF7B00 0%, #FFAA00 100%); color: #000;">
+                                    {{ coach.anneeExperience is defined ? coach.anneeExperience ~ ' an' ~ (coach.anneeExperience > 1 ? 's' : '') : 'Non défini' }}
+                                </span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-dark">
                                     <span><i class="fas fa-clipboard-list mr-2" style="color: #FF7B00;"></i>Planning</span>
-                                    <span class="text-right">{{ planning ? planning.titre : 'Aucun planning' }}</span>
+                                    <span class="text-right">
+                                    {{ planning is defined and planning.titre is defined ? planning.titre : 'Aucun planning' }}
+                                </span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-dark">
                                     <span><i style="color: #FF7B00;"></i>Tarif</span>
-                                    <span class="font-weight-bold" style="color: #FFAA00;">{{ planning ? planning.tarif ~ ' $' : 'Non défini' }}</span>
+                                    <span class="font-weight-bold" style="color: #FFAA00;">
+                                    {{ planning is defined and planning.tarif is defined ? planning.tarif ~ ' $' : 'Non défini' }}
+                                </span>
                                 </li>
                             </ul>
                         </div>
@@ -74,18 +83,13 @@
                             <h4 class="mb-0"><i class="fas fa-credit-card mr-2"></i>Paiement sécurisé</h4>
                         </div>
                         <div class="card-body text-white">
-                            {% if planning %}
+                            {% if planning is defined %}
                                 <form id="payment-form">
+                                    <!-- Champs Stripe -->
                                     <div class="form-group mb-3">
                                         <label class="font-weight-bold">Numéro de carte</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text bg-dark border-dark"><i class="far fa-credit-card" style="color: #FFAA00;"></i></span>
-                                            </div>
-                                            <div id="card-number-element" class="form-control bg-dark border-dark text-white"></div>
-                                        </div>
+                                        <div id="card-number-element" class="form-control bg-dark border-dark text-white"></div>
                                     </div>
-
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group mb-3">
@@ -96,12 +100,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group mb-3">
                                                 <label class="font-weight-bold">CVC</label>
-                                                <div class="input-group">
-                                                    <div id="card-cvc-element" class="form-control bg-dark border-dark text-white"></div>
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text bg-dark border-dark"><i class="fas fa-question-circle" data-toggle="tooltip" title="3 chiffres au dos de votre carte" style="color: #FFAA00;"></i></span>
-                                                    </div>
-                                                </div>
+                                                <div id="card-cvc-element" class="form-control bg-dark border-dark text-white"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -119,14 +118,6 @@
                                     <button type="submit" class="btn btn-block py-3 font-weight-bold" style="background: linear-gradient(135deg, #FF7B00 0%, #FFAA00 100%); border: none; color: #000;">
                                         <i class="fas fa-lock mr-2"></i> Payer maintenant
                                     </button>
-
-                                    <div class="text-center mt-3">
-                                        <div class="d-flex justify-content-center mb-2">
-                                            <img src="{{ asset('img/paiement_securise.png') }}" alt="Méthodes de paiement" style="height: 24px; filter: brightness(0.8);">
-                                        </div>
-                                        <p class="small text-muted mt-2 mb-0"><i class="fas fa-shield-alt mr-1" style="color: #FF7B00;"></i>Paiement 100% sécurisé</p>
-                                    </div>
-                                    <div id="card-errors" class="text-danger mt-2"></div>
                                 </form>
                             {% else %}
                                 <div class="alert alert-warning" role="alert">
@@ -140,6 +131,7 @@
         </div>
     </section>
 {% endblock %}
+
 
 {% block stylesheets %}
     {{ parent() }}
@@ -256,8 +248,6 @@
                         return;
                     }
 
-                    console.log('Client Secret reçu:', clientSecret);
-
                     // Confirmer le paiement avec Stripe
                     const result = await stripe.confirmCardPayment(clientSecret, {
                         payment_method: {
@@ -268,8 +258,6 @@
                         }
                     });
 
-                    console.log('Résultat de confirmCardPayment:', result);
-
                     if (result.error) {
                         displayError.textContent = result.error.message;
                         submitButton.disabled = false;
@@ -277,36 +265,12 @@
                     }
 
                     const paymentIntent = result.paymentIntent;
-                    console.log('Statut du PaymentIntent:', paymentIntent.status);
 
                     if (paymentIntent.status === 'succeeded') {
-                        console.log('Paiement réussi, redirection...');
+                        // Paiement réussi, redirection vers la page de succès
                         window.location.href = '{{ path('paiement_successs') }}?payment_intent=' + paymentIntent.id;
-                    } else if (paymentIntent.status === 'requires_action') {
-                        // Gérer les cas comme 3D Secure
-                        const { error: actionError } = await stripe.handleCardAction(clientSecret);
-                        if (actionError) {
-                            displayError.textContent = actionError.message;
-                            submitButton.disabled = false;
-                            return;
-                        }
-
-                        // Vérifier à nouveau le statut après l'action
-                        const { paymentIntent: updatedIntent, error: finalError } = await stripe.retrievePaymentIntent(clientSecret);
-                        if (finalError) {
-                            displayError.textContent = finalError.message;
-                            submitButton.disabled = false;
-                            return;
-                        }
-
-                        if (updatedIntent.status === 'succeeded') {
-                            console.log('Paiement réussi après 3D Secure, redirection...');
-                            window.location.href = '{{ path('paiement_successs') }}?payment_intent=' + updatedIntent.id;
-                        } else {
-                            displayError.textContent = 'Paiement non complété. Statut: ' + updatedIntent.status;
-                            submitButton.disabled = false;
-                        }
                     } else {
+                        // Si paiement non complété, afficher un message d'erreur
                         displayError.textContent = 'Paiement non complété. Statut: ' + paymentIntent.status;
                         submitButton.disabled = false;
                     }
@@ -316,6 +280,7 @@
                     submitButton.disabled = false;
                 }
             });
+
 
             // Activer les tooltips de Bootstrap
             $('[data-toggle="tooltip"]').tooltip();
