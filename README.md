@@ -23,7 +23,7 @@ To install Coachini locally, follow these steps:
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/housssemm/PI_DEV_symfony.git
-   cd coachini
+   cd Pi_Dev
    ```
 
 2. **Install dependencies**:
