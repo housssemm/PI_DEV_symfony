@@ -22,7 +22,7 @@ To install Coachini locally, follow these steps:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/coachini.git
+   git clone https://github.com/housssemm/PI_DEV_symfony.git
    cd coachini
    ```
 
@@ -107,7 +107,7 @@ To contribute:
 1. **Fork the project**: Click the "Fork" button on the [Coachini repository](https://github.com/your-username/coachini).
 2. **Clone your fork**:
    ```bash
-   git clone https://github.com/your-username/coachini.git
+   git clone https://github.com/housssemm/PI_DEV_symfony.git
    cd coachini
    ```
 3. **Create a branch**:
