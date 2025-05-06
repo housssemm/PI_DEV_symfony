@@ -74,7 +74,7 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         // Récupérer la clé reCAPTCHA depuis les paramètres
-        $recaptchaSiteKey = $this->getParameter('RECAPTCHA_SITE_KEY');
+       $recaptchaSiteKey = $this->getParameter('RECAPTCHA_SITE_KEY');
 
         if ($user) {
             // Préparer les données avec gestion des null
