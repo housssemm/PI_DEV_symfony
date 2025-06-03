@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détection d'exercices{% endblock %}
+
+{% block Hero_Section_Begin %}
+
+    <section class="breadcrumb-section" style="
+            background-image: url('{{ asset('img/pmp.png') }}');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            height: 800px;
+            margin-top: -200px;
+            padding: 0;
+            ">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2>Events</h2>
+                        <div class="bt-option">
+                            <a href="./index.html">Home</a>
+                            <span>Map</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}
+
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4">Détection d'exercices en temps réel</h1>
+    
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Flux vidéo</h5>
+                </div>
+                <div class="card-body">
+                    <img src="{{ video_url }}" class="img-fluid" alt="Flux vidéo de détection d'exercices">
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Statistiques</h5>
+                </div>
+                <div class="card-body">
+                    <div id="stats-container">
+                        Chargement des statistiques...
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ path('app_workout_detection_reset') }}" class="btn btn-warning">
+                        Réinitialiser le compteur
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+<script>
+    function updateStats() {
+        fetch('{{ path('app_workout_detection_stats') }}')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('stats-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Erreur lors de la mise à jour des statistiques:', error);
+            });
+    }
+    
+    // Mettre à jour les statistiques toutes les 2 secondes
+    setInterval(updateStats, 2000);
+    
+    // Charger les statistiques au chargement de la page
+    document.addEventListener('DOMContentLoaded', updateStats);
+</script>
+{% endblock %}
+{% endblock %}
+
+

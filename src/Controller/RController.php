@@ -121,7 +121,7 @@ use App\Entity\Adherent;
 use App\Entity\Coach;
 use App\Entity\CreateurEvenement;
 use App\Entity\InvestisseurProduit;
-use App\Form\R;
+use App\Form\RType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -138,7 +138,7 @@ class RController extends AbstractController
         UserPasswordHasherInterface $passwordHasher
     ): Response
     {
-        $form = $this->createForm(R::class);
+        $form = $this->createForm(RType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
