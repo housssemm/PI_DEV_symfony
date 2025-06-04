@@ -240,8 +240,31 @@
                         <h5 class="mb-0">Contenu</h5>
                     </div>
                     <div class="card-body">
-                        {{ form_row(form.ingredients) }}
-                        {{ form_row(form.description) }}
+                        <div class="form-group">
+                            {{ form_label(form.ingredients, 'Ingrédients', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.ingredients, {
+                                'attr': {
+                                    'class': 'form-control custom-textarea',
+                                    'rows': 5,
+                                    'placeholder': 'Listez les ingrédients principaux du plat...'
+                                }
+                            }) }}
+                            {{ form_errors(form.ingredients) }}
+                            <small class="form-text">Séparez les ingrédients par des virgules ou des sauts de ligne.</small>
+                        </div>
+                        
+                        <div class="form-group mb-0">
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.description, {
+                                'attr': {
+                                    'class': 'form-control custom-textarea',
+                                    'rows': 7,
+                                    'placeholder': 'Décrivez la préparation et les caractéristiques du plat...'
+                                }
+                            }) }}
+                            {{ form_errors(form.description) }}
+                            <small class="form-text">Décrivez la préparation, le goût et les caractéristiques nutritionnelles du plat.</small>
+                        </div>
                     </div>
                 </div>
                 

@@ -1,0 +1,382 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calculateur de Calories{% endblock %}
+
+{% block body %}
+<style>
+    body {
+        background: #151515;
+        color: #e2e8f0;
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    .container {
+        max-width: 1200px;
+    }
+    
+    h1 {
+        color: #ff7e2e;
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        position: relative;
+        display: inline-block;
+    }
+    
+    h1:after {
+        content: '';
+        position: absolute;
+        width: 60%;
+        height: 4px;
+        background: linear-gradient(90deg, #f36100, #ff7e2e);
+        bottom: -10px;
+        left: 0;
+        border-radius: 2px;
+    }
+    
+    .card {
+        background: #1e1e1e;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .card-header {
+        background-color: #252525;
+        border-bottom: 1px solid #333;
+        padding: 1.2rem 1.5rem;
+    }
+    
+    .card-header h5 {
+        color: #ff7e2e;
+        font-weight: 600;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .card-header h5 i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .form-control, .form-select {
+        background-color: #2a2a2a;
+        border: 2px solid #3a3a3a;
+        border-radius: 10px;
+        color: #e2e8f0;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background-color: #2d2d2d;
+        border-color: #f36100;
+        box-shadow: 0 0 0 0.25rem rgba(243, 97, 0, 0.25);
+        color: #fff;
+    }
+    
+    .form-label {
+        color: #e2e8f0;
+        font-weight: 600;
+        margin-bottom: 0.8rem;
+        font-size: 1rem;
+    }
+    
+    .form-text {
+        color: #aaa;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #f36100 0%, #ff7e2e 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(243, 97, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #e55a00 0%, #f36100 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(243, 97, 0, 0.4);
+    }
+    
+    .result-card {
+        background: linear-gradient(135deg, #1e1e1e 0%, #252525 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        text-align: center;
+    }
+    
+    .result-value {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #ff7e2e;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .result-label {
+        font-size: 1.2rem;
+        color: #e2e8f0;
+        margin-bottom: 1.5rem;
+    }
+    
+    .macro-card {
+        background: #252525;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .macro-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .macro-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+    }
+    
+    .macro-protein {
+        color: #4299e1;
+    }
+    
+    .macro-carbs {
+        color: #48bb78;
+    }
+    
+    .macro-fats {
+        color: #ed8936;
+    }
+    
+    .macro-label {
+        font-size: 1rem;
+        color: #e2e8f0;
+        margin-bottom: 0.5rem;
+    }
+    
+    .macro-subvalue {
+        font-size: 0.9rem;
+        color: #a0aec0;
+    }
+    
+    .info-icon {
+        color: #a0aec0;
+        font-size: 0.9rem;
+        margin-left: 5px;
+        cursor: help;
+    }
+    
+    .form-check-input {
+        background-color: #2a2a2a;
+        border: 2px solid #3a3a3a;
+    }
+    
+    .form-check-input:checked {
+        background-color: #f36100;
+        border-color: #f36100;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">
+                <i class="fa fa-calculator me-2"></i>Calculateur de Besoins Caloriques
+            </h1>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fa fa-user-circle"></i> Entrez vos informations</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{{ path('app_calorie_calculator') }}">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Genre</label>
+                                <div class="d-flex">
+                                    <div class="form-check me-4">
+                                        <input class="form-check-input" type="radio" name="gender" id="male" value="male" checked>
+                                        <label class="form-check-label" for="male">
+                                            <i class="fa fa-mars me-1"></i> Homme
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="gender" id="female" value="female">
+                                        <label class="form-check-label" for="female">
+                                            <i class="fa fa-venus me-1"></i> Femme
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="age" class="form-label">Âge</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa fa-birthday-cake"></i></span>
+                                    <input type="number" class="form-control" id="age" name="age" min="15" max="100" required placeholder="Votre âge">
+                                    <span class="input-group-text">ans</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="weight" class="form-label">Poids</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa fa-weight"></i></span>
+                                    <input type="number" step="0.1" class="form-control" id="weight" name="weight" min="30" max="300" required placeholder="Votre poids">
+                                    <span class="input-group-text">kg</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="height" class="form-label">Taille</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa fa-ruler-vertical"></i></span>
+                                    <input type="number" class="form-control" id="height" name="height" min="100" max="250" required placeholder="Votre taille">
+                                    <span class="input-group-text">cm</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="activity_level" class="form-label">Niveau d'activité</label>
+                            <select class="form-select" id="activity_level" name="activity_level" required>
+                                <option value="" disabled selected>Choisissez votre niveau d'activité</option>
+                                <option value="sedentary">Sédentaire (peu ou pas d'exercice)</option>
+                                <option value="light">Légèrement actif (exercice léger 1-3 jours/semaine)</option>
+                                <option value="moderate">Modérément actif (exercice modéré 3-5 jours/semaine)</option>
+                                <option value="active">Très actif (exercice intense 6-7 jours/semaine)</option>
+                                <option value="very_active">Extrêmement actif (exercice très intense, travail physique)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Objectif</label>
+                            <div class="d-flex flex-wrap">
+                                <div class="form-check me-4 mb-2">
+                                    <input class="form-check-input" type="radio" name="goal" id="lose" value="lose">
+                                    <label class="form-check-label" for="lose">
+                                        <i class="fa fa-arrow-down me-1"></i> Perdre du poids
+                                    </label>
+                                </div>
+                                <div class="form-check me-4 mb-2">
+                                    <input class="form-check-input" type="radio" name="goal" id="maintain" value="maintain" checked>
+                                    <label class="form-check-label" for="maintain">
+                                        <i class="fa fa-equals me-1"></i> Maintenir mon poids
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="goal" id="gain" value="gain">
+                                    <label class="form-check-label" for="gain">
+                                        <i class="fa fa-arrow-up me-1"></i> Prendre du poids/muscle
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fa fa-calculator me-2"></i>Calculer mes besoins caloriques
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            {% if dailyCalories %}
+                <div class="result-card mb-4">
+                    <h2 class="mb-4">Vos résultats</h2>
+                    <div class="result-value">{{ dailyCalories }} kcal</div>
+                    <div class="result-label">Besoins caloriques quotidiens</div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="macro-card">
+                                <div class="macro-value macro-protein">{{ macros.protein.grams }}g</div>
+                                <div class="macro-label">Protéines</div>
+                                <div class="macro-subvalue">{{ macros.protein.calories }} kcal</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="macro-card">
+                                <div class="macro-value macro-carbs">{{ macros.carbs.grams }}g</div>
+                                <div class="macro-label">Glucides</div>
+                                <div class="macro-subvalue">{{ macros.carbs.calories }} kcal</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="macro-card">
+                                <div class="macro-value macro-fats">{{ macros.fats.grams }}g</div>
+                                <div class="macro-label">Lipides</div>
+                                <div class="macro-subvalue">{{ macros.fats.calories }} kcal</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fa fa-info-circle"></i> Détails du calcul</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Métabolisme de base (BMR):</strong> {{ result.bmr }} kcal</p>
+                                        <p><strong>Dépense énergétique totale (TDEE):</strong> {{ result.tdee }} kcal</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Répartition des macros:</strong></p>
+                                        <ul>
+                                            <li>Protéines: {{ (macros.protein.calories / dailyCalories * 100)|round }}%</li>
+                                            <li>Glucides: {{ (macros.carbs.calories / dailyCalories * 100)|round }}%</li>
+                                            <li>Lipides: {{ (macros.fats.calories / dailyCalories * 100)|round }}%</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fa fa-lightbulb"></i> Conseils nutritionnels</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6><i class="fa fa-check-circle text-success me-2"></i>Sources de protéines recommandées:</h6>
+                            <p>Poulet, dinde, poisson, œufs, tofu, légumineuses, produits laitiers faibles en gras.</p>
+                        </div>
+                        <div class="mb-3">
+                            <h6><i class="fa fa-check-circle text-success me-2"></i>Sources de glucides de qualité:</h6>
+                            <p>Riz complet, patates douces, avoine, fruits, légumes, légumineuses.</p>
+                        </div>
+                        <div>
+                            <h6><i class="fa fa-check-circle text-success me-2"></i>Sources de lipides sains:</h6>
+                            <p>Avocat, noix, graines, huile d'olive, poissons gras.</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

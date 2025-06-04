@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier un Plat{% endblock %}
+{% block title %}Modifier le Plat{% endblock %}
 
 {% block body %}
     <style>
@@ -15,9 +15,11 @@
         }
         
         h1 {
-            color: #f36100;
+            color: #ff7e2e;
             font-weight: 700;
+            font-size: 2.5rem;
             margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             position: relative;
             display: inline-block;
         }
@@ -25,11 +27,12 @@
         h1:after {
             content: '';
             position: absolute;
-            width: 50%;
-            height: 3px;
-            background: #f36100;
+            width: 60%;
+            height: 4px;
+            background: linear-gradient(90deg, #f36100, #ff7e2e);
             bottom: -10px;
             left: 0;
+            border-radius: 2px;
         }
         
         .card {
@@ -38,40 +41,33 @@
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             overflow: hidden;
-            margin-bottom: 2rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+            margin-bottom: 1.5rem;
         }
         
         .card-header {
             background-color: #252525;
-            border-bottom: 2px solid #f36100;
+            border-bottom: 1px solid #333;
             padding: 1.2rem 1.5rem;
         }
         
         .card-header h5 {
-            color: #f36100;
+            color: #ff7e2e;
             font-weight: 600;
-            margin: 0;
-            font-size: 1.2rem;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header h5 i {
+            margin-right: 10px;
+            font-size: 1.1rem;
         }
         
         .card-body {
-            padding: 1.8rem;
+            padding: 1.5rem;
         }
         
-        .form-label {
-            color: #f36100;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-        
-        .form-control {
+        .form-control, .form-select {
             background-color: #2a2a2a;
             border: 2px solid #3a3a3a;
             border-radius: 10px;
@@ -81,35 +77,52 @@
             transition: all 0.3s ease;
         }
         
-        .form-control:focus {
-            background-color: #2a2a2a;
+        .form-control:focus, .form-select:focus {
+            background-color: #2d2d2d;
             border-color: #f36100;
             box-shadow: 0 0 0 0.25rem rgba(243, 97, 0, 0.25);
             color: #fff;
         }
         
-        textarea.form-control {
-            min-height: 120px;
+        .form-label {
+            color: #f36100;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-label i {
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .form-text {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
         }
         
         .form-group {
             margin-bottom: 1.5rem;
         }
         
-        .btn {
-            padding: 0.8rem 1.5rem;
-            font-weight: 600;
-            border-radius: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-        }
-        
         .btn-primary {
             background: linear-gradient(135deg, #f36100 0%, #ff7e2e 100%);
             border: none;
             color: white;
+            font-weight: 600;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
             box-shadow: 0 4px 15px rgba(243, 97, 0, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .btn-primary i {
+            margin-right: 8px;
         }
         
         .btn-primary:hover {
@@ -122,7 +135,17 @@
             background: #2d2d2d;
             border: none;
             color: #e2e8f0;
+            font-weight: 600;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .btn-secondary i {
+            margin-right: 8px;
         }
         
         .btn-secondary:hover {
@@ -132,149 +155,199 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
         }
         
-        .text-muted {
-            color: #aaa !important;
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
         }
         
-        .img-thumbnail {
+        .btn-danger i {
+            margin-right: 8px;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(220, 53, 69, 0.4);
+        }
+        
+        .custom-textarea {
             background-color: #2a2a2a;
-            border: 1px solid #444;
+            border: 2px solid #3a3a3a;
             border-radius: 10px;
-            padding: 0.5rem;
+            color: #e2e8f0;
+            padding: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: auto;
+            line-height: 1.6;
+        }
+        
+        .custom-textarea:focus {
+            background-color: #2d2d2d;
+            border-color: #f36100;
+            box-shadow: 0 0 0 0.25rem rgba(243, 97, 0, 0.25);
+            color: #fff;
+            outline: none;
+        }
+        
+        .custom-textarea::placeholder {
+            color: #6c757d;
+            opacity: 0.7;
         }
         
         .img-preview {
-            position: relative;
-            overflow: hidden;
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+            border: 2px solid #333;
         }
         
-        .img-preview img {
-            transition: transform 0.3s ease;
-        }
-        
-        .img-preview:hover img {
-            transform: scale(1.05);
-        }
-        
-        .form-text {
-            color: #aaa;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-        
-        .invalid-feedback {
-            color: #ff6b6b;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-        
-        .btn-group {
+        .action-buttons {
             display: flex;
             gap: 1rem;
-        }
-        
-        .form-floating > .form-control {
-            padding-top: 1.5rem;
-            padding-bottom: 0.5rem;
-            height: calc(3.5rem + 2px);
-        }
-        
-        .form-floating > label {
-            padding: 1rem 1rem;
+            margin-top: 1.5rem;
         }
     </style>
 
     <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <h1 class="mb-5">Modifier un Plat</h1>
-                
-                {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informations générales</h5>
+        <h1 class="mb-4">
+            <i class="fa fa-edit me-2"></i>Modifier le Plat
+        </h1>
+        
+        {{ form_start(form) }}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fa fa-info-circle"></i> Informations générales</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.name, 'Nom du plat', {'label_attr': {'class': 'form-label'}}) }}
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa fa-utensils"></i></span>
+                                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Nom du plat'}}) }}
+                                </div>
+                                {{ form_errors(form.name) }}
                             </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    {{ form_label(form.name) }}
-                                    {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.name) }}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.nbCalories, 'Calories', {'label_attr': {'class': 'form-label'}}) }}
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa fa-fire"></i></span>
+                                    {{ form_widget(form.nbCalories, {'attr': {'class': 'form-control', 'placeholder': 'Nombre de calories'}}) }}
                                 </div>
-                                
-                                <div class="form-group">
-                                    {{ form_label(form.idNutritionist) }}
-                                    {{ form_widget(form.idNutritionist, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.idNutritionist) }}
-                                </div>
-                                
-                                <div class="form-group">
-                                    {{ form_label(form.nbCalories) }}
-                                    {{ form_widget(form.nbCalories, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.nbCalories) }}
-                                </div>
+                                {{ form_errors(form.nbCalories) }}
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5 class="mb-0"><i class="fas fa-image me-2"></i>Image</h5>
-                            </div>
-                            <div class="card-body">
-                                {% if plat.image %}
-                                    <div class="img-preview mb-3">
-                                        <img src="{{ asset(plat.image) }}" class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
-                                    </div>
-                                    <p class="text-muted small mb-3">Image actuelle. Téléchargez une nouvelle image pour la remplacer.</p>
-                                {% endif %}
-                                
-                                <div class="form-group">
-                                    {{ form_label(form.image) }}
-                                    {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.image) }}
-                                    <small class="form-text">Formats acceptés: JPG, PNG. Taille max: 5MB</small>
-                                </div>
-                            </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.idNutritionist, 'Nutritionniste', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-user-md"></i></span>
+                            {{ form_widget(form.idNutritionist, {'attr': {'class': 'form-control', 'placeholder': 'ID du nutritionniste'}}) }}
                         </div>
+                        {{ form_errors(form.idNutritionist) }}
                     </div>
                 </div>
-                
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-utensils me-2"></i>Contenu</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            {{ form_label(form.ingredients) }}
-                            {{ form_widget(form.ingredients, {'attr': {'class': 'form-control', 'rows': 4}}) }}
-                            {{ form_errors(form.ingredients) }}
-                            <small class="form-text">Listez les ingrédients principaux du plat.</small>
-                        </div>
-                        
-                        <div class="form-group mb-0">
-                            {{ form_label(form.description) }}
-                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 6}}) }}
-                            {{ form_errors(form.description) }}
-                            <small class="form-text">Décrivez la préparation et les caractéristiques du plat.</small>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="d-flex justify-content-between mt-4">
-                    <a href="{{ path('app_plats_index') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Retour à la liste
-                    </a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i>Enregistrer les modifications
-                    </button>
-                </div>
-                {{ form_end(form) }}
             </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fa fa-image"></i> Image</h5>
+                </div>
+                <div class="card-body">
+                    {% if plat.image %}
+                        <img src="{{ asset(plat.image) }}" class="img-preview" alt="{{ plat.name }}">
+                    {% endif %}
+                    
+                    <div class="form-group mb-0">
+                        {{ form_label(form.image, 'Image du plat', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-upload"></i></span>
+                            {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.image) }}
+                        <small class="form-text">Format recommandé: JPG ou PNG, max 2MB.</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fa fa-list-ul"></i> Contenu</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        {{ form_label(form.ingredients, 'Ingrédients', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-carrot"></i></span>
+                            {{ form_widget(form.ingredients, {
+                                'attr': {
+                                    'class': 'form-control custom-textarea',
+                                    'rows': 5,
+                                    'placeholder': 'Listez les ingrédients principaux du plat...'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.ingredients) }}
+                        <small class="form-text">Séparez les ingrédients par des virgules ou des sauts de ligne.</small>
+                    </div>
+                    
+                    <div class="form-group mb-0">
+                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-align-left"></i></span>
+                            {{ form_widget(form.description, {
+                                'attr': {
+                                    'class': 'form-control custom-textarea',
+                                    'rows': 7,
+                                    'placeholder': 'Décrivez la préparation et les caractéristiques du plat...'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.description) }}
+                        <small class="form-text">Décrivez la préparation, le goût et les caractéristiques nutritionnelles du plat.</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-save"></i> Enregistrer les modifications
+                </button>
+                <a href="{{ path('app_plats_index') }}" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left"></i> Retour à la liste
+                </a>
+                <a href="{{ path('app_plats_show', {'id': plat.id}) }}" class="btn btn-secondary">
+                    <i class="fa fa-eye"></i> Voir le plat
+                </a>
+            </div>
+        {{ form_end(form) }}
+        
+        <div class="mt-4">
+            <form method="post" action="{{ path('app_plats_delete', {'id': plat.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce plat?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ plat.id) }}">
+                <button class="btn btn-danger">
+                    <i class="fa fa-trash"></i> Supprimer le plat
+                </button>
+            </form>
         </div>
     </div>
 {% endblock %}
+
+
 
