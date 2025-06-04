@@ -27,28 +27,27 @@ Encore
             ]
         }
     })
-    // Add this configuration for dev-server
-    // .configureDevServerOptions(options => {
-    //     options.port = 3000; // Try a different port
-    //     options.host = 'localhost';
-    //     options.allowedHosts = 'all';
-    //     options.https = false;
-    // })
+    .configureDevServerOptions(options => {
+        options.port = 3000; // Try a different port
+        options.host = 'localhost';
+        options.allowedHosts = 'all';
+        options.https = false;
+    })
     // .configureDevServerOptions(options => {
     //
     //     options.host = '172.20.10.4'; // Allow connections from other devices
     //     options.port = 3000;      // Or any port you want
     //     options.allowedHosts = 'all'; // Accept requests from any host
     // })
-    .configureDevServerOptions(options => {
-        options.https = {
-            key: './172.20.10.4-key.pem',
-            cert: './172.20.10.4.pem',
-        };
-        options.host = '172.20.10.4'; // L’IP de ta machine
-        options.port = 3000;
-        options.allowedHosts = 'all'; // Autorise tous les clients sur le réseau
-    })
+    // .configureDevServerOptions(options => {
+    //     options.https = {
+    //         key: './172.20.10.4-key.pem',
+    //         cert: './172.20.10.4.pem',
+    //     };
+    //     options.host = '172.20.10.4'; // L’IP de ta machine
+    //     options.port = 3000;
+    //     options.allowedHosts = 'all'; // Autorise tous les clients sur le réseau
+    // })
 
     // Add this to copy static assets
     .copyFiles({
