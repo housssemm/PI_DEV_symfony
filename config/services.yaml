@@ -129,6 +129,7 @@ parameters:
   user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
   cv_directory: '%kernel.project_dir%/public/uploads/cv'
   videos_directory: '%kernel.project_dir%/public/uploads/videos'
+  images_directory: '%kernel.project_dir%/public/uploads/images'
   #maissa
   stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
   stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
