@@ -186,14 +186,92 @@
         cursor: help;
     }
     
-    .form-check-input {
-        background-color: #2a2a2a;
-        border: 2px solid #3a3a3a;
+    /* Styles améliorés pour les boutons radio */
+    .radio-card-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
     }
     
-    .form-check-input:checked {
-        background-color: #f36100;
+    .radio-card {
+        flex: 1;
+        min-width: 120px;
+        position: relative;
+    }
+    
+    .radio-card input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .radio-card-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #252525;
+        border: 2px solid #3a3a3a;
+        border-radius: 10px;
+        padding: 15px 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        height: 100%;
+    }
+    
+    .radio-card input[type="radio"]:checked + .radio-card-label {
+        background: rgba(243, 97, 0, 0.1);
         border-color: #f36100;
+        box-shadow: 0 0 10px rgba(243, 97, 0, 0.3);
+    }
+    
+    .radio-card-icon {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+        color: #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .radio-card input[type="radio"]:checked + .radio-card-label .radio-card-icon {
+        color: #ff7e2e;
+        transform: scale(1.2);
+    }
+    
+    .radio-card-text {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    /* Styles améliorés pour les icônes */
+    .input-group-text {
+        background-color: #2a2a2a;
+        border: 2px solid #3a3a3a;
+        color: #ff7e2e;
+        border-right: none;
+    }
+    
+    .input-group .form-control {
+        border-left: none;
+    }
+    
+    .input-group:focus-within .input-group-text {
+        border-color: #f36100;
+        color: #ff7e2e;
+    }
+    
+    .icon-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(243, 97, 0, 0.1);
+        color: #ff7e2e;
+        margin-right: 10px;
     }
 </style>
 
@@ -201,29 +279,31 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <h1 class="mb-4">
-                <i class="fa fa-calculator me-2"></i>Calculateur de Besoins Caloriques
+                <span class="icon-circle"><i class="fa fa-calculator"></i></span>Calculateur de Besoins Caloriques
             </h1>
             
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fa fa-user-circle"></i> Entrez vos informations</h5>
+                    <h5 class="mb-0"><span class="icon-circle"><i class="fa fa-user-circle"></i></span> Entrez vos informations</h5>
                 </div>
                 <div class="card-body">
                     <form method="post" action="{{ path('app_calorie_calculator') }}">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label">Genre</label>
-                                <div class="d-flex">
-                                    <div class="form-check me-4">
-                                        <input class="form-check-input" type="radio" name="gender" id="male" value="male" checked>
-                                        <label class="form-check-label" for="male">
-                                            <i class="fa fa-mars me-1"></i> Homme
+                                <div class="radio-card-group">
+                                    <div class="radio-card">
+                                        <input type="radio" name="gender" id="male" value="male" checked>
+                                        <label class="radio-card-label" for="male">
+                                            <i class="fa fa-mars radio-card-icon"></i>
+                                            <span class="radio-card-text">Homme</span>
                                         </label>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="gender" id="female" value="female">
-                                        <label class="form-check-label" for="female">
-                                            <i class="fa fa-venus me-1"></i> Femme
+                                    <div class="radio-card">
+                                        <input type="radio" name="gender" id="female" value="female">
+                                        <label class="radio-card-label" for="female">
+                                            <i class="fa fa-venus radio-card-icon"></i>
+                                            <span class="radio-card-text">Femme</span>
                                         </label>
                                     </div>
                                 </div>
@@ -238,11 +318,11 @@
                             </div>
                         </div>
                         
-                        <div class="row mb-3">
-                            <div class="col-md-6">
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
                                 <label for="weight" class="form-label">Poids</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-weight"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-balance-scale"></i></span>
                                     <input type="number" step="0.1" class="form-control" id="weight" name="weight" min="30" max="300" required placeholder="Votre poids">
                                     <span class="input-group-text">kg</span>
                                 </div>
@@ -250,14 +330,14 @@
                             <div class="col-md-6">
                                 <label for="height" class="form-label">Taille</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-ruler-vertical"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-arrows-v"></i></span>
                                     <input type="number" class="form-control" id="height" name="height" min="100" max="250" required placeholder="Votre taille">
                                     <span class="input-group-text">cm</span>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label for="activity_level" class="form-label">Niveau d'activité</label>
                             <select class="form-select" id="activity_level" name="activity_level" required>
                                 <option value="" disabled selected>Choisissez votre niveau d'activité</option>
@@ -271,23 +351,26 @@
                         
                         <div class="mb-4">
                             <label class="form-label">Objectif</label>
-                            <div class="d-flex flex-wrap">
-                                <div class="form-check me-4 mb-2">
-                                    <input class="form-check-input" type="radio" name="goal" id="lose" value="lose">
-                                    <label class="form-check-label" for="lose">
-                                        <i class="fa fa-arrow-down me-1"></i> Perdre du poids
+                            <div class="radio-card-group">
+                                <div class="radio-card">
+                                    <input type="radio" name="goal" id="lose" value="lose">
+                                    <label class="radio-card-label" for="lose">
+                                        <i class="fa fa-arrow-down radio-card-icon"></i>
+                                        <span class="radio-card-text">Perdre du poids</span>
                                     </label>
                                 </div>
-                                <div class="form-check me-4 mb-2">
-                                    <input class="form-check-input" type="radio" name="goal" id="maintain" value="maintain" checked>
-                                    <label class="form-check-label" for="maintain">
-                                        <i class="fa fa-equals me-1"></i> Maintenir mon poids
+                                <div class="radio-card">
+                                    <input type="radio" name="goal" id="maintain" value="maintain" checked>
+                                    <label class="radio-card-label" for="maintain">
+                                        <i class="fa fa-equals radio-card-icon"></i>
+                                        <span class="radio-card-text">Maintenir</span>
                                     </label>
                                 </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="goal" id="gain" value="gain">
-                                    <label class="form-check-label" for="gain">
-                                        <i class="fa fa-arrow-up me-1"></i> Prendre du poids/muscle
+                                <div class="radio-card">
+                                    <input type="radio" name="goal" id="gain" value="gain">
+                                    <label class="radio-card-label" for="gain">
+                                        <i class="fa fa-arrow-up radio-card-icon"></i>
+                                        <span class="radio-card-text">Prendre du muscle</span>
                                     </label>
                                 </div>
                             </div>
@@ -333,7 +416,7 @@
                     <div class="mt-4">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="mb-0"><i class="fa fa-info-circle"></i> Détails du calcul</h5>
+                                <h5 class="mb-0"><span class="icon-circle"><i class="fa fa-info-circle"></i></span> Détails du calcul</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -357,7 +440,7 @@
                 
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fa fa-lightbulb"></i> Conseils nutritionnels</h5>
+                        <h5 class="mb-0"><span class="icon-circle"><i class="fa fa-lightbulb"></i></span> Conseils nutritionnels</h5>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
@@ -379,4 +462,7 @@
     </div>
 </div>
 {% endblock %}
+
+
+
 
