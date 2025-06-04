@@ -5,7 +5,31 @@
 {% block Hero_Section_Begin %}
     <style>
         body { background: #151515; }
-        .erreur { color: #3b82f6; }
+        .erreur { color: #3b82f6;}
+        .addd-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white; /* text always white */
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0.25rem 0.375rem rgba(59, 130, 246, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.025rem;
+        }
+
+        .addd-button:hover {
+            transform: translateY(-0.125rem);
+            box-shadow: 0 0.5rem 1.25rem rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            /* No change to color */
+        }
+
     </style>
     <section class="breadcrumb-section set-bg" data-setbg={{ asset('img/offre2.jpg') }}>
         <div class="container">
@@ -45,11 +69,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
+
         <h1 class="page-title">
             <i class="bi bi-tags"></i>
             Liste des Offres
         </h1>
+        {% if isinv %}
+            <div class="addd-button"> <a href="{{ path('offre_index') }}" >
+                    <i class="bi bi-plus-circle"></i> Gerer les Ofrres
+                </a></div>
 
+        {% endif %}
         <!-- Formulaire de recherche et filtres -->
         <div class="card mb-4 bg-dark border-secondary">
             <div class="card-body">

@@ -7,6 +7,7 @@ use App\Repository\CoachRepository;
 use App\Repository\PlanningRepository;
 use App\Service\StripeService;
 use Google\Service\Compute\Address;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,21 +18,24 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 use Psr\Log\LoggerInterface;
-
+use Mailjet\Client as MailjetClient;
+use Mailjet\Resources;
 class PaiementPlanningController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private StripeService $stripeService;
     private Security $security;
     private LoggerInterface $logger;
-
-    public function __construct(EntityManagerInterface $entityManager, StripeService $stripeService, Security $security, LoggerInterface $logger)
+    private $mailjet;
+    public function __construct(EntityManagerInterface $entityManager,MailjetClient $mailjet, StripeService $stripeService, Security $security, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->stripeService = $stripeService;
         $this->security = $security;
         $this->logger = $logger;
+        $this->mailjet = $mailjet;
     }
+
 
     #[Route('/payer/coach/{id}', name: 'payer_coach')]
     public function payerCoach($id, CoachRepository $coachRepository, PlanningRepository $planningRepository): Response
@@ -65,6 +69,9 @@ class PaiementPlanningController extends AbstractController
     public function createPaymentIntent($planningId, PlanningRepository $planningRepository): JsonResponse
     {
         $planning = $planningRepository->find($planningId);
+        if (!is_numeric($planningId)) {
+            return new JsonResponse(['error' => 'ID de planning invalide.'], 400);
+        }
 
         if (!$planning) {
             return new JsonResponse(['error' => 'Planning non trouvé.'], 404);
@@ -88,19 +95,19 @@ class PaiementPlanningController extends AbstractController
         }
     }
 
-    #[Route('/paiement/success', name: 'paiement_success')]
+    #[Route('/paiement/planing/success', name: 'paiement_successs')]
     public function success(Request $request, PlanningRepository $planningRepository,MailerInterface $mailer): Response
     {
         $paymentIntentId = $request->query->get('payment_intent');
         if (!$paymentIntentId) {
             $this->addFlash('error', 'Erreur : Payment Intent ID manquant.');
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_homee');
         }
 
         $paymentIntent = $this->stripeService->retrievePaymentIntent($paymentIntentId);
         if ($paymentIntent->status !== 'succeeded') {
             $this->addFlash('error', 'Erreur : Paiement non validé.');
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_homee');
         }
 
         $planningId = $paymentIntent->metadata['planningId'] ?? null;
@@ -109,13 +116,13 @@ class PaiementPlanningController extends AbstractController
         $planning = $planningRepository->find($planningId);
         if (!$planning) {
             $this->addFlash('error', 'Erreur : Planning non trouvé.');
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_homee');
         }
 
         $adherent = $this->getUser();
         if (!$adherent || $adherent->getId() !== (int)$adherentId) {
             $this->addFlash('error', 'Erreur : Adhérent non connecté ou ID incorrect.');
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_homee');
         }
 
         $paiement = new PaiementPlanning();
@@ -128,33 +135,58 @@ class PaiementPlanningController extends AbstractController
         $this->entityManager->flush();
         $datePaiement = $paiement->getDatePaiement()->format('d/m/Y H:i');
 
-        $email = (new Email())
-            ->from('Coachini <maissa.maalej3@gmail.com>')   // adresse de ton compte Mailjet
-            ->to($adherent->getEmail())           // adresse de l'adhérent
-            ->subject('Confirmation de paiement')
-            ->html("
-            <p>Bonjour {$adherent->getNom()},</p>
-            <p>Votre paiement pour le planning <strong>{$planning->getTitre()}</strong> a été effectué avec succès.</p>
-            <h3>Détails du paiement :</h3>
-            <ul>
-                <li><strong>Planning :</strong> {$planning->getTitre()}</li>
-                <li><strong>Tarif :</strong> {$planning->getTarif()} \$</li>
-                <li><strong>Date de paiement :</strong> " . (new \DateTime())->format('d/m/Y H:i') . "</li>
-            </ul>
-            <p>Merci pour votre confiance !</p>
-            <p><strong>L'équipe Coachini</strong></p>
-        ");
+//        $email = (new Email())
+//            ->from('Coachini <maissa.maalej3@gmail.com>')   // adresse de ton compte Mailjet
+//            ->to($adherent->getEmail())           // adresse de l'adhérent
+//            ->subject('Confirmation de paiement')
+//            ->html("
+//            <p>Bonjour {$adherent->getNom()},</p>
+//            <p>Votre paiement pour le planning <strong>{$planning->getTitre()}</strong> a été effectué avec succès.</p>
+//            <h3>Détails du paiement :</h3>
+//            <ul>
+//                <li><strong>Planning :</strong> {$planning->getTitre()}</li>
+//                <li><strong>Tarif :</strong> {$planning->getTarif()} \$</li>
+//                <li><strong>Date de paiement :</strong> " . (new \DateTime())->format('d/m/Y H:i') . "</li>
+//            </ul>
+//            <p>Merci pour votre confiance !</p>
+//            <p><strong>L'équipe Coachini</strong></p>
+//        ");
 
-        $mailer->send($email);
-        $this->addFlash('success', 'Paiement effectué avec succès ! Merci pour votre achat.');
+//        $mailer->send($email);
+        try {
+            $body = [
+                'Messages' => [
+                    [
+                        'From' => [
+                            'Email' => 'farahbenyedderr@gmail.com',
+                            'Name' => 'Coachini',
+                        ],
+                        'To' => [
+                            [
+                                'Email' => $adherent->getEmail(),
+                            ],
+                        ],
+                        'TemplateID' => 6765931,
+                        'TemplateLanguage' => true,
+                        'Subject' => 'Confirmation de paiement',
+                        'Variables' => [
+                            'CODE' => 'hhhhhhhhh353333hhhh',
+                        ],
+                    ],
+                ],
+            ];
+
+            $response = $this->mailjet->post(Resources::$Email, ['body' => $body]);
+            if (!$response->success()) {
+                $this->addFlash('success', 'Paiement effectué avec succès ! Merci pour votre confiance.');
+            }
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Échec de l’envoi de l’e-mail : ' . $e->getMessage()], 500);
+        }
+
 
         return $this->redirectToRoute('app_homee');
     }
 
-    #[Route('/paiement/cancel', name: 'paiement_cancel')]
-    public function cancel(): Response
-    {
-        $this->addFlash('error', 'Le paiement a été annulé.');
-        return $this->redirectToRoute('app_homee');
-    }
+
 }
