@@ -31,6 +31,14 @@ class WaterReminderController extends AbstractController
             'controller_name' => 'WaterReminderController',
         ]);
     }
+    #[Route('/water-Bienfaits', name: 'app_water_Bienfaits')]
+    public function water(): Response
+    {
+        return $this->render('water_reminder/Bienfaits.html.twig', [
+            'controller_name' => 'WaterReminderController',
+        ]);
+    }
+
 
     #[Route('/water-reminder/schedule', name: 'app_water_reminder_schedule', methods: ['POST'])]
     public function scheduleReminder(Request $request): JsonResponse

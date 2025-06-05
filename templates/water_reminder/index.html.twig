@@ -1,51 +1,66 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Rappel d'hydratation{% endblock %}
+
 {% block Hero_Section_Begin %}
+    <section class="breadcrumb-section" style="
+            background-image: url('{{ asset('img/wat.png') }}');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            height: 400px;
+            padding: 0;
+            ">
+    </section>
 {% endblock %}
+
 {% block css %}
     {{ parent() }}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <style>
         body {
             margin: 0;
-            overflow: hidden;
+            /* Removed overflow: hidden; to enable scrolling */
             font-family: 'Arial', sans-serif;
             color: #e0e0e0;
             background-color: #121212;
+            min-height: 100vh; /* Ensure body takes at least full viewport height */
+            display: flex; /* Use flexbox for body to manage content and water-container */
+            flex-direction: column;
         }
-        
+
         #water-container {
-            position: absolute;
+            position: fixed; /* Use fixed to keep it in the background */
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -1;
         }
-        
+
         .content-container {
             position: relative;
-            z-index: 1;
+            z-index: 1; /* Keep content above the water background */
             padding: 2rem;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 50px auto; /* Added top margin for spacing */
             background-color: rgba(30, 30, 30, 0.8);
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            margin-top: 50px;
+            flex-grow: 1; /* Allow content to grow and push footer down */
+            min-height: calc(100vh - 400px - 100px); /* Adjust based on hero and potential footer */
         }
-        
+
         h1 {
             color: #00b0ff;
             text-align: center;
             margin-bottom: 1.5rem;
         }
-        
+
         h2 {
             color: #00b0ff;
         }
-        
+
         .reminder-card {
             background-color: #1e1e1e;
             border-radius: 10px;
@@ -53,14 +68,14 @@
             margin-bottom: 1.5rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
-        
+
         .water-goal {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-top: 2rem;
         }
-        
+
         .water-progress {
             height: 40px;
             background-color: #263238;
@@ -69,7 +84,7 @@
             flex-grow: 1;
             margin-right: 1rem;
         }
-        
+
         .water-progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #00b0ff, #0091ea);
@@ -78,23 +93,26 @@
             transition: width 0.5s ease;
             box-shadow: 0 0 10px rgba(0, 176, 255, 0.5);
         }
-        
+
         .water-amount {
             font-size: 1.2rem;
             font-weight: bold;
             color: #00b0ff;
+            white-space: nowrap; /* Prevent line break for amount */
         }
-        
+
         .water-buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 20px;
+            justify-content: center; /* Center buttons on larger screens */
         }
-        
+
         .water-btn {
             flex: 1;
-            min-width: 120px;
+            min-width: 120px; /* Adjust min-width for better wrapping */
+            max-width: 200px; /* Added max-width to prevent buttons from getting too wide */
             padding: 12px 15px;
             border: none;
             border-radius: 8px;
@@ -110,33 +128,34 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            text-decoration: none; /* For anchor tags if used as buttons */
         }
-        
+
         .water-btn:hover {
             background-color: #00b0ff;
             transform: translateY(-2px);
         }
-        
+
         .water-btn:active {
             transform: translateY(1px);
         }
-        
+
         #reset-water {
             background-color: #e53935;
         }
-        
+
         #reset-water:hover {
             background-color: #f44336;
         }
-        
+
         #set-goal {
             background-color: #7b1fa2;
         }
-        
+
         #set-goal:hover {
             background-color: #9c27b0;
         }
-        
+
         .ripple {
             position: absolute;
             border-radius: 50%;
@@ -145,18 +164,18 @@
             animation: ripple 1s linear;
             pointer-events: none;
         }
-        
+
         @keyframes ripple {
             to {
                 transform: scale(4);
                 opacity: 0;
             }
         }
-        
+
         .glow {
             animation: glow 2s ease-in-out infinite alternate;
         }
-        
+
         @keyframes glow {
             from {
                 box-shadow: 0 0 5px rgba(0, 176, 255, 0.5);
@@ -165,7 +184,7 @@
                 box-shadow: 0 0 20px rgba(0, 176, 255, 0.8);
             }
         }
-        
+
         /* Spinner de chargement */
         .spinner {
             display: inline-block;
@@ -177,11 +196,11 @@
             animation: spin 1s ease-in-out infinite;
             margin-right: 8px;
         }
-        
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        
+
         /* Animation de succès */
         .goal-success-animation {
             position: fixed;
@@ -198,12 +217,12 @@
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
         }
-        
+
         .goal-success-animation.show {
             opacity: 1;
             visibility: visible;
         }
-        
+
         .success-content {
             background-color: #1e1e1e;
             border-radius: 12px;
@@ -215,28 +234,28 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             border: 2px solid #4caf50;
         }
-        
+
         .goal-success-animation.show .success-content {
             transform: scale(1);
         }
-        
+
         .success-icon {
             font-size: 60px;
             margin-bottom: 20px;
             animation: bounce 1s ease infinite;
         }
-        
+
         .success-content h3 {
             color: #4caf50;
             font-size: 24px;
             margin-bottom: 15px;
         }
-        
+
         .success-content p {
             color: #e0e0e0;
             margin-bottom: 25px;
         }
-        
+
         .success-btn {
             background-color: #4caf50;
             color: white;
@@ -247,27 +266,27 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        
+
         .success-btn:hover {
             background-color: #66bb6a;
         }
-        
+
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-15px); }
         }
-        
+
         /* Animation pour la barre de progression */
         .success-achieved {
             animation: pulse 1.5s ease-in-out 3;
         }
-        
+
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
             70% { box-shadow: 0 0 0 15px rgba(76, 175, 80, 0); }
             100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
         }
-        
+
         /* Modal pour modifier l'objectif */
         .water-goal-modal {
             position: fixed;
@@ -284,12 +303,12 @@
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
         }
-        
+
         .water-goal-modal.show {
             opacity: 1;
             visibility: visible;
         }
-        
+
         .water-goal-modal-content {
             background-color: #1e1e1e;
             border-radius: 12px;
@@ -300,23 +319,23 @@
             transition: transform 0.3s;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-        
+
         .water-goal-modal.show .water-goal-modal-content {
             transform: translateY(0);
         }
-        
+
         .water-goal-modal h3 {
             color: #0091ea;
             margin-bottom: 20px;
             text-align: center;
         }
-        
+
         .goal-input-container {
             display: flex;
             align-items: center;
             margin-bottom: 20px;
         }
-        
+
         #goal-slider {
             flex: 1;
             -webkit-appearance: none;
@@ -325,7 +344,7 @@
             border-radius: 4px;
             outline: none;
         }
-        
+
         #goal-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 20px;
@@ -335,11 +354,11 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-        
+
         #goal-slider::-webkit-slider-thumb:hover {
             background: #00b0ff;
         }
-        
+
         .goal-value-display {
             margin-left: 15px;
             font-size: 18px;
@@ -348,13 +367,14 @@
             min-width: 60px;
             text-align: center;
         }
-        
+
         .goal-presets {
             display: flex;
             justify-content: space-between;
             margin-bottom: 25px;
+            gap: 10px; /* Added gap for better spacing */
         }
-        
+
         .goal-presets button {
             background-color: #333;
             color: white;
@@ -363,18 +383,19 @@
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
+            flex: 1; /* Make presets fill available space */
         }
-        
+
         .goal-presets button:hover {
             background-color: #444;
         }
-        
+
         .goal-modal-buttons {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
         }
-        
+
         .goal-modal-buttons button {
             padding: 10px 20px;
             border: none;
@@ -382,33 +403,33 @@
             cursor: pointer;
             font-weight: 500;
         }
-        
+
         #cancel-goal {
             background-color: #424242;
             color: white;
         }
-        
+
         #save-goal {
             background-color: #0091ea;
             color: white;
         }
-        
+
         #cancel-goal:hover {
             background-color: #616161;
         }
-        
+
         #save-goal:hover {
             background-color: #00b0ff;
         }
-        
-        /* Styles pour la section des bénéfices */
+
+        /* --- Styles pour la section des bénéfices --- */
         .benefits {
-            margin: 50px 0;
+            margin-top: 50px; /* Use margin-top to separate from previous content */
             padding: 20px;
-            background-color: rgba(0, 145, 234, 0.05);
+            background-color: rgba(0, 145, 234, 0.05); /* Lighter background for distinction */
             border-radius: 12px;
         }
-        
+
         .benefits h2 {
             text-align: center;
             color: #0091ea;
@@ -417,7 +438,7 @@
             position: relative;
             padding-bottom: 15px;
         }
-        
+
         .benefits h2:after {
             content: '';
             position: absolute;
@@ -429,13 +450,13 @@
             background: linear-gradient(to right, #0091ea, #00b0ff);
             border-radius: 3px;
         }
-        
+
         .benefits-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
         }
-        
+
         .benefit-card {
             background-color: #1e1e1e;
             border-radius: 10px;
@@ -445,13 +466,16 @@
             position: relative;
             overflow: hidden;
             border-top: 3px solid #0091ea;
+            display: block; /* Make the anchor tag a block element */
+            text-decoration: none; /* Remove underline from the link */
+            color: inherit; /* Inherit text color from parent */
         }
-        
+
         .benefit-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
-        
+
         .benefit-card:before {
             content: '';
             position: absolute;
@@ -462,7 +486,7 @@
             background: linear-gradient(135deg, rgba(0, 145, 234, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
             z-index: 0;
         }
-        
+
         .benefit-icon {
             width: 60px;
             height: 60px;
@@ -476,12 +500,12 @@
             z-index: 1;
             box-shadow: 0 5px 15px rgba(0, 145, 234, 0.3);
         }
-        
+
         .benefit-icon i {
             font-size: 28px;
             color: white;
         }
-        
+
         .benefit-card h3 {
             font-size: 18px;
             color: #e0e0e0;
@@ -489,7 +513,7 @@
             position: relative;
             z-index: 1;
         }
-        
+
         .benefit-card p {
             color: #9e9e9e;
             font-size: 14px;
@@ -497,62 +521,28 @@
             position: relative;
             z-index: 1;
         }
-        
+
         /* Variation des couleurs pour chaque carte */
-        .benefit-card:nth-child(1) .benefit-icon {
-            background: linear-gradient(135deg, #0091ea 0%, #00b0ff 100%);
-        }
-        
-        .benefit-card:nth-child(2) .benefit-icon {
-            background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
-        }
-        
-        .benefit-card:nth-child(3) .benefit-icon {
-            background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
-        }
-        
-        .benefit-card:nth-child(4) .benefit-icon {
-            background: linear-gradient(135deg, #e91e63 0%, #f48fb1 100%);
-        }
-        
-        .benefit-card:nth-child(5) .benefit-icon {
-            background: linear-gradient(135deg, #9c27b0 0%, #ce93d8 100%);
-        }
-        
-        .benefit-card:nth-child(6) .benefit-icon {
-            background: linear-gradient(135deg, #f44336 0%, #ef9a9a 100%);
-        }
-        
-        .benefit-card:nth-child(1) {
-            border-top-color: #0091ea;
-        }
-        
-        .benefit-card:nth-child(2) {
-            border-top-color: #ff9800;
-        }
-        
-        .benefit-card:nth-child(3) {
-            border-top-color: #4caf50;
-        }
-        
-        .benefit-card:nth-child(4) {
-            border-top-color: #e91e63;
-        }
-        
-        .benefit-card:nth-child(5) {
-            border-top-color: #9c27b0;
-        }
-        
-        .benefit-card:nth-child(6) {
-            border-top-color: #f44336;
-        }
-        
+        .benefit-card:nth-child(1) .benefit-icon { background: linear-gradient(135deg, #0091ea 0%, #00b0ff 100%); }
+        .benefit-card:nth-child(2) .benefit-icon { background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%); }
+        .benefit-card:nth-child(3) .benefit-icon { background: linear-gradient(135deg, #4caf50 0%, #81c784 100%); }
+        .benefit-card:nth-child(4) .benefit-icon { background: linear-gradient(135deg, #e91e63 0%, #f48fb1 100%); }
+        .benefit-card:nth-child(5) .benefit-icon { background: linear-gradient(135deg, #9c27b0 0%, #ce93d8 100%); }
+        .benefit-card:nth-child(6) .benefit-icon { background: linear-gradient(135deg, #f44336 0%, #ef9a9a 100%); }
+
+        .benefit-card:nth-child(1) { border-top-color: #0091ea; }
+        .benefit-card:nth-child(2) { border-top-color: #ff9800; }
+        .benefit-card:nth-child(3) { border-top-color: #4caf50; }
+        .benefit-card:nth-child(4) { border-top-color: #e91e63; }
+        .benefit-card:nth-child(5) { border-top-color: #9c27b0; }
+        .benefit-card:nth-child(6) { border-top-color: #f44336; }
+
         /* Animation au survol */
         .benefit-card:hover .benefit-icon {
             transform: scale(1.1);
             transition: transform 0.3s;
         }
-        
+
         /* Modal styles */
         .modal {
             display: none;
@@ -563,8 +553,9 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.7);
+            overflow: auto; /* Allow modal content to scroll if it's too long */
         }
-        
+
         .modal-content {
             background-color: #1e1e1e;
             margin: 10% auto;
@@ -572,74 +563,94 @@
             border-radius: 8px;
             max-width: 500px;
             position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-        
+
         .close {
             position: absolute;
-            right: 20px;
+            right: 15px; /* Adjusted for better spacing */
             top: 10px;
             font-size: 28px;
             color: #aaa;
             cursor: pointer;
         }
-        
+
         .close:hover {
             color: white;
         }
-        
+
         .form-group {
             margin-bottom: 15px;
         }
-        
+
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px; /* Increased margin for label */
+            font-size: 1rem;
+            color: #00b0ff;
         }
-        
+
         .form-group input {
-            width: 100%;
+            width: calc(100% - 20px); /* Account for padding */
             padding: 10px;
             border-radius: 4px;
             border: 1px solid #444;
             background-color: #333;
             color: white;
+            font-size: 1rem;
         }
-        
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0091ea;
+            box-shadow: 0 0 0 2px rgba(0, 145, 234, 0.3);
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .benefits-grid {
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             }
-            
+
             .benefit-card {
                 padding: 20px;
             }
-            
+
             .benefit-icon {
                 width: 50px;
                 height: 50px;
             }
-            
+
             .benefit-icon i {
                 font-size: 24px;
             }
+
+            .content-container {
+                margin: 20px auto; /* Adjust margin for smaller screens */
+                padding: 1rem;
+            }
         }
-        
+
         @media (max-width: 480px) {
             .benefits-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .benefits h2 {
                 font-size: 24px;
             }
-            
+
             .water-buttons {
                 flex-direction: column;
+                align-items: stretch; /* Stretch buttons to full width */
             }
-            
+
             .water-btn {
-                width: 100%;
+                max-width: 100%; /* Ensure buttons take full width */
+            }
+
+            .modal-content {
+                margin: 5% auto; /* Adjust modal margin for very small screens */
             }
         }
     </style>
@@ -652,9 +663,9 @@
         <h1>Rappel d'hydratation</h1>
         
         <div class="reminder-card">
-            <h2>Votre objectif quotidien</h2>
-            <p>Boire suffisamment d'eau est essentiel pour votre santé. Suivez votre consommation quotidienne ici.</p>
-            
+{#            <h2>Votre objectif quotidien</h2>#}
+{#            <p>Boire suffisamment d'eau est essentiel pour votre santé. Suivez votre consommation quotidienne ici.</p>#}
+{#            #}
             <div class="water-goal">
                 <div class="water-progress">
                     <div class="water-progress-bar"></div>
@@ -678,54 +689,6 @@
             </div>
         </div>
         
-        <div class="benefits">
-            <h2>Bienfaits d'une bonne hydratation</h2>
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="bi bi-droplet-half"></i>
-                    </div>
-                    <h3>Améliore la digestion</h3>
-                    <p>L'eau facilite la digestion et prévient la constipation en maintenant le bon fonctionnement du système digestif.</p>
-                </div>
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="bi bi-lightning-charge"></i>
-                    </div>
-                    <h3>Augmente l'énergie</h3>
-                    <p>Une bonne hydratation améliore les performances physiques et mentales, réduisant la sensation de fatigue.</p>
-                </div>
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="bi bi-graph-down-arrow"></i>
-                    </div>
-                    <h3>Favorise la perte de poids</h3>
-                    <p>Boire de l'eau avant les repas peut réduire l'appétit et augmenter le métabolisme, aidant à la gestion du poids.</p>
-                </div>
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="bi bi-stars"></i>
-                    </div>
-                    <h3>Améliore la santé de la peau</h3>
-                    <p>L'hydratation aide à maintenir l'élasticité de la peau, lui donnant un aspect plus jeune et éclatant.</p>
-                </div>
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="bi bi-thermometer-half"></i>
-                    </div>
-                    <h3>Régule la température</h3>
-                    <p>L'eau aide à maintenir la température corporelle optimale, particulièrement important pendant l'exercice ou par temps chaud.</p>
-                </div>
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="bi bi-battery-charging"></i>
-                    </div>
-                    <h3>Réduit la fatigue</h3>
-                    <p>Une hydratation adéquate améliore la circulation sanguine et l'oxygénation, réduisant la sensation de fatigue.</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Reminder Modal -->
     <div id="reminderModal" class="modal">
@@ -745,7 +708,7 @@
     </div>
 {% endblock %}
 
-{% block javascripts %}
+{% block js %}
     {{ parent() }}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="importmap">
