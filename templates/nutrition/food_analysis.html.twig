@@ -1,7 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Analyse Nutritionnelle par IA{% endblock %}
-
+{% block Hero_Section_Begin %}
+    <section class="breadcrumb-section" style="
+            background-image: url('{{ asset('img/IA_food.jpg') }}');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            height: 600px;
+            margin-top: -100px;
+            padding: 0;
+            ">
+    </section>
+{% endblock %}
 {% block body %}
 <style>
     body {
@@ -232,7 +243,7 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <h1 class="mb-4">
-                <span class="icon-circle"><i class="fa fa-camera"></i></span>Analyse Nutritionnelle par IA
+                <span class="icon-circle"><i class="fa fa-camera"></i></span> Analyse Nutritionnelle par IA
             </h1>
             
             <div class="card mb-4">

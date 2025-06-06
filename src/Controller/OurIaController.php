@@ -44,6 +44,20 @@ class OurIaController extends AbstractController
                 'img' => 'img/ia_gen.png',
                 'path' => 'app_gym',
             ],
+            [
+                'title' => 'IA Food Analysis',
+                'description' => 'Rate And Know  Your Food Calorie.',
+                'route' => 'settings',
+                'img' => 'img/rec_ia.jpg',
+                'path' => 'app_food_analysis',
+            ],
+            [
+                'title' => 'IA Meals Generator',
+                'description' => 'generate your meals with IA.',
+                'route' => 'settings',
+                'img' => 'img/IA_FF.png',
+                'path' => 'app_nutrition',
+            ],
         ];
         return $this->render('our_ia.html.twig', [
             'cards' => $cards,
