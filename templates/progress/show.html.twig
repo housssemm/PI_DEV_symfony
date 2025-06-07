@@ -1,0 +1,297 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ post.title }}
+{% endblock %}
+
+{% block body %}
+	<div class="progress-detail-container">
+		<div class="progress-detail-header">
+			<div class="progress-detail-title">
+				<h1>{{ post.title }}</h1>
+				<span class="progress-date">{{ post.createdAt|date('d/m/Y') }}</span>
+			</div>
+			{% if is_granted('ROLE_USER') and app.user == post.user %}
+				<div class="progress-detail-actions">
+					<a href="{{ path('app_progress_edit', {'id': post.id}) }}" class="btn btn-secondary">
+						<i class="fas fa-edit"></i>
+						Modifier
+					</a>
+					<form action="{{ path('app_progress_delete', {'id': post.id}) }}" method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette progression ?');">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+						<button type="submit" class="btn btn-danger">
+							<i class="fas fa-trash"></i>
+							Supprimer
+						</button>
+					</form>
+				</div>
+			{% endif %}
+		</div>
+
+		<div class="progress-detail-content">
+			<div class="progress-images">
+				{% if post.beforeImage %}
+					<div class="progress-image">
+						<img src="{{ asset('uploads/progress/' ~ post.beforeImage) }}" alt="Avant">
+						<span class="image-label">Avant</span>
+					</div>
+				{% endif %}
+				{% if post.afterImage %}
+					<div class="progress-image">
+						<img src="{{ asset('uploads/progress/' ~ post.afterImage) }}" alt="Après">
+						<span class="image-label">Après</span>
+					</div>
+				{% endif %}
+			</div>
+
+			<div class="progress-stats">
+				<div class="stat">
+					<span class="stat-label">Poids actuel</span>
+					<span class="stat-value">{{ post.currentWeight }}
+						kg</span>
+				</div>
+				<div class="stat">
+					<span class="stat-label">Objectif</span>
+					<span class="stat-value">{{ post.goalWeight }}
+						kg</span>
+				</div>
+				<div class="stat">
+					<span class="stat-label">Progression</span>
+					<span class="stat-value">{{ (post.currentWeight - post.goalWeight)|abs }}
+						kg</span>
+				</div>
+			</div>
+
+			<div class="progress-description">
+				{{ post.content|nl2br }}
+			</div>
+
+			<div class="progress-interactions">
+				<button class="btn-like" data-post-id="{{ post.id }}">
+					<i class="fas fa-heart"></i>
+					<span class="likes-count">{{ post.likes }}</span>
+				</button>
+				<a href="{{ path('app_progress_index') }}" class="btn btn-secondary">
+					<i class="fas fa-arrow-left"></i>
+					Retour
+				</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		.progress-detail-container {
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 2rem;
+		}
+
+		.progress-detail-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 2rem;
+		}
+
+		.progress-detail-title h1 {
+			color: var(--primary-color);
+			font-size: 2.5rem;
+			margin: 0;
+		}
+
+		.progress-date {
+			color: var(--text-muted);
+			font-size: 1rem;
+		}
+
+		.progress-detail-actions {
+			display: flex;
+			gap: 1rem;
+		}
+
+		.progress-detail-content {
+			background: var(--bg-card);
+			border-radius: 15px;
+			padding: 2rem;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.progress-images {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 2rem;
+			margin-bottom: 2rem;
+		}
+
+		.progress-image {
+			position: relative;
+			border-radius: 10px;
+			overflow: hidden;
+		}
+
+		.progress-image img {
+			width: 100%;
+			height: 400px;
+			object-fit: cover;
+		}
+
+		.image-label {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background: rgba(0, 0, 0, 0.7);
+			color: white;
+			padding: 0.75rem;
+			text-align: center;
+			font-size: 1.1rem;
+		}
+
+		.progress-stats {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1.5rem;
+			margin-bottom: 2rem;
+			background: var(--bg-dark);
+			padding: 1.5rem;
+			border-radius: 10px;
+		}
+
+		.stat {
+			text-align: center;
+		}
+
+		.stat-label {
+			display: block;
+			color: var(--text-muted);
+			font-size: 1rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.stat-value {
+			color: var(--text-light);
+			font-size: 1.5rem;
+			font-weight: 600;
+		}
+
+		.progress-description {
+			color: var(--text-light);
+			line-height: 1.8;
+			font-size: 1.1rem;
+			margin-bottom: 2rem;
+		}
+
+		.progress-interactions {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding-top: 1.5rem;
+			border-top: 1px solid var(--border-color);
+		}
+
+		.btn-like {
+			background: none;
+			border: none;
+			color: var(--text-muted);
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			transition: color 0.3s ease;
+			font-size: 1.1rem;
+		}
+
+		.btn-like:hover {
+			color: var(--primary-color);
+		}
+
+		.btn-like i {
+			font-size: 1.3rem;
+		}
+
+		.btn {
+			padding: 0.75rem 1.5rem;
+			border: none;
+			border-radius: 8px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.btn-secondary {
+			background: var(--bg-dark);
+			color: var(--text-light);
+		}
+
+		.btn-secondary:hover {
+			background: var(--bg-darker);
+		}
+
+		.btn-danger {
+			background: #dc3545;
+			color: white;
+		}
+
+		.btn-danger:hover {
+			background: #c82333;
+		}
+
+		@media(max-width: 768px) {
+			.progress-detail-header {
+				flex-direction: column;
+				gap: 1rem;
+				text-align: center;
+			}
+
+			.progress-images {
+				grid-template-columns: 1fr;
+			}
+
+			.progress-stats {
+				grid-template-columns: 1fr;
+			}
+
+			.progress-interactions {
+				flex-direction: column;
+				gap: 1rem;
+			}
+
+			.btn {
+				width: 100%;
+				justify-content: center;
+			}
+		}
+	</style>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+const likeButton = document.querySelector('.btn-like');
+
+if (likeButton) {
+likeButton.addEventListener('click', function () {
+const postId = this.dataset.postId;
+const likesCount = this.querySelector('.likes-count');
+
+fetch (`/progress/${postId}/like`, {
+method: 'POST',
+headers: {
+'X-Requested-With': 'XMLHttpRequest'
+}
+}).then(response => response.json()).then(data => {
+likesCount.textContent = data.likes;
+this.classList.add('liked');
+}).catch(error => console.error('Error:', error));
+});
+}
+});
+	</script>
+{% endblock %}
