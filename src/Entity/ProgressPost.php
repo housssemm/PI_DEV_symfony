@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProgressPostRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,22 +15,25 @@ class ProgressPost
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'progressPosts')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
-
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
     private ?string $content = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Type('numeric')]
+    #[Assert\Positive]
     private ?float $currentWeight = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Type('numeric')]
+    #[Assert\Positive]
     private ?float $goalWeight = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -37,9 +41,6 @@ class ProgressPost
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $afterImage = null;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
     private ?bool $isPublic = true;
@@ -50,6 +51,13 @@ class ProgressPost
     #[ORM\Column]
     private ?int $comments = 0;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'progressPosts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -58,17 +66,6 @@ class ProgressPost
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-        return $this;
     }
 
     public function getTitle(): ?string
@@ -137,11 +134,6 @@ class ProgressPost
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
     public function isPublic(): ?bool
     {
         return $this->isPublic;
@@ -172,6 +164,28 @@ class ProgressPost
     public function setComments(int $comments): static
     {
         $this->comments = $comments;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
         return $this;
     }
 }
