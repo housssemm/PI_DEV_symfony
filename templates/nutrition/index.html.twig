@@ -1,0 +1,436 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Programme Nutritionnel Personnalisé
+{% endblock %}
+{% block Hero_Section_Begin %}
+	<section class="breadcrumb-section set-bg" data-setbg="img/nutrition-banner.jpg">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12 text-center">
+					<div class="breadcrumb-text">
+						<h2>Nutrition AI</h2>
+						<div class="bt-option">
+							<a href="./index.html">Home</a>
+							<span>Nutrition AI</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
+{% block body %}
+	<div class="nutrition-container">
+		<h1 class="page-title">Programme Nutritionnel Personnalisé</h1>
+
+		<div class="form-container">
+			<p class="form-intro">Veuillez remplir le formulaire pour générer votre programme nutritionnel personnalisé.</p>
+			{{ form(form) }}
+			</div>
+
+			{% if mealPlan is defined and mealPlan is not null %}
+				<div class="nutrition-program">
+					<h2 class="session-title">{{ mealPlan.title }}</h2>
+
+					{% for meal in mealPlan.meals %}
+						<div class="meal-section">
+							<div class="meal-header">
+								<h3 class="meal-title">{{ meal.name }}</h3>
+								<span class="meal-time">{{ meal.time }}</span>
+							</div>
+
+							<div class="meal-foods">
+								{% for food in meal.foods %}
+									<div class="food-card">
+										<div class="food-image">
+											<img src="{{ asset('img/foods/' ~ food.img) }}" alt="{{ food.name }}" class="food-img">
+										</div>
+										<div class="food-info">
+											<h4 class="food-name">{{ food.name }}</h4>
+											<div class="food-macros">
+												<div class="macro">
+													<span class="macro-label">Calories</span>
+													<span class="macro-value">{{ food.calories }}</span>
+												</div>
+												<div class="macro">
+													<span class="macro-label">Protéines</span>
+													<span class="macro-value">{{ food.protein }}</span>
+												</div>
+												<div class="macro">
+													<span class="macro-label">Glucides</span>
+													<span class="macro-value">{{ food.carbs }}</span>
+												</div>
+												<div class="macro">
+													<span class="macro-label">Lipides</span>
+													<span class="macro-value">{{ food.fat }}</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								{% endfor %}
+							</div>
+						</div>
+					{% endfor %}
+
+					<div class="important-notes">
+						<h3>Conseils Importants:</h3>
+						<ul>
+							<li>Buvez au moins 2 litres d'eau par jour.</li>
+							<li>Respectez les horaires des repas pour maintenir un métabolisme stable.</li>
+							<li>Préparez vos repas à l'avance pour éviter les écarts.</li>
+							<li>Évitez les aliments transformés et privilégiez les aliments frais.</li>
+							<li>Consultez un nutritionniste avant de commencer tout nouveau régime.</li>
+						</ul>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	{% endblock %}
+
+	{% block css %}
+		{{ parent() }}
+		<style>:root
+		{
+			--primary-color: #FA8200;
+			--primary-hover: #e67e00;
+			--bg-dark: #151515;
+			--bg-card: #1a1a1a;
+			--text-light: #f1f1f1;
+			--text-muted: #888888;
+			--border-color: #333333;
+			--success-color: #4caf50;
+		}
+
+		body {
+			background-color: var(--bg-dark);
+			color: var(--text-light);
+			font-family: 'Segoe UI', sans-serif;
+			line-height: 1.6;
+		}
+
+		.breadcrumb-section {
+			position: relative;
+			background-color: var(--bg-dark);
+			height: 400px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+		}
+
+		.breadcrumb-section::before {
+			content: "";
+			background: linear-gradient(rgba(21, 21, 21, 0.7), rgba(21, 21, 21, 0.9));
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
+
+		.breadcrumb-text {
+			position: relative;
+			z-index: 2;
+			color: #fff;
+			text-align: center;
+		}
+
+		.breadcrumb-text h2 {
+			font-size: 3.5rem;
+			font-weight: 700;
+			margin-bottom: 1rem;
+			color: var(--primary-color);
+			text-shadow: 0 2px 10px rgba(250, 130, 0, 0.3);
+		}
+
+		.bt-option a,
+		.bt-option span {
+			color: var(--text-light);
+			font-size: 1.1rem;
+			transition: color 0.3s ease;
+		}
+
+		.bt-option a:hover {
+			color: var(--primary-color);
+		}
+
+		.nutrition-container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 2rem;
+		}
+
+		.page-title {
+			font-size: 2.5rem;
+			font-weight: 700;
+			text-align: center;
+			margin: 2rem 0;
+			color: var(--primary-color);
+			text-shadow: 0 2px 10px rgba(250, 130, 0, 0.3);
+			animation: fadeInDown 0.8s ease;
+		}
+
+		.nutrition-program {
+			background: var(--bg-card);
+			padding: 2rem;
+			border-radius: 20px;
+			margin-top: 2rem;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			animation: fadeIn 0.8s ease;
+		}
+
+		.session-title {
+			color: var(--primary-color);
+			font-size: 2rem;
+			font-weight: 700;
+			margin-bottom: 2rem;
+			padding-bottom: 1rem;
+			border-bottom: 2px solid var(--primary-color);
+			text-align: center;
+		}
+
+		.meal-section {
+			margin-bottom: 3rem;
+			padding: 1.5rem;
+			background: var(--bg-dark);
+			border-radius: 15px;
+			border: 1px solid var(--border-color);
+		}
+
+		.meal-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 1.5rem;
+		}
+
+		.meal-title {
+			color: var(--primary-color);
+			font-size: 1.5rem;
+			font-weight: 600;
+		}
+
+		.meal-time {
+			color: var(--text-muted);
+			font-size: 1.1rem;
+		}
+
+		.meal-foods {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 1.5rem;
+		}
+
+		.food-card {
+			background: var(--bg-card);
+			border-radius: 12px;
+			overflow: hidden;
+			transition: transform 0.3s ease;
+			border: 1px solid var(--border-color);
+		}
+
+		.food-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+		}
+
+		.food-image {
+			width: 100%;
+			height: 200px;
+			overflow: hidden;
+		}
+
+		.food-img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform 0.3s ease;
+		}
+
+		.food-card:hover .food-img {
+			transform: scale(1.1);
+		}
+
+		.food-info {
+			padding: 1.5rem;
+		}
+
+		.food-name {
+			color: var(--text-light);
+			font-size: 1.2rem;
+			font-weight: 600;
+			margin-bottom: 1rem;
+		}
+
+		.food-macros {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 1rem;
+		}
+
+		.macro {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding: 0.5rem;
+			background: rgba(255, 255, 255, 0.03);
+			border-radius: 8px;
+			border: 1px solid var(--border-color);
+		}
+
+		.macro-label {
+			color: var(--text-muted);
+			font-size: 0.9rem;
+			margin-bottom: 0.3rem;
+		}
+
+		.macro-value {
+			color: var(--text-light);
+			font-weight: 600;
+		}
+
+		.important-notes {
+			margin-top: 3rem;
+			padding: 2rem;
+			background: rgba(250, 130, 0, 0.05);
+			border-radius: 12px;
+			border-left: 4px solid var(--primary-color);
+		}
+
+		.important-notes h3 {
+			color: var(--primary-color);
+			margin-bottom: 1rem;
+			font-size: 1.4rem;
+		}
+
+		.important-notes ul {
+			list-style: none;
+			padding: 0;
+		}
+
+		.important-notes li {
+			margin-bottom: 0.8rem;
+			padding-left: 1.5rem;
+			position: relative;
+			color: var(--text-light);
+		}
+
+		.important-notes li:before {
+			content: "•";
+			color: var(--primary-color);
+			position: absolute;
+			left: 0;
+			font-size: 1.2rem;
+		}
+
+		.form-container {
+			background-color: var(--bg-card);
+			padding: 2rem;
+			border-radius: 20px;
+			margin-top: 2rem;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			animation: fadeIn 0.8s ease;
+			border: 1px solid var(--border-color);
+		}
+
+		.form-intro {
+			text-align: center;
+			color: var(--text-light);
+			font-size: 1.2rem;
+			margin-bottom: 2rem;
+		}
+
+		form {
+			display: grid;
+			gap: 1.5rem;
+		}
+
+		form input,
+		form select,
+		form textarea {
+			background-color: var(--bg-dark);
+			color: var(--text-light);
+			border: 1px solid var(--border-color);
+			padding: 1rem;
+			width: 100%;
+			border-radius: 8px;
+			transition: all 0.3s ease;
+		}
+
+		form input:focus,
+		form select:focus,
+		form textarea:focus {
+			border-color: var(--primary-color);
+			box-shadow: 0 0 0 2px rgba(250, 130, 0, 0.2);
+			outline: none;
+		}
+
+		form label {
+			color: var(--text-light);
+			font-weight: 500;
+			margin-bottom: 0.5rem;
+			display: block;
+		}
+
+		form button,
+		form input[type="submit"] {
+			background-color: var(--primary-color);
+			color: #000;
+			border: none;
+			padding: 1rem 2rem;
+			border-radius: 8px;
+			cursor: pointer;
+			font-weight: 600;
+			font-size: 1.1rem;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+
+		form button:hover,
+		form input[type="submit"]:hover {
+			background-color: var(--primary-hover);
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(250, 130, 0, 0.3);
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+			}
+			to {
+				opacity: 1;
+			}
+		}
+
+		@keyframes fadeInDown {
+			from {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@media(max-width: 768px) {
+			.nutrition-container {
+				padding: 1rem;
+			}
+
+			.meal-foods {
+				grid-template-columns: 1fr;
+			}
+
+			.food-macros {
+				grid-template-columns: 1fr;
+			}
+
+			.breadcrumb-text h2 {
+				font-size: 2.5rem;
+			}
+		}
+	</style>
+{% endblock %}
