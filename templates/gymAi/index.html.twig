@@ -1,244 +1,475 @@
-
 {% extends 'base.html.twig' %}
 
-{% block title %}Programme de Gym Personnalisé {% endblock %}
+{% block title %}Programme de Gym Personnalisé
+{% endblock %}
 {% block Hero_Section_Begin %}
-    <section class="breadcrumb-section set-bg" data-setbg="img/AI-Workout-Generater.png">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div class="breadcrumb-text">
-                        <h2>My Gym Partner</h2>
-                        <div class="bt-option">
-                            <a href="./index.html">Home</a>
-                            <span>My Gym Partner</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+	<section class="breadcrumb-section set-bg" data-setbg="img/AI-Workout-Generater.png">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12 text-center">
+					<div class="breadcrumb-text">
+						<h2>My Gym Partner</h2>
+						<div class="bt-option">
+							<a href="./index.html">Home</a>
+							<span>My Gym Partner</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 {% endblock %}
 {% block body %}
-    <h1 class="page-title">Programme de Gym Personnalisé</h1>
-    {% if program %}
-        <div class="gym-program">
-            {{ program|raw }}
-        </div>
-    {% else %}
-        <p>Veuillez remplir le formulaire pour générer votre programme.</p>
-        {{ form(form) }}
-    {% endif %}
-{% endblock %}
+	<div class="gym-container">
+		<h1 class="page-title">Programme de Gym Personnalisé</h1>
+		{% if program %}
+			<div class="gym-program">
+				<h2 class="session-title">Jour 1: Séance Banc (Perte de Poids - Débutant)</h2>
+				<table class="exercise-table">
+					<thead>
+						<tr>
+							<th>Exercice</th>
+							<th>Séries</th>
+							<th>Répétitions</th>
+							<th>Repos (secondes)</th>
+							<th>Notes</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<div class="exercise-info">
+									<img src="{{ asset('img/exercises/squats.jpg') }}" alt="Squats" class="exercise-img">
+									<span class="exercise-name">Squats (sans poids)</span>
+								</div>
+							</td>
+							<td>3</td>
+							<td>12-15</td>
+							<td>60</td>
+							<td class="exercise-notes">Concentrez-vous sur la forme. Asseyez-vous doucement sur le banc et relevez-vous.</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="exercise-info">
+									<img src="{{ asset('img/exercises/pushups.jpg') }}" alt="Pompes Inclinées" class="exercise-img">
+									<span class="exercise-name">Pompes Inclinées</span>
+								</div>
+							</td>
+							<td>3</td>
+							<td>8-12</td>
+							<td>60</td>
+							<td class="exercise-notes">Plus le banc est haut, plus l'exercice est facile.</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="exercise-info">
+									<img src="{{ asset('img/exercises/lunges.jpg') }}" alt="Fentes Avant" class="exercise-img">
+									<span class="exercise-name">Fentes Avant (alternées)</span>
+								</div>
+							</td>
+							<td>3</td>
+							<td>10 par jambe</td>
+							<td>60</td>
+							<td class="exercise-notes">Utilisez le banc comme support pour l'équilibre si nécessaire.</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="exercise-info">
+									<img src="{{ asset('img/exercises/dips.jpg') }}" alt="Dips sur Banc" class="exercise-img">
+									<span class="exercise-name">Dips sur Banc</span>
+								</div>
+							</td>
+							<td>3</td>
+							<td>8-12</td>
+							<td>60</td>
+							<td class="exercise-notes">Plus vos pieds sont loin du banc, plus l'exercice est difficile.</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="exercise-info">
+									<img src="{{ asset('img/exercises/crunches.jpg') }}" alt="Relevés de Buste" class="exercise-img">
+									<span class="exercise-name">Relevés de Buste (Abdominaux)</span>
+								</div>
+							</td>
+							<td>3</td>
+							<td>15-20</td>
+							<td>45</td>
+							<td class="exercise-notes">Concentrez-vous sur la contraction abdominale.</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="exercise-info">
+									<img src="{{ asset('img/exercises/plank.jpg') }}" alt="Planche" class="exercise-img">
+									<span class="exercise-name">Planche (sur les avant-bras)</span>
+								</div>
+							</td>
+							<td>3</td>
+							<td>30 secondes</td>
+							<td>45</td>
+							<td class="exercise-notes">Gardez le corps droit, des épaules aux talons.</td>
+						</tr>
+					</tbody>
+				</table>
 
-{#{% block css %}#}
-{#    {{ parent() }}#}
-{#    <style>#}
-{#        .gym-program {#}
-{#            font-family: 'Segoe UI', sans-serif;#}
-{#            background: #f8f9fa;#}
-{#            padding: 20px;#}
-{#            border-radius: 15px;#}
-{#            margin-top: 20px;#}
-{#            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);#}
-{#        }#}
+				<div class="important-notes">
+					<h3>Important:</h3>
+					<ul>
+						<li>Échauffez-vous pendant 5-10 minutes avant de commencer (marche sur place, rotations des bras, etc.).</li>
+						<li>Étirez-vous pendant 5-10 minutes après la séance.</li>
+						<li>Buvez beaucoup d'eau.</li>
+						<li>Si vous ressentez une douleur, arrêtez immédiatement l'exercice.</li>
+						<li>Augmentez progressivement les répétitions ou les séries au fur et à mesure que vous gagnez en force.</li>
+						<li>Consultez un médecin avant de commencer tout nouveau programme d'exercice.</li>
+					</ul>
+				</div>
+			</div>
+		{% else %}
+			<div class="form-container">
+				<p class="form-intro">Veuillez remplir le formulaire pour générer votre programme personnalisé.</p>
+				{{ form(form) }}
+				</div>
+			{% endif %}
+		</div>
+	{% endblock %}
 
-{#        .gym-program h2.day-title {#}
-{#            color: #007bff;#}
-{#            margin-top: 25px;#}
-{#            border-bottom: 2px solid #007bff;#}
-{#            padding-bottom: 10px;#}
-{#        }#}
+	{% block css %}
+		{{ parent() }}
+		<style>:root
+		{
+			--primary-color: #FA8200;
+			--primary-hover: #e67e00;
+			--bg-dark: #151515;
+			--bg-card: #1e1e1e;
+			--text-light: #f1f1f1;
+			--text-muted: #aaaaaa;
+			--border-color: #444;
+			--success-color: #4caf50;
+		}
 
-{#        .gym-program table.exercise-table {#}
-{#            width: 100%;#}
-{#            border-collapse: collapse;#}
-{#            margin-bottom: 20px;#}
-{#            background-color: #fff;#}
-{#            border-radius: 8px;#}
-{#            overflow: hidden;#}
-{#            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);#}
-{#        }#}
+		body {
+			background-color: var(--bg-dark);
+			color: var(--text-light);
+			font-family: 'Segoe UI', sans-serif;
+			line-height: 1.6;
+		}
 
-{#        .gym-program th, .gym-program td {#}
-{#            border: 1px solid #dee2e6;#}
-{#            padding: 12px;#}
-{#            text-align: center;#}
-{#        }#}
+		.gym-container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 2rem;
+		}
 
-{#        .gym-program th {#}
-{#            background-color: #e9ecef;#}
-{#            font-weight: bold;#}
-{#        }#}
+		.breadcrumb-section {
+			position: relative;
+			background-color: var(--bg-dark);
+			height: 400px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+		}
 
-{#        .gym-program tr:nth-child(even) {#}
-{#            background-color: #f5f5f5;#}
-{#        }#}
+		.breadcrumb-section::before {
+			content: "";
+			background: linear-gradient(rgba(21, 21, 21, 0.7), rgba(21, 21, 21, 0.9));
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
 
-{#        /* Styles spécifiques pour les cellules */#}
-{#        .exercise-name {#}
-{#            font-weight: bold;#}
-{#            color: #28a745;#}
-{#        }#}
+		.breadcrumb-text {
+			position: relative;
+			z-index: 2;
+			color: #fff;
+			text-align: center;
+		}
 
-{#        .exercise-sets, .exercise-repetitions, .exercise-rest {#}
-{#            color: #6c757d;#}
-{#        }#}
+		.breadcrumb-text h2 {
+			font-size: 3.5rem;
+			font-weight: 700;
+			margin-bottom: 1rem;
+			color: var(--primary-color);
+			text-shadow: 0 2px 10px rgba(250, 130, 0, 0.3);
+		}
 
-{#        .exercise-notes {#}
-{#            font-style: italic;#}
-{#            color: #555;#}
-{#        }#}
-{#        .exercise-img {#}
-{#            max-width: 80px;#}
-{#            height: auto;#}
-{#            vertical-align: middle;#}
-{#        }#}
-{#    </style>#}
-{#{% endblock %}#}
-{% block css %}
-    {{ parent() }}
-    <style>
-        body {
-            background-color: #151515;
-            color: #f1f1f1;
-            font-family: 'Segoe UI', sans-serif;
-        }
+		.bt-option a,
+		.bt-option span {
+			color: var(--text-light);
+			font-size: 1.1rem;
+			transition: color 0.3s ease;
+		}
 
-        .breadcrumb-section {
-            position: relative;
-            background-color: #151515;
-        }
+		.bt-option a:hover {
+			color: var(--primary-color);
+		}
 
-        .breadcrumb-section::before {
-            content: "";
-            background-color: rgba(21, 21, 21, 0.6); /* Superposition sombre */
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-        }
+		.page-title {
+			font-size: 2.5rem;
+			font-weight: 700;
+			text-align: center;
+			margin: 2rem 0;
+			color: var(--primary-color);
+			text-shadow: 0 2px 10px rgba(250, 130, 0, 0.3);
+			animation: fadeInDown 0.8s ease;
+		}
 
-        .breadcrumb-text {
-            position: relative;
-            z-index: 2;
-            color: #fff;
-        }
+		.gym-program {
+			background: var(--bg-card);
+			padding: 2rem;
+			border-radius: 20px;
+			margin-top: 2rem;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+			animation: fadeIn 0.8s ease;
+		}
 
-        .breadcrumb-text h2,
-        .breadcrumb-text a,
-        .breadcrumb-text span {
-            color: #fff;
-        }
+		.gym-program h2.day-title {
+			color: var(--primary-color);
+			margin-top: 2rem;
+			border-bottom: 2px solid var(--primary-color);
+			padding-bottom: 1rem;
+			font-size: 1.8rem;
+		}
 
-        .gym-program {
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-        }
+		.gym-program table.exercise-table {
+			width: 100%;
+			border-collapse: separate;
+			border-spacing: 0;
+			margin: 1.5rem 0;
+			background-color: var(--bg-dark);
+			border-radius: 12px;
+			overflow: hidden;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+		}
 
-        .gym-program h2.day-title {
-            color: #ffcc00;
-            margin-top: 25px;
-            border-bottom: 2px solid #ffcc00;
-            padding-bottom: 10px;
-        }
+		.gym-program th,
+		.gym-program td {
+			border: 1px solid var(--border-color);
+			padding: 1rem;
+			text-align: center;
+		}
 
-        .gym-program table.exercise-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #1a1a1a;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            color: #f1f1f1;
-        }
+		.gym-program th {
+			background-color: rgba(250, 130, 0, 0.1);
+			color: var(--primary-color);
+			font-weight: 600;
+			text-transform: uppercase;
+			font-size: 0.9rem;
+			letter-spacing: 1px;
+		}
 
-        .gym-program th, .gym-program td {
-            border: 1px solid #444;
-            padding: 12px;
-            text-align: center;
-        }
+		.gym-program tr:nth-child(even) {
+			background-color: rgba(255, 255, 255, 0.03);
+		}
 
-        .gym-program th {
-            background-color: #333;
-            color: #ffcc00;
-            font-weight: bold;
-        }
+		.gym-program tr:hover {
+			background-color: rgba(250, 130, 0, 0.05);
+			transition: background-color 0.3s ease;
+		}
 
-        .gym-program tr:nth-child(even) {
-            background-color: #222;
-        }
+		.exercise-name {
+			font-weight: 600;
+			color: var(--success-color);
+		}
 
-        .exercise-name {
-            font-weight: bold;
-            color: #4caf50;
-        }
+		.exercise-sets,
+		.exercise-repetitions,
+		.exercise-rest {
+			color: var(--text-light);
+		}
 
-        .exercise-sets, .exercise-repetitions, .exercise-rest {
-            color: #cccccc;
-        }
+		.exercise-notes {
+			font-style: italic;
+			color: var(--text-muted);
+			font-size: 0.9rem;
+		}
 
-        .exercise-notes {
-            font-style: italic;
-            color: #aaaaaa;
-        }
+		.exercise-img {
+			max-width: 100px;
+			height: auto;
+			border-radius: 8px;
+			transition: transform 0.3s ease;
+		}
 
-        .exercise-img {
-            max-width: 80px;
-            height: auto;
-            vertical-align: middle;
-        }
+		.exercise-img:hover {
+			transform: scale(1.1);
+		}
 
-        form {
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-            color: #fff;
-            margin-top: 30px;
-        }
+		.form-container {
+			background-color: var(--bg-card);
+			padding: 2rem;
+			border-radius: 20px;
+			margin-top: 2rem;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+			animation: fadeIn 0.8s ease;
+		}
 
-        form input, form select, form textarea {
-            background-color: #2c2c2c;
-            color: #fff;
-            border: 1px solid #444;
-            padding: 10px;
-            width: 100%;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
+		.form-intro {
+			text-align: center;
+			color: var(--text-light);
+			font-size: 1.2rem;
+			margin-bottom: 2rem;
+		}
 
-        form label {
-            color: #ccc;
-            font-weight: bold;
-        }
+		form {
+			display: grid;
+			gap: 1.5rem;
+		}
 
-        form button, form input[type="submit"] {
-            background-color: #FA8200;
-            color: #000;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s ease;
-        }
+		form input,
+		form select,
+		form textarea {
+			background-color: var(--bg-dark);
+			color: var(--text-light);
+			border: 1px solid var(--border-color);
+			padding: 1rem;
+			width: 100%;
+			border-radius: 8px;
+			transition: all 0.3s ease;
+		}
 
-        form button:hover, form input[type="submit"]:hover {
-            background-color: #e6b800;
-        }
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-top: 30px;
-            margin-bottom: 20px;
-            color: #FA8200;
-            text-shadow: 0 2px 10px rgba(250, 130, 0, 0.3);
-        }
+		form input:focus,
+		form select:focus,
+		form textarea:focus {
+			border-color: var(--primary-color);
+			box-shadow: 0 0 0 2px rgba(250, 130, 0, 0.2);
+			outline: none;
+		}
 
+		form label {
+			color: var(--text-light);
+			font-weight: 500;
+			margin-bottom: 0.5rem;
+			display: block;
+		}
 
-    </style>
+		form button,
+		form input[type="submit"] {
+			background-color: var(--primary-color);
+			color: #000;
+			border: none;
+			padding: 1rem 2rem;
+			border-radius: 8px;
+			cursor: pointer;
+			font-weight: 600;
+			font-size: 1.1rem;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+
+		form button:hover,
+		form input[type="submit"]:hover {
+			background-color: var(--primary-hover);
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(250, 130, 0, 0.3);
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+			}
+			to {
+				opacity: 1;
+			}
+		}
+
+		@keyframes fadeInDown {
+			from {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		/* Responsive Design */
+		@media(max-width: 768px) {
+			.gym-container {
+				padding: 1rem;
+			}
+
+			.breadcrumb-text h2 {
+				font-size: 2.5rem;
+			}
+
+			.page-title {
+				font-size: 2rem;
+			}
+
+			.gym-program {
+				padding: 1rem;
+			}
+
+			.gym-program table.exercise-table {
+				display: block;
+				overflow-x: auto;
+			}
+		}
+
+		.session-title {
+			color: var(--primary-color);
+			font-size: 2rem;
+			font-weight: 700;
+			margin-bottom: 2rem;
+			padding-bottom: 1rem;
+			border-bottom: 2px solid var(--primary-color);
+			text-align: center;
+		}
+
+		.exercise-info {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+
+		.exercise-img {
+			width: 80px;
+			height: 80px;
+			object-fit: cover;
+			border-radius: 8px;
+			transition: transform 0.3s ease;
+		}
+
+		.exercise-img:hover {
+			transform: scale(1.1);
+		}
+
+		.important-notes {
+			margin-top: 3rem;
+			padding: 2rem;
+			background: rgba(250, 130, 0, 0.1);
+			border-radius: 12px;
+			border-left: 4px solid var(--primary-color);
+		}
+
+		.important-notes h3 {
+			color: var(--primary-color);
+			margin-bottom: 1rem;
+			font-size: 1.4rem;
+		}
+
+		.important-notes ul {
+			list-style: none;
+			padding: 0;
+		}
+
+		.important-notes li {
+			margin-bottom: 0.8rem;
+			padding-left: 1.5rem;
+			position: relative;
+		}
+
+		.important-notes li:before {
+			content: "•";
+			color: var(--primary-color);
+			position: absolute;
+			left: 0;
+			font-size: 1.2rem;
+		}
+	</style>
 {% endblock %}

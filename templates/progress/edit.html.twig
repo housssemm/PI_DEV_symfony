@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Progress Post
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<div class="row justify-content-center">
+			<div class="col-md-8">
+				<div class="card" style="background-color: #151515; border: 1px solid #333;">
+					<div class="card-header" style="background-color: #1a1a1a; border-bottom: 1px solid #333;">
+						<h1 class="text-center mb-0" style="color: #FA8200;">Edit Progress Post</h1>
+					</div>
+					<div class="card-body">
+						{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+						<div class="mb-3">
+							{{ form_label(form.title, 'Title', {'label_attr': {'class': 'form-label text-white'}}) }}
+							{{ form_widget(form.title, {'attr': {'class': 'form-control', 'style': 'background-color: #1a1a1a; border: 1px solid #333; color: #fff;'}}) }}
+							{{ form_errors(form.title) }}
+						</div>
+
+						<div class="mb-3">
+							{{ form_label(form.content, 'Content', {'label_attr': {'class': 'form-label text-white'}}) }}
+							{{ form_widget(form.content, {'attr': {'class': 'form-control', 'style': 'background-color: #1a1a1a; border: 1px solid #333; color: #fff;', 'rows': '5'}}) }}
+							{{ form_errors(form.content) }}
+						</div>
+
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								{{ form_label(form.currentWeight, 'Current Weight (kg)', {'label_attr': {'class': 'form-label text-white'}}) }}
+								{{ form_widget(form.currentWeight, {'attr': {'class': 'form-control', 'style': 'background-color: #1a1a1a; border: 1px solid #333; color: #fff;'}}) }}
+								{{ form_errors(form.currentWeight) }}
+							</div>
+
+							<div class="col-md-6 mb-3">
+								{{ form_label(form.goalWeight, 'Goal Weight (kg)', {'label_attr': {'class': 'form-label text-white'}}) }}
+								{{ form_widget(form.goalWeight, {'attr': {'class': 'form-control', 'style': 'background-color: #1a1a1a; border: 1px solid #333; color: #fff;'}}) }}
+								{{ form_errors(form.goalWeight) }}
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								{{ form_label(form.beforeImage, 'Before Image', {'label_attr': {'class': 'form-label text-white'}}) }}
+								{{ form_widget(form.beforeImage, {'attr': {'class': 'form-control', 'style': 'background-color: #1a1a1a; border: 1px solid #333; color: #fff;'}}) }}
+								{{ form_errors(form.beforeImage) }}
+								{% if progress_post.beforeImage %}
+									<div class="mt-2">
+										<p class="text-white">Current image:</p>
+										<img src="{{ asset('uploads/progress/' ~ progress_post.beforeImage) }}" alt="Before" class="img-thumbnail" style="max-width: 200px; border: 1px solid #333;">
+									</div>
+								{% endif %}
+							</div>
+
+							<div class="col-md-6 mb-3">
+								{{ form_label(form.afterImage, 'After Image', {'label_attr': {'class': 'form-label text-white'}}) }}
+								{{ form_widget(form.afterImage, {'attr': {'class': 'form-control', 'style': 'background-color: #1a1a1a; border: 1px solid #333; color: #fff;'}}) }}
+								{{ form_errors(form.afterImage) }}
+								{% if progress_post.afterImage %}
+									<div class="mt-2">
+										<p class="text-white">Current image:</p>
+										<img src="{{ asset('uploads/progress/' ~ progress_post.afterImage) }}" alt="After" class="img-thumbnail" style="max-width: 200px; border: 1px solid #333;">
+									</div>
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="mb-3 form-check">
+							{{ form_widget(form.isPublic, {'attr': {'class': 'form-check-input'}}) }}
+							{{ form_label(form.isPublic, 'Make this post public', {'label_attr': {'class': 'form-check-label text-white'}}) }}
+							{{ form_errors(form.isPublic) }}
+						</div>
+
+						<div class="d-flex justify-content-between">
+							<a href="{{ path('app_progress_index') }}" class="btn" style="background-color: #333; color: #fff; border: 1px solid #444;">
+								<i class="fas fa-arrow-left"></i>
+								Back to list
+							</a>
+							<button type="submit" class="btn" style="background-color: #FA8200; color: #fff; border: none;">
+								<i class="fas fa-save"></i>
+								Save changes
+							</button>
+						</div>
+						{{ form_end(form) }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<style>
+		body {
+			background-color: #151515;
+		}
+		.form-control:focus {
+			background-color: #1a1a1a;
+			border-color: #FA8200;
+			color: #fff;
+			box-shadow: 0 0 0 0.25rem rgba(250, 130, 0, 0.25);
+		}
+		.form-control::file-selector-button {
+			background-color: #333;
+			color: #fff;
+			border: 1px solid #444;
+		}
+		.form-control::file-selector-button:hover {
+			background-color: #444;
+		}
+		.btn:hover {
+			opacity: 0.9;
+		}
+		.form-check-input:checked {
+			background-color: #FA8200;
+			border-color: #FA8200;
+		}
+	</style>
+{% endblock %}

@@ -1,0 +1,298 @@
+{# templates/plats/new.html.twig #}
+
+{% extends 'base.html.twig' %}
+{% block Hero_Section_Begin %}
+
+    <section class="breadcrumb-section" style="
+            background-image: url('{{ asset('img/Coachini Meals.png') }}');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            height: 400px;
+            /*margin-top: 100px;*/
+            padding: 0;
+            ">
+
+    </section>
+
+
+{% endblock %}
+{% block title %}Ajouter un Plat{% endblock %}
+
+{% block body %}
+    <style>
+        body {
+            background: #151515;
+            color: #e2e8f0;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+        
+        h1 {
+            color: #f36100;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1:after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background: #f36100;
+            bottom: -10px;
+            left: 0;
+        }
+        
+        .card {
+            background: #1e1e1e;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .card-header {
+            background-color: #252525;
+            border-bottom: 2px solid #f36100;
+            padding: 1.2rem 1.5rem;
+        }
+        
+        .card-header h5 {
+            color: #f36100;
+            font-weight: 600;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .card-body {
+            padding: 1.8rem;
+        }
+        
+        .form-label {
+            color: #f36100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .form-control {
+            background-color: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 10px;
+            color: #e2e8f0;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            background-color: #2a2a2a;
+            border-color: #f36100;
+            box-shadow: 0 0 0 0.25rem rgba(243, 97, 0, 0.25);
+            color: #fff;
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #f36100 0%, #ff7e2e 100%);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(243, 97, 0, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #e55a00 0%, #f36100 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(243, 97, 0, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #2d2d2d;
+            border: none;
+            color: #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: #3a3a3a;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        }
+        
+        .text-muted {
+            color: #aaa !important;
+        }
+        
+        .form-text {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        
+        .invalid-feedback {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .form-floating > .form-control {
+            padding-top: 1.5rem;
+            padding-bottom: 0.5rem;
+            height: calc(3.5rem + 2px);
+        }
+        
+        .form-floating > label {
+            padding: 1rem 1rem;
+        }
+        
+        .file-upload-wrapper {
+            position: relative;
+            border: 2px dashed #3a3a3a;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .file-upload-wrapper:hover {
+            border-color: #f36100;
+        }
+        
+        .file-upload-wrapper i {
+            font-size: 2rem;
+            color: #f36100;
+            margin-bottom: 1rem;
+        }
+        
+        .file-upload-wrapper p {
+            margin-bottom: 0;
+        }
+    </style>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="mb-5">Ajouter un nouveau plat</h1>
+                
+                {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informations générales</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    {{ form_label(form.name) }}
+                                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Nom du plat'}}) }}
+                                    {{ form_errors(form.name) }}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form_label(form.idNutritionist) }}
+                                    {{ form_widget(form.idNutritionist, {'attr': {'class': 'form-control', 'placeholder': 'ID du nutritionniste'}}) }}
+                                    {{ form_errors(form.idNutritionist) }}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form_label(form.nbCalories) }}
+                                    {{ form_widget(form.nbCalories, {'attr': {'class': 'form-control', 'placeholder': 'Nombre de calories'}}) }}
+                                    {{ form_errors(form.nbCalories) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Image</h5>
+                            </div>
+                            <div class="card-body">
+                                {{ form_row(form.image) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Contenu</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            {{ form_label(form.ingredients, 'Ingrédients', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.ingredients, {
+                                'attr': {
+                                    'class': 'form-control custom-textarea',
+                                    'rows': 5,
+                                    'placeholder': 'Listez les ingrédients principaux du plat...'
+                                }
+                            }) }}
+                            {{ form_errors(form.ingredients) }}
+                            <small class="form-text">Séparez les ingrédients par des virgules ou des sauts de ligne.</small>
+                        </div>
+                        
+                        <div class="form-group mb-0">
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.description, {
+                                'attr': {
+                                    'class': 'form-control custom-textarea',
+                                    'rows': 7,
+                                    'placeholder': 'Décrivez la préparation et les caractéristiques du plat...'
+                                }
+                            }) }}
+                            {{ form_errors(form.description) }}
+                            <small class="form-text">Décrivez la préparation, le goût et les caractéristiques nutritionnelles du plat.</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{{ path('app_plats_index') }}" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left"></i> Retour à la liste
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i> Enregistrer
+                    </button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,421 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Analyse Nutritionnelle par IA{% endblock %}
+{% block Hero_Section_Begin %}
+    <section class="breadcrumb-section" style="
+            background-image: url('{{ asset('img/IA_food.jpg') }}');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            height: 600px;
+            margin-top: -100px;
+            padding: 0;
+            ">
+    </section>
+{% endblock %}
+{% block body %}
+<style>
+    body {
+        background: #151515;
+        color: #e2e8f0;
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    .container {
+        max-width: 1200px;
+    }
+    
+    h1 {
+        color: #ff7e2e;
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        position: relative;
+        display: inline-block;
+    }
+    
+    h1:after {
+        content: '';
+        position: absolute;
+        width: 60%;
+        height: 4px;
+        background: linear-gradient(90deg, #f36100, #ff7e2e);
+        bottom: -10px;
+        left: 0;
+        border-radius: 2px;
+    }
+    
+    .card {
+        background: #1e1e1e;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .card-header {
+        background-color: #252525;
+        border-bottom: 1px solid #333;
+        padding: 1.2rem 1.5rem;
+    }
+    
+    .card-header h5 {
+        color: #ff7e2e;
+        font-weight: 600;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #f36100 0%, #ff7e2e 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(243, 97, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #e55a00 0%, #f36100 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(243, 97, 0, 0.4);
+    }
+    
+    .upload-area {
+        border: 2px dashed #3a3a3a;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin-bottom: 1.5rem;
+    }
+    
+    .upload-area:hover {
+        border-color: #ff7e2e;
+        background-color: rgba(243, 97, 0, 0.05);
+    }
+    
+    .upload-icon {
+        font-size: 3rem;
+        color: #ff7e2e;
+        margin-bottom: 1rem;
+    }
+    
+    .preview-container {
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+    
+    .preview-image {
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .result-card {
+        background: linear-gradient(135deg, #1e1e1e 0%, #252525 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .nutrition-score {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .score-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: white;
+        position: relative;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .score-label {
+        font-size: 1.2rem;
+        color: #e2e8f0;
+    }
+    
+    .food-item {
+        background: #252525;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .food-icon {
+        font-size: 1.5rem;
+        color: #ff7e2e;
+        margin-right: 1rem;
+    }
+    
+    .calories-badge {
+        background: linear-gradient(135deg, #f36100 0%, #ff7e2e 100%);
+        color: white;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        display: inline-block;
+        margin-top: 1rem;
+    }
+    
+    .tips-list {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    
+    .tips-list li {
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .tips-list li i {
+        color: #ff7e2e;
+        margin-right: 0.5rem;
+        margin-top: 0.25rem;
+    }
+    
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        flex-direction: column;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #3a3a3a;
+        border-top: 5px solid #ff7e2e;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .icon-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(243, 97, 0, 0.1);
+        color: #ff7e2e;
+        margin-right: 10px;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">
+                <span class="icon-circle"><i class="fa fa-camera"></i></span> Analyse Nutritionnelle par IA
+            </h1>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><span class="icon-circle"><i class="fa fa-upload"></i></span> Téléchargez une photo de votre repas</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" id="food-analysis-form">
+                        <div class="upload-area" id="upload-area">
+                            <i class="fa fa-cloud-upload-alt upload-icon"></i>
+                            <h4>Glissez votre image ici</h4>
+                            <p>ou cliquez pour sélectionner un fichier</p>
+                            <input type="file" name="food_image" id="food-image-input" accept="image/*" style="display: none;">
+                        </div>
+                        
+                        <div class="preview-container" id="preview-container" style="display: none;">
+                            <img src="" id="preview-image" class="preview-image">
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-secondary me-2" id="change-image-btn">
+                                    <i class="fa fa-redo me-2"></i>Changer l'image
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="analyze-btn">
+                                    <i class="fa fa-search me-2"></i>Analyser cette image
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            {% if error %}
+                <div class="alert alert-danger">
+                    <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                </div>
+            {% endif %}
+            
+            {% if result %}
+                <div class="result-card">
+                    <h2 class="mb-4 text-center">Résultats de l'analyse</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="nutrition-score mb-4">
+                                {% set scoreColor = result.nutritionScore >= 7 ? 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' : 
+                                                  (result.nutritionScore >= 4 ? 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)' : 
+                                                  'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)') %}
+                                
+                                <div class="score-circle" style="background: {{ scoreColor }}">
+                                    {{ result.nutritionScore }}/10
+                                </div>
+                                <div class="score-label">Score nutritionnel</div>
+                            </div>
+                            
+                            <div class="calories-info text-center mb-4">
+                                <div class="calories-badge">
+                                    <i class="fa fa-fire me-2"></i>{{ result.calories }} calories estimées
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5 class="mb-3"><i class="fa fa-utensils me-2 text-primary"></i>Aliments identifiés</h5>
+                            {% for food in result.foods %}
+                                <div class="food-item">
+                                    <i class="fa fa-check-circle food-icon"></i>
+                                    <span>{{ food }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 class="mb-3"><i class="fa fa-chart-pie me-2 text-primary"></i>Analyse nutritionnelle</h5>
+                        <p>{{ result.analysis }}</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 class="mb-3"><i class="fa fa-lightbulb me-2 text-primary"></i>Conseils pour améliorer</h5>
+                        <ul class="tips-list">
+                            {% if result.tips is iterable %}
+                                {% for tip in result.tips %}
+                                    <li><i class="fa fa-check-circle"></i>{{ tip }}</li>
+                                {% endfor %}
+                            {% else %}
+                                {% for tip in result.tips|split('\n') %}
+                                    {% if tip|trim %}
+                                        <li><i class="fa fa-check-circle"></i>{{ tip|trim }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="loading-overlay" id="loading-overlay" style="display: none;">
+    <div class="spinner"></div>
+    <p>Analyse en cours avec l'IA...</p>
+    <p class="text-muted">Cela peut prendre quelques secondes</p>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('food-image-input');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const changeImageBtn = document.getElementById('change-image-btn');
+        const form = document.getElementById('food-analysis-form');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        
+        // Gérer le glisser-déposer
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('border-primary');
+        });
+        
+        uploadArea.addEventListener('dragleave', function() {
+            uploadArea.classList.remove('border-primary');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('border-primary');
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                displayPreview(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Gérer le clic sur la zone de téléchargement
+        uploadArea.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // Afficher l'aperçu lorsqu'un fichier est sélectionné
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length) {
+                displayPreview(fileInput.files[0]);
+            }
+        });
+        
+        // Changer d'image
+        changeImageBtn.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // Afficher le chargement lors de la soumission
+        form.addEventListener('submit', function() {
+            if (fileInput.files.length) {
+                loadingOverlay.style.display = 'flex';
+            }
+        });
+        
+        // Fonction pour afficher l'aperçu de l'image
+        function displayPreview(file) {
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    uploadArea.style.display = 'none';
+                    previewContainer.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        }
+    });
+</script>
+{% endblock %}

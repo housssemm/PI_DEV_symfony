@@ -1,0 +1,1175 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rappel d'hydratation{% endblock %}
+
+{% block Hero_Section_Begin %}
+    <section class="breadcrumb-section" style="
+            background-image: url('{{ asset('img/wat.png') }}');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            height: 400px;
+            padding: 0;
+            ">
+    </section>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            margin: 0;
+            /* Removed overflow: hidden; to enable scrolling */
+            font-family: 'Arial', sans-serif;
+            color: #e0e0e0;
+            background-color: #121212;
+            min-height: 100vh; /* Ensure body takes at least full viewport height */
+            display: flex; /* Use flexbox for body to manage content and water-container */
+            flex-direction: column;
+        }
+
+        #water-container {
+            position: fixed; /* Use fixed to keep it in the background */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .content-container {
+            position: relative;
+            z-index: 1; /* Keep content above the water background */
+            padding: 2rem;
+            max-width: 800px;
+            margin: 50px auto; /* Added top margin for spacing */
+            background-color: rgba(30, 30, 30, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            flex-grow: 1; /* Allow content to grow and push footer down */
+            min-height: calc(100vh - 400px - 100px); /* Adjust based on hero and potential footer */
+        }
+
+        h1 {
+            color: #00b0ff;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            color: #00b0ff;
+        }
+
+        .reminder-card {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .water-goal {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .water-progress {
+            height: 40px;
+            background-color: #263238;
+            border-radius: 20px;
+            overflow: hidden;
+            flex-grow: 1;
+            margin-right: 1rem;
+        }
+
+        .water-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00b0ff, #0091ea);
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 176, 255, 0.5);
+        }
+
+        .water-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00b0ff;
+            white-space: nowrap; /* Prevent line break for amount */
+        }
+
+        .water-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center; /* Center buttons on larger screens */
+        }
+
+        .water-btn {
+            flex: 1;
+            min-width: 120px; /* Adjust min-width for better wrapping */
+            max-width: 200px; /* Added max-width to prevent buttons from getting too wide */
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #0091ea;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none; /* For anchor tags if used as buttons */
+        }
+
+        .water-btn:hover {
+            background-color: #00b0ff;
+            transform: translateY(-2px);
+        }
+
+        .water-btn:active {
+            transform: translateY(1px);
+        }
+
+        #reset-water {
+            background-color: #e53935;
+        }
+
+        #reset-water:hover {
+            background-color: #f44336;
+        }
+
+        #set-goal {
+            background-color: #7b1fa2;
+        }
+
+        #set-goal:hover {
+            background-color: #9c27b0;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(0, 176, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 1s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(0, 176, 255, 0.5);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(0, 176, 255, 0.8);
+            }
+        }
+
+        /* Spinner de chargement */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animation de succès */
+        .goal-success-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .goal-success-animation.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .success-content {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 2px solid #4caf50;
+        }
+
+        .goal-success-animation.show .success-content {
+            transform: scale(1);
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: bounce 1s ease infinite;
+        }
+
+        .success-content h3 {
+            color: #4caf50;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .success-content p {
+            color: #e0e0e0;
+            margin-bottom: 25px;
+        }
+
+        .success-btn {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .success-btn:hover {
+            background-color: #66bb6a;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Animation pour la barre de progression */
+        .success-achieved {
+            animation: pulse 1.5s ease-in-out 3;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+
+        /* Modal pour modifier l'objectif */
+        .water-goal-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .water-goal-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .water-goal-modal-content {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .water-goal-modal.show .water-goal-modal-content {
+            transform: translateY(0);
+        }
+
+        .water-goal-modal h3 {
+            color: #0091ea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .goal-input-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #goal-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        #goal-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #0091ea;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #goal-slider::-webkit-slider-thumb:hover {
+            background: #00b0ff;
+        }
+
+        .goal-value-display {
+            margin-left: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0091ea;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .goal-presets {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 10px; /* Added gap for better spacing */
+        }
+
+        .goal-presets button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            flex: 1; /* Make presets fill available space */
+        }
+
+        .goal-presets button:hover {
+            background-color: #444;
+        }
+
+        .goal-modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .goal-modal-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #cancel-goal {
+            background-color: #424242;
+            color: white;
+        }
+
+        #save-goal {
+            background-color: #0091ea;
+            color: white;
+        }
+
+        #cancel-goal:hover {
+            background-color: #616161;
+        }
+
+        #save-goal:hover {
+            background-color: #00b0ff;
+        }
+
+        /* --- Styles pour la section des bénéfices --- */
+        .benefits {
+            margin-top: 50px; /* Use margin-top to separate from previous content */
+            padding: 20px;
+            background-color: rgba(0, 145, 234, 0.05); /* Lighter background for distinction */
+            border-radius: 12px;
+        }
+
+        .benefits h2 {
+            text-align: center;
+            color: #0091ea;
+            margin-bottom: 30px;
+            font-size: 28px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .benefits h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, #0091ea, #00b0ff);
+            border-radius: 3px;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .benefit-card {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            border-top: 3px solid #0091ea;
+            display: block; /* Make the anchor tag a block element */
+            text-decoration: none; /* Remove underline from the link */
+            color: inherit; /* Inherit text color from parent */
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .benefit-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 145, 234, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+            z-index: 0;
+        }
+
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0091ea 0%, #00b0ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0, 145, 234, 0.3);
+        }
+
+        .benefit-icon i {
+            font-size: 28px;
+            color: white;
+        }
+
+        .benefit-card h3 {
+            font-size: 18px;
+            color: #e0e0e0;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .benefit-card p {
+            color: #9e9e9e;
+            font-size: 14px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Variation des couleurs pour chaque carte */
+        .benefit-card:nth-child(1) .benefit-icon { background: linear-gradient(135deg, #0091ea 0%, #00b0ff 100%); }
+        .benefit-card:nth-child(2) .benefit-icon { background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%); }
+        .benefit-card:nth-child(3) .benefit-icon { background: linear-gradient(135deg, #4caf50 0%, #81c784 100%); }
+        .benefit-card:nth-child(4) .benefit-icon { background: linear-gradient(135deg, #e91e63 0%, #f48fb1 100%); }
+        .benefit-card:nth-child(5) .benefit-icon { background: linear-gradient(135deg, #9c27b0 0%, #ce93d8 100%); }
+        .benefit-card:nth-child(6) .benefit-icon { background: linear-gradient(135deg, #f44336 0%, #ef9a9a 100%); }
+
+        .benefit-card:nth-child(1) { border-top-color: #0091ea; }
+        .benefit-card:nth-child(2) { border-top-color: #ff9800; }
+        .benefit-card:nth-child(3) { border-top-color: #4caf50; }
+        .benefit-card:nth-child(4) { border-top-color: #e91e63; }
+        .benefit-card:nth-child(5) { border-top-color: #9c27b0; }
+        .benefit-card:nth-child(6) { border-top-color: #f44336; }
+
+        /* Animation au survol */
+        .benefit-card:hover .benefit-icon {
+            transform: scale(1.1);
+            transition: transform 0.3s;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            overflow: auto; /* Allow modal content to scroll if it's too long */
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            position: absolute;
+            right: 15px; /* Adjusted for better spacing */
+            top: 10px;
+            font-size: 28px;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px; /* Increased margin for label */
+            font-size: 1rem;
+            color: #00b0ff;
+        }
+
+        .form-group input {
+            width: calc(100% - 20px); /* Account for padding */
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0091ea;
+            box-shadow: 0 0 0 2px rgba(0, 145, 234, 0.3);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .benefits-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            .benefit-card {
+                padding: 20px;
+            }
+
+            .benefit-icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            .benefit-icon i {
+                font-size: 24px;
+            }
+
+            .content-container {
+                margin: 20px auto; /* Adjust margin for smaller screens */
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits h2 {
+                font-size: 24px;
+            }
+
+            .water-buttons {
+                flex-direction: column;
+                align-items: stretch; /* Stretch buttons to full width */
+            }
+
+            .water-btn {
+                max-width: 100%; /* Ensure buttons take full width */
+            }
+
+            .modal-content {
+                margin: 5% auto; /* Adjust modal margin for very small screens */
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div id="water-container"></div>
+    
+    <div class="content-container">
+        <h1>Rappel d'hydratation</h1>
+        
+        <div class="reminder-card">
+{#            <h2>Votre objectif quotidien</h2>#}
+{#            <p>Boire suffisamment d'eau est essentiel pour votre santé. Suivez votre consommation quotidienne ici.</p>#}
+{#            #}
+            <div class="water-goal">
+                <div class="water-progress">
+                    <div class="water-progress-bar"></div>
+                </div>
+                <div class="water-amount">0.0L / 3.0L</div>
+            </div>
+            
+            <div class="water-buttons">
+                <button class="water-btn" id="add-water">
+                    <i class="bi bi-plus-circle"></i> Ajouter 250ml
+                </button>
+                <button class="water-btn" id="set-reminder" style="background-color: #00897b;">
+                    <i class="bi bi-bell"></i> Définir un rappel
+                </button>
+                <button class="water-btn" id="reset-water">
+                    <i class="bi bi-arrow-counterclockwise"></i> Réinitialiser
+                </button>
+                <button class="water-btn" id="set-goal">
+                    <i class="bi bi-sliders"></i> Modifier l'objectif
+                </button>
+            </div>
+        </div>
+        
+
+    <!-- Reminder Modal -->
+    <div id="reminderModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Définir un rappel d'hydratation</h2>
+            <form id="reminderForm">
+                <div class="form-group">
+                    <label for="phone">Numéro de téléphone:</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="Entrez votre numéro">
+                </div>
+                <button type="submit" class="water-btn" style="width: 100%;">
+                    <i class="bi bi-send"></i> Programmer le rappel
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.146.0/build/three.module.js"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuration Three.js
+            const container = document.getElementById('water-container');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x121212, 1);
+            container.appendChild(renderer.domElement);
+            
+            // Lumières
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(0, 10, 5);
+            scene.add(directionalLight);
+            
+            // Création de l'eau
+            const waterGeometry = new THREE.CylinderGeometry(5, 5, 10, 32);
+            const waterMaterial = new THREE.MeshStandardMaterial({
+                color: 0x0091ea,
+                transparent: true,
+                opacity: 0.8,
+                metalness: 0.1,
+                roughness: 0.1
+            });
+            
+            const waterMesh = new THREE.Mesh(waterGeometry, waterMaterial);
+            waterMesh.position.set(0, 0, -15);
+            scene.add(waterMesh);
+            
+            // Création de bulles
+            const bubbles = [];
+            const bubblesCount = 30;
+            
+            for (let i = 0; i < bubblesCount; i++) {
+                const bubbleGeometry = new THREE.SphereGeometry(0.1 + Math.random() * 0.2, 16, 16);
+                const bubbleMaterial = new THREE.MeshStandardMaterial({
+                    color: 0xffffff,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                
+                const bubble = new THREE.Mesh(bubbleGeometry, bubbleMaterial);
+                
+                // Position aléatoire dans le cylindre d'eau
+                const radius = Math.random() * 4;
+                const theta = Math.random() * Math.PI * 2;
+                const y = Math.random() * 10 - 5;
+                
+                bubble.position.x = radius * Math.cos(theta);
+                bubble.position.y = y;
+                bubble.position.z = radius * Math.sin(theta) - 15;
+                
+                bubble.userData = {
+                    speed: 0.01 + Math.random() * 0.03,
+                    rotationSpeed: 0.01 + Math.random() * 0.02
+                };
+                
+                scene.add(bubble);
+                bubbles.push(bubble);
+            }
+            
+            // Ajout d'un effet de particules d'eau
+            const particlesCount = 200;
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesPositions = new Float32Array(particlesCount * 3);
+            
+            for (let i = 0; i < particlesCount * 3; i += 3) {
+                const radius = 7 + Math.random() * 3;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.random() * Math.PI;
+                
+                particlesPositions[i] = radius * Math.sin(phi) * Math.cos(theta);
+                particlesPositions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                particlesPositions[i + 2] = radius * Math.cos(phi) - 15;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlesPositions, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                color: 0x00b0ff,
+                size: 0.1,
+                transparent: true,
+                opacity: 0.5
+            });
+            
+            const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
+            
+            // Position de la caméra
+            camera.position.z = 15;
+            
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Rotation douce de l'eau
+                waterMesh.rotation.y += 0.005;
+                particles.rotation.y -= 0.002;
+                
+                // Animation des bulles
+                bubbles.forEach(bubble => {
+                    bubble.position.y += bubble.userData.speed;
+                    bubble.rotation.x += bubble.userData.rotationSpeed;
+                    bubble.rotation.z += bubble.userData.rotationSpeed;
+                    
+                    // Réinitialiser la position si la bulle atteint le haut
+                    if (bubble.position.y > 5) {
+                        bubble.position.y = -5;
+                        bubble.position.x = (Math.random() * 8) - 4;
+                        bubble.position.z = (Math.random() * 8) - 4 - 15;
+                    }
+                });
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Redimensionnement
+            window.addEventListener('resize', function() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+            // Interaction avec le bouton d'ajout d'eau
+            const addWaterBtn = document.getElementById('add-water');
+            const progressBar = document.querySelector('.water-progress-bar');
+            const waterAmount = document.querySelector('.water-amount');
+
+            // Récupérer les valeurs du localStorage ou utiliser les valeurs par défaut
+            let currentAmount = parseFloat(localStorage.getItem('waterCurrentAmount') || '0.0');
+            let goalAmount = parseFloat(localStorage.getItem('waterGoalAmount') || '3.0');
+            let goalReached = localStorage.getItem('waterGoalReached') === 'true';
+
+            // Mettre à jour l'affichage initial
+            updateWaterDisplay();
+
+            addWaterBtn.addEventListener('click', function(e) {
+                // Effet de ripple
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+                ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 1000);
+                
+                // Mise à jour de la quantité d'eau
+                const previousAmount = currentAmount;
+                currentAmount += 0.25;
+                if (currentAmount > goalAmount) currentAmount = goalAmount;
+                
+                // Sauvegarder dans localStorage
+                localStorage.setItem('waterCurrentAmount', currentAmount.toString());
+                
+                // Mettre à jour l'affichage
+                updateWaterDisplay();
+                
+                // Effet de glow sur la barre de progression
+                progressBar.classList.add('glow');
+                setTimeout(() => {
+                    progressBar.classList.remove('glow');
+                }, 2000);
+                
+                // Animation de l'eau qui monte
+                if (typeof waterMesh !== 'undefined') {
+                    waterMesh.scale.y += 0.05;
+                    setTimeout(() => {
+                        waterMesh.scale.y -= 0.05;
+                    }, 300);
+                }
+                
+                // Vérifier si l'objectif vient d'être atteint
+                if (currentAmount >= goalAmount && previousAmount < goalAmount && !goalReached) {
+                    goalReached = true;
+                    localStorage.setItem('waterGoalReached', 'true');
+                    showSuccessAnimation();
+                }
+            });
+
+            // Fonction pour afficher l'animation de succès
+            function showSuccessAnimation() {
+                // Créer l'élément de succès
+                const successElement = document.createElement('div');
+                successElement.className = 'goal-success-animation';
+                successElement.innerHTML = `
+                    <div class="success-content">
+                        <div class="success-icon">🎉</div>
+                        <h3>Objectif atteint !</h3>
+                        <p>Félicitations ! Vous avez atteint votre objectif d'hydratation quotidien.</p>
+                        <button class="success-btn">Super !</button>
+                    </div>
+                `;
+                document.body.appendChild(successElement);
+                
+                // Ajouter la classe pour déclencher l'animation
+                setTimeout(() => {
+                    successElement.classList.add('show');
+                }, 100);
+                
+                // Ajouter un gestionnaire d'événement pour fermer l'animation
+                successElement.querySelector('.success-btn').addEventListener('click', () => {
+                    successElement.classList.remove('show');
+                    setTimeout(() => {
+                        successElement.remove();
+                    }, 500);
+                });
+                
+                // Jouer un son de succès si disponible
+                try {
+                    const successSound = new Audio('/build/sounds/success.mp3');
+                    successSound.play().catch(err => console.log('Impossible de jouer le son:', err));
+                } catch (e) {
+                    console.log('Son non disponible:', e);
+                }
+                
+                // Ajouter une classe de succès à la barre de progression
+                progressBar.classList.add('success-achieved');
+                setTimeout(() => {
+                    progressBar.classList.remove('success-achieved');
+                }, 5000);
+            }
+
+            // Fonction pour mettre à jour l'affichage de l'eau
+            function updateWaterDisplay() {
+                const percentage = (currentAmount / goalAmount) * 100;
+                progressBar.style.width = percentage + '%';
+                waterAmount.textContent = currentAmount.toFixed(1) + 'L / ' + goalAmount.toFixed(1) + 'L';
+                
+                // Changer la couleur en fonction du pourcentage
+                if (percentage < 30) {
+                    progressBar.style.background = '#f44336';
+                } else if (percentage < 70) {
+                    progressBar.style.background = '#ff9800';
+                } else {
+                    progressBar.style.background = 'linear-gradient(90deg, #00b0ff, #0091ea)';
+                }
+            }
+
+            // Gestionnaire d'événement pour le bouton de réinitialisation
+            document.getElementById('reset-water').addEventListener('click', function() {
+                currentAmount = 0.0;
+                goalReached = false;
+                localStorage.setItem('waterCurrentAmount', currentAmount.toString());
+                localStorage.setItem('waterGoalReached', 'false');
+                updateWaterDisplay();
+                
+                // Animation de l'eau qui descend
+                if (typeof waterMesh !== 'undefined') {
+                    waterMesh.scale.y = 1.0;
+                }
+                
+                // Effet visuel de réinitialisation
+                progressBar.style.transition = 'width 0.5s ease-in-out';
+                setTimeout(() => {
+                    progressBar.style.transition = 'width 0.3s ease-out';
+                }, 500);
+            });
+
+            // Gestionnaire d'événement pour le bouton de modification d'objectif
+            document.getElementById('set-goal').addEventListener('click', function() {
+                // Créer un modal pour modifier l'objectif
+                const modalElement = document.createElement('div');
+                modalElement.className = 'water-goal-modal';
+                modalElement.innerHTML = `
+                    <div class="water-goal-modal-content">
+                        <h3>Modifier votre objectif quotidien</h3>
+                        <div class="goal-input-container">
+                            <input type="range" id="goal-slider" min="1" max="5" step="0.5" value="${goalAmount}">
+                            <div class="goal-value-display">
+                                <span id="goal-value">${goalAmount.toFixed(1)}</span>L
+                            </div>
+                        </div>
+                        <div class="goal-presets">
+                            <button data-value="1.5">1.5L</button>
+                            <button data-value="2.0">2.0L</button>
+                            <button data-value="2.5">2.5L</button>
+                            <button data-value="3.0">3.0L</button>
+                        </div>
+                        <div class="goal-modal-buttons">
+                            <button id="cancel-goal">Annuler</button>
+                            <button id="save-goal">Enregistrer</button>
+                         </div>
+                    </div>
+                `;
+                document.body.appendChild(modalElement);
+                
+                // Ajouter la classe pour déclencher l'animation
+                setTimeout(() => {
+                    modalElement.classList.add('show');
+                }, 10);
+                
+                // Mettre à jour l'affichage de la valeur lorsque le slider change
+                const goalSlider = document.getElementById('goal-slider');
+                const goalValue = document.getElementById('goal-value');
+                
+                goalSlider.addEventListener('input', function() {
+                    goalValue.textContent = parseFloat(this.value).toFixed(1);
+                });
+                
+                // Gestionnaires pour les boutons de préréglage
+                document.querySelectorAll('.goal-presets button').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const value = parseFloat(this.dataset.value);
+                        goalSlider.value = value;
+                        goalValue.textContent = value.toFixed(1);
+                    });
+                });
+                
+                // Gestionnaire pour le bouton d'annulation
+                document.getElementById('cancel-goal').addEventListener('click', function() {
+                    modalElement.classList.remove('show');
+                    setTimeout(() => {
+                        modalElement.remove();
+                    }, 300);
+                });
+                
+                // Gestionnaire pour le bouton d'enregistrement
+                document.getElementById('save-goal').addEventListener('click', function() {
+                    const newGoalValue = parseFloat(goalSlider.value);
+                    localStorage.setItem('waterGoalAmount', newGoalValue.toString());
+                    
+                    // Vérifier si l'objectif est déjà atteint avec la nouvelle valeur
+                    if (currentAmount >= newGoalValue && !goalReached) {
+                        goalReached = true;
+                        localStorage.setItem('waterGoalReached', 'true');
+                        showSuccessAnimation();
+                    } else if (currentAmount < newGoalValue) {
+                        goalReached = false;
+                        localStorage.setItem('waterGoalReached', 'false');
+                    }
+                    
+                    modalElement.classList.remove('show');
+                    setTimeout(() => {
+                        modalElement.remove();
+                        window.location.reload(); // Recharger la page pour appliquer le nouvel objectif
+                    }, 300);
+                });
+            });
+            
+            // Modal pour définir un rappel
+            const modal = document.getElementById('reminderModal');
+            const setReminderBtn = document.getElementById('set-reminder');
+            const closeBtn = document.querySelector('.close');
+            const reminderForm = document.getElementById('reminderForm');
+            
+            setReminderBtn.addEventListener('click', function() {
+                modal.style.display = 'block';
+            });
+            
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            reminderForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const phone = document.getElementById('phone').value;
+                
+                // Afficher un indicateur de chargement
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="spinner"></span> Envoi en cours...';
+                submitBtn.disabled = true;
+                
+                // Envoyer la requête au serveur pour envoyer le SMS immédiatement
+                fetch('/water-reminder/schedule', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ phone: phone })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'Erreur réseau: ' + response.status);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    modal.style.display = 'none';
+                    
+                    if (data.success) {
+                        // Utiliser SweetAlert2 si disponible, sinon alert standard
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'SMS envoyé',
+                                text: 'Un SMS de rappel d\'hydratation a été envoyé à votre numéro.',
+                                background: '#1e1e1e',
+                                confirmButtonColor: '#0091ea'
+                            });
+                        } else {
+                            alert('SMS envoyé ! Un rappel d\'hydratation a été envoyé à votre numéro.');
+                        }
+                    } else {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur',
+                                text: data.message || 'Une erreur s\'est produite lors de l\'envoi du SMS.',
+                                background: '#1e1e1e',
+                                confirmButtonColor: '#0091ea'
+                            });
+                        } else {
+                            alert('Erreur: ' + (data.message || 'Une erreur s\'est produite.'));
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de l\'envoi du SMS:', error);
+                    
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: error.message || 'Une erreur s\'est produite lors de l\'envoi du SMS.',
+                            background: '#1e1e1e',
+                            confirmButtonColor: '#0091ea'
+                        });
+                    } else {
+                        alert('Erreur: ' + (error.message || 'Une erreur inconnue s\'est produite.'));
+                    }
+                })
+                .finally(() => {
+                    // Restaurer le bouton
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                });
+            });
+        });
+    </script>
+{% endblock %}

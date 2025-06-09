@@ -1,0 +1,272 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Plats{% endblock %}
+
+{% block Hero_Section_Begin %}
+
+    <section class="breadcrumb-section" style="
+            background-image: url('{{ asset('img/Coachini Meals.png') }}');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            height: 400px;
+            /*margin-top: 100px;*/
+            padding: 0;
+            ">
+
+    </section>
+
+
+{% endblock %}
+
+
+{% block body %}
+    <style>
+        body {
+            background: #151515;
+            color: #e2e8f0;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+        
+        h1 {
+            color: #ff7e2e;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 4px;
+            background: linear-gradient(90deg, #f36100, #ff7e2e);
+            bottom: -10px;
+            left: 0;
+            border-radius: 2px;
+        }
+        
+        .card {
+            background: #1e1e1e;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(243, 97, 0, 0.2);
+        }
+        
+        .card-body {
+            color: #e2e8f0;
+            padding: 1.5rem;
+        }
+        
+        .card-title {
+            color: #ff7e2e;
+            font-weight: 600;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.5rem;
+        }
+        
+        .card-text {
+            color: #e2e8f0;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .card-footer {
+            background-color: #252525;
+            border-top: 1px solid #333;
+            padding: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #f36100 0%, #ff7e2e 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(243, 97, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #e55a00 0%, #f36100 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(243, 97, 0, 0.4);
+        }
+        
+        .btn-outline-primary {
+            color: #ff7e2e;
+            border: 2px solid #ff7e2e;
+            background-color: transparent;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: #ff7e2e;
+            border-color: #ff7e2e;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline-edit {
+            color: #b18d44;
+            border: 2px solid #b18d44;
+            background-color: transparent;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-edit:hover {
+            background-color: #b18d44;
+            border-color: #b18d44;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline-danger {
+            color: #dc3545;
+            border: 2px solid #dc3545;
+            background-color: transparent;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .bg-light {
+            background-color: #2a2a2a !important;
+        }
+        
+        .text-muted {
+            color: #aaa !important;
+        }
+        
+        .alert-info {
+            background-color: #2a2a2a;
+            border-color: #444;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+        
+        .btn-group {
+            gap: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #333;
+        }
+        
+        .add-btn-container {
+            background: linear-gradient(135deg, #1e1e1e 0%, #252525 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .calories-badge {
+            background-color: #252525;
+            color: #ff7e2e;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+    </style>
+
+    <div class="container py-5">
+        <div class="add-btn-container">
+            <h1 class="mb-0">Liste des Plats</h1>
+            <a href="{{ path('app_plats_new') }}" class="btn btn-primary">
+                <i class="fa fa-plus me-2"></i> Ajouter un plat
+            </a>
+        </div>
+        
+        <div class="row">
+            {% for plat in plats %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if plat.image %}
+                            <img src="{{ asset(plat.image) }}" class="card-img-top" alt="{{ plat.name }}">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                                <span class="text-muted">Pas d'image</span>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ plat.name }}</h5>
+                            <p class="card-text">{{ plat.description|slice(0, 100) }}{% if plat.description|length > 100 %}...{% endif %}</p>
+                            <div class="calories-badge">
+                                {{ plat.nbCalories }} calories
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ path('app_plats_show', {'id': plat.id}) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa fa-eye me-1"></i> Voir
+                                </a>
+                                <a href="{{ path('app_plats_edit', {'id': plat.id}) }}" class="btn btn-sm btn-outline-edit">
+                                    <i class="fa fa-edit me-1"></i> Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_plats_delete', {'id': plat.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce plat?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ plat.id) }}">
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="fa fa-trash me-1"></i> Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Aucun plat trouvé. <a href="{{ path('app_plats_new') }}" class="text-decoration-none" style="color: #ff7e2e; font-weight: 600;">Ajouter un plat</a>.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
+

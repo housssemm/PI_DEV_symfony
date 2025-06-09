@@ -1,0 +1,23 @@
+<div class="stats-content">
+    <div class="mb-3">
+        <h3 class="h5">Répétitions</h3>
+        <div class="display-4 text-primary">{{ counter }}</div>
+    </div>
+    
+    <div class="mb-3">
+        <h3 class="h5">État actuel</h3>
+        <div class="h4">
+            {% if stage == 'up' %}
+                <span class="badge bg-warning">Position haute</span>
+            {% elseif stage == 'down' %}
+                <span class="badge bg-info">Position basse</span>
+            {% else %}
+                <span class="badge bg-secondary">{{ stage|default('En attente') }}</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Positionnez-vous face à la caméra pour commencer la détection.
+    </div>
+</div>
