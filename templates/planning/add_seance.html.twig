@@ -1,7 +1,7 @@
-{# Bloc des styles CSS #}
+{# templates/planning/add_seance.html.twig #}
 {% block stylesheets %}
     <style>
-        /* Styles pour l'en-tête du formulaire */
+        /* Styles existants inchangés */
         .form-header {
             text-align: center;
             margin-bottom: 25px;
@@ -23,7 +23,6 @@
             margin: 0 auto;
         }
 
-        /* Conteneur principal du formulaire */
         .form-container {
             min-height: 100vh;
             display: flex;
@@ -40,7 +39,6 @@
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.49);
         }
-        /* Styles pour les groupes de champs */
         .form-group {
             margin-bottom: 20px;
         }
@@ -64,7 +62,6 @@
             outline: none;
         }
 
-        /* Styles pour les boutons */
         .btn-primary {
             background-color: #ff6600;
             border: none;
@@ -81,7 +78,6 @@
             background-color: #e64a00;
         }
 
-        /* Bouton spécifique pour le chargement de fichier */
         #uploadBtn {
             display: block;
             width: 100%;
@@ -105,7 +101,6 @@
             display: none;
         }
 
-        /* Styles responsives */
         @media (min-width: 768px) {
             .form-row {
                 display: flex;
@@ -119,21 +114,44 @@
                 flex: 1;
             }
         }
-        /* Style de fond global */
         body {
             background: #151515 !important;
         }
 
-        /* Messages d'erreur */
         .invalid-feedback {
             display: block;
             color: #dc3545;
         }
+        .info-message {
+            color: blue;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .flash-message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
     </style>
 {% endblock %}
-{# Bloc principal du contenu #}
+
 {% block body %}
     <div class="form-container">
+        {# Affichage des messages flash pour débogage #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="flash-message flash-{{ label }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
         {# Début du formulaire Symfony avec chemin et attributs #}
         {{ form_start(form, {'action': path('addseance'), 'attr': {'novalidate': 'novalidate', 'class': 'modal-form'}}) }}
 
@@ -148,13 +166,13 @@
             <div class="form-group">
                 {{ form_label(form.Titre, 'Titre') }}
                 {{ form_widget(form.Titre, {'attr': {'class': 'form-control'}}) }}
-                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Titre) }}</div>
+                <div class="invalid-feedback">{{ form_errors(form.Titre) }}</div>
             </div>
 
             <div class="form-group">
                 {{ form_label(form.Description, 'Description') }}
                 {{ form_widget(form.Description, {'attr': {'class': 'form-control'}}) }}
-                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Description) }}</div>
+                <div class="invalid-feedback">{{ form_errors(form.Description) }}</div>
             </div>
         </div>
 
@@ -163,28 +181,30 @@
             <div class="form-group">
                 {{ form_label(form.Date, 'Date') }}
                 {{ form_widget(form.Date, {'attr': {'class': 'form-control'}}) }}
-                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Date) }}</div>
+                <div class="invalid-feedback">{{ form_errors(form.Date) }}</div>
             </div>
 
             <div class="form-group">
                 {{ form_label(form.Type, 'Type') }}
-                {{ form_widget(form.Type, {'attr': {'class': 'form-select', 'id': 'typeSeance'}}) }}
-                <div class="invalid-feedback" style="display: block">{{ form_errors(form.Type) }}</div>
+                {{ form_widget(form.Type, {'attr': {'class': 'form-select', 'id': 'seance_type'}}) }}
+                <div class="invalid-feedback">{{ form_errors(form.Type) }}</div>
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group" style="flex: 1;">
-                {{ form_label(form.LienVideo, 'Lien Vidéo') }}
-                {{ form_widget(form.LienVideo, {'attr': {'class': 'form-control'}}) }}
-                <div class="invalid-feedback" style="display: block">{{ form_errors(form.LienVideo) }}</div>
+                {{ form_label(form.LienVideo, 'Lien') }}
+                {{ form_widget(form.LienVideo, {'attr': {'class': 'form-control', 'id': 'seance_lienVideo'}}) }}
+                <div class="info-message">Le lien sera généré automatiquement pour une séance "En Direct".</div>
+                <div class="invalid-feedback">{{ form_errors(form.LienVideo) }}</div>
             </div>
 
             <div class="form-group" id="videoFileGroup" style="flex: 1; display: none;">
                 <button type="button" id="uploadBtn" class="btn btn-primary">
                     📁 Charger une vidéo
                 </button>
-                {{ form_widget(form.VideoFile, {'attr': {'style': 'display: none;'}}) }}
+                {{ form_widget(form.VideoFile, {'attr': {'style': 'display: none;', 'id': 'seance_videoFile'}}) }}
+                <div class="invalid-feedback">{{ form_errors(form.VideoFile) }}</div>
             </div>
         </div>
 
@@ -193,22 +213,22 @@
             <div class="form-group">
                 {{ form_label(form.heureDebut, 'Heure Début') }}
                 {{ form_widget(form.heureDebut, {'attr': {'class': 'form-control time-picker'}}) }}
-                <div class="invalid-feedback" style="display: block">{{ form_errors(form.heureDebut) }}</div>
+                <div class="invalid-feedback">{{ form_errors(form.heureDebut) }}</div>
             </div>
 
             <div class="form-group">
                 {{ form_label(form.heureFin, 'Heure Fin') }}
                 {{ form_widget(form.heureFin, {'attr': {'class': 'form-control time-picker'}}) }}
-                <div class="invalid-feedback" style="display: block">{{ form_errors(form.heureFin) }}</div>
+                <div class="invalid-feedback">{{ form_errors(form.heureFin) }}</div>
             </div>
         </div>
 
-        {# Ligne pour Coach et Adhérent #}
+        {# Ligne pour Adhérent #}
         <div class="form-row">
             <div class="form-group">
                 {{ form_label(form.adherent, 'Adhérent') }}
                 {{ form_widget(form.adherent, {'attr': {'class': 'form-select'}}) }}
-                <div class="invalid-feedback" style="display: block">{{ form_errors(form.adherent) }}</div>
+                <div class="invalid-feedback">{{ form_errors(form.adherent) }}</div>
             </div>
         </div>
 
@@ -219,43 +239,107 @@
         {{ form_end(form) }}
     </div>
 {% endblock %}
+
 {% block javascripts %}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const typeSeance = document.querySelector('[name$="[Type]"]');
+            // Tentative de sélection des éléments avec getElementById
+            let typeSeance = document.getElementById('seance_type');
+            let videoFileGroup = document.getElementById('videoFileGroup');
+            let uploadBtn = document.getElementById('uploadBtn');
+            let videoFileInput = document.getElementById('seance_videoFile');
+            let lienVideo = document.getElementById('seance_lienVideo');
 
-            const videoFileGroup = document.getElementById('videoFileGroup');
-            const uploadBtn = document.getElementById('uploadBtn');
-            const videoFileInput = document.querySelector('input[name$="[VideoFile]"]');
-            const lienVideo = document.querySelector('[name$="[LienVideo]"]');
+            // Fallback avec querySelector si getElementById échoue
+            if (!typeSeance) {
+                typeSeance = document.querySelector('select[name$="[Type]"]');
+                console.warn('Fallback pour typeSeance:', typeSeance);
+            }
+            if (!videoFileGroup) {
+                videoFileGroup = document.getElementById('videoFileGroup'); // Pas de fallback direct, vérifie le DOM
+                console.warn('videoFileGroup non trouvé');
+            }
+            if (!uploadBtn) {
+                uploadBtn = document.querySelector('#uploadBtn');
+                console.warn('Fallback pour uploadBtn:', uploadBtn);
+            }
+            if (!videoFileInput) {
+                videoFileInput = document.querySelector('input[name$="[VideoFile]"]');
+                console.warn('Fallback pour videoFileInput:', videoFileInput);
+            }
+            if (!lienVideo) {
+                lienVideo = document.querySelector('input[name$="[LienVideo]"]');
+                console.warn('Fallback pour lienVideo:', lienVideo);
+            }
 
-            // Fonction d'affichage conditionnel
+            // Logs pour débogage
+            console.log('typeSeance:', typeSeance);
+            console.log('videoFileGroup:', videoFileGroup);
+            console.log('uploadBtn:', uploadBtn);
+            console.log('videoFileInput:', videoFileInput);
+            console.log('lienVideo:', lienVideo);
+
+            // Vérification finale des éléments
+            if (!typeSeance || !videoFileGroup || !uploadBtn || !videoFileInput || !lienVideo) {
+                console.error('Un ou plusieurs éléments sont manquants dans le DOM. Vérifiez les IDs ou le rendu HTML.');
+                return;
+            }
+
+            // Fonction pour générer un lien temporaire pour "En Direct"
+            function generateTemporaryLink() {
+                const baseUrl = '{{ app.request.schemeAndHttpHost }}' || 'http://localhost:8000'; // Fallback local
+                const tempLink = `${baseUrl}/seance/livestream/temp`;
+                lienVideo.value = tempLink;
+                lienVideo.readOnly = true;
+                console.log('Lien temporaire généré:', tempLink);
+            }
+
+            // Fonction pour gérer l'affichage conditionnel et les actions
             function toggleVideoUpload() {
+                console.log('Type de séance sélectionné:', typeSeance.value);
                 if (typeSeance.value === 'ENREGISTRE') {
-                    console.log("🔍 Valeur actuelle de typeSeance :", typeSeance.value);
                     videoFileGroup.style.display = 'flex';
+                    lienVideo.value = ''; // Vider le champ pour "Enregistré"
+                    lienVideo.readOnly = false; // Permettre la modification
+                    console.log('Mode "Enregistré" activé, bouton affiché');
+                } else if (typeSeance.value === 'EN_DIRECT') {
+                    videoFileGroup.style.display = 'none';
+                    generateTemporaryLink(); // Générer et afficher le lien temporaire
+                    console.log('Mode "En Direct" activé, lien généré');
                 } else {
                     videoFileGroup.style.display = 'none';
+                    lienVideo.value = '';
+                    lienVideo.readOnly = false;
+                    console.log('Aucun mode sélectionné');
                 }
             }
-            // Clic sur bouton déclenche l'input file
+
+            // Événement pour le clic sur le bouton "Charger une vidéo"
             uploadBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                videoFileInput.click();
+                console.log('Bouton "Charger une vidéo" cliqué');
+                videoFileInput.click(); // Ouvre la fenêtre de sélection de fichier
             });
-// Lorsqu'un fichier est sélectionné, on met à jour le champ Lien Vidéo
+
+            // Événement lorsque un fichier est sélectionné
             videoFileInput.addEventListener('change', function () {
+                console.log('Événement change déclenché sur videoFileInput');
                 if (videoFileInput.files.length > 0) {
-                    // Ici on récupère le nom du fichier sélectionné
                     const fileName = videoFileInput.files[0].name;
-                    console.log("Fichier sélectionné :", fileName);
-                    // On affiche le nom dans le champ Lien Vidéo
-                    lienVideo.value = fileName;
+                    lienVideo.value = fileName; // Mettre le nom du fichier dans le champ Lien
+                    console.log('Nom du fichier affiché dans le champ Lien:', fileName);
+                } else {
+                    console.log('Aucun fichier sélectionné');
                 }
             });
-            // Détection de changement sur le select
-            typeSeance.addEventListener('change', toggleVideoUpload);
-            // Initialisation à l'ouverture de la page
+
+            // Détection de changement sur le select Type
+            typeSeance.addEventListener('change', function () {
+                console.log('Changement détecté sur typeSeance');
+                toggleVideoUpload();
+            });
+
+            // Initialisation au chargement de la page
             toggleVideoUpload();
         });
     </script>

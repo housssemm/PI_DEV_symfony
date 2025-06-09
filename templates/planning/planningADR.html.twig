@@ -66,31 +66,29 @@
                     </div>
                 </div>
 
-               <div class="actions">
-    <!-- Si la séance est en direct -->
-    ${seance.type === 'EN_DIRECT' ? `
-        <button class="btn-modify" onclick="window.open('${seance.lienVideo}', '_blank')">
-            <i class="bi bi-camera-video"></i> Participer
-        </button>
-    ` : `
-        <button class="btn-modify" onclick="window.location.href='/seance/video/${seance.id}'">
-            <i class="bi bi-play-circle"></i> Regarder la vidéo
-        </button>
-    `}
-</div>
-
-
+                <div class="actions">
+                    <!-- Redirige vers la route seance_join pour EN_DIRECT -->
+                    ${seance.type === 'EN_DIRECT' ? `
+                       <button class="btn-modify" onclick="window.location.href='/seance/join/${seance.id}'">
+                            <i class="bi bi-camera-video"></i> Participer
+                        </button>
+                    ` : `
+                        <button class="btn-modify" onclick="window.location.href='/seance/video/${seance.id}'">
+                            <i class="bi bi-play-circle"></i> Regarder la vidéo
+                        </button>
+                    `}
+                </div>
             </div>
         </div>
     `).join('');
                         })
-
-                            .catch(error => {
+                        .catch(error => {
                             container.innerHTML = `<div class="error animate__animated animate__shakeX">⚠️ ${error.message}</div>`;
                         });
                 }
             });
-            calendar.render(); });
+            calendar.render();
+        });
     </script>
 {% endblock %}
 {% block stylesheets %}

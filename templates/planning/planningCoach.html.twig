@@ -22,7 +22,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const calendarEl = document.getElementById('calendrier');
             const container  = document.getElementById('seances-list');
-
+            const isCoach = {{ is_granted('ROLE_COACH') ? 'true' : 'false' }};
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'fr',
@@ -37,7 +37,7 @@
                         text: '+',
                         click: () => window.location.href = '{{ path('addseance') }}'
                     }
-                },
+                }, events:'/planningCoach/events-json',
                 dateClick: (info) => {
                     const dateStr = info.dateStr;
                     container.innerHTML = '<div class="loading-spinner"></div>';
@@ -73,20 +73,20 @@
                         <i class="bi bi-pencil-square"></i> Modifier
                       </button>
                       <form action="${seance.deletePath}" method="POST" style="display:inline">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="btn-delete"
-                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette séance ?')">
-                          <i class="bi bi-trash"></i> Supprimer
-                        </button>
-                      </form>
+    <input type="hidden" name="_method" value="DELETE">
+    <button type="submit" id="delete-btn-${seance.id}" class="btn-delete"
+            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette séance ?')">
+        <i class="bi bi-trash"></i> Supprimer
+    </button>
+                </form>
                       ${
                                 seance.type === 'EN_DIRECT'
-                                    ? `<button class="btn-modify" onclick="window.open('${seance.lienVideo}','_blank')">
-                               <i class="bi bi-camera-video"></i> Participer
-                             </button>`
+                                    ? `<button class="btn-modify" onclick="window.location.href='${isCoach ? '/seance/livestream/' + seance.id : '/seance/join/' + seance.id}'">
+                                 <i class="bi bi-camera-video"></i> Participer
+                               </button>`
                                     : `<a class="btn-modify" href="${seance.videoPath}">
-                               <i class="bi bi-play-circle"></i> Regarder la vidéo
-                             </a>`
+                                 <i class="bi bi-play-circle"></i> Regarder la vidéo
+                               </a>`
                             }
                     </div>
                   </div>

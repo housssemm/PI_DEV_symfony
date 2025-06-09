@@ -16,27 +16,47 @@ class SeanceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Seance::class);
     }
-    public function findByDateCoach(\DateTimeInterface $date): array
+    public function findByDateCoach(\DateTimeInterface $date,int $coachId): array
     {
         return $this->createQueryBuilder('s')
             ->leftJoin('s.coach', 'c')
             ->addSelect('c')
             ->andWhere('s.Date = :date')
-            ->setParameter('date', $date->format('Y-m-d')) // Formatage explicite
+            ->andWhere('c.id = :coachId')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->setParameter('coachId', $coachId)
             ->getQuery()
             ->getResult();
     }
-    public function findByDateAndAdherent(\DateTimeInterface $date, Adherent $adherent): array
+    public function findByCoachId(int $coachId): array
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.Date = :date')
-            ->andWhere('s.adherent = :adherent')
-            ->setParameter('date', $date->format('Y-m-d'))
-            ->setParameter('adherent', $adherent)
+            ->leftJoin('s.coach', 'c')
+            ->addSelect('c')
+            ->andWhere('c.id = :coachId')
+            ->setParameter('coachId', $coachId)
             ->getQuery()
             ->getResult();
     }
 
+    public function findByDateAndAdherent(\DateTimeInterface $date, int $adherentId): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.Date = :date')
+            ->andWhere('s.adherent = :adherentId')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->setParameter('adherentId', $adherentId)
+            ->getQuery()
+            ->getResult();
+    }
+    public function findByAdherentId(int $adherentId): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.adherent = :adherentId')
+            ->setParameter('adherentId', $adherentId)
+            ->getQuery()
+            ->getResult();
+    }
 
 
 //    /**
