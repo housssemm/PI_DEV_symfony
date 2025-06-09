@@ -1,0 +1,408 @@
+
+.chatbot {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -6px 99px -17px rgba(0, 0, 0, 0.68);
+
+    @media screen and (min-width: 640px) {
+        max-width:420px;
+        right: 80px;
+        top: auto;
+    }
+
+    &.chatbot--closed {
+        top: auto;
+        width: 100%;
+    }
+}
+
+.chatbot__header {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #F58400;
+    height: 54px;
+    padding: 0 20px;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: #0b0b0b;
+
+    &:hover {
+        background-color: #F58400;
+    }
+
+    p {
+        margin-right: 20px;
+    }
+}
+
+.chatbot__close-button {
+    fill: #fff;
+
+    &.icon-speech {
+        width: 20px;
+        display: none;
+
+        .chatbot--closed & {
+            display: block;
+        }
+    }
+
+    &.icon-close {
+        width: 14px;
+
+        .chatbot--closed & {
+            display: none;
+        }
+    }
+}
+
+.chatbot__message-window {
+    height: calc(100% - (54px + 60px));
+    padding: calc(20px * 2) 20px 20px;
+    background-color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    @media screen and (min-width: 640px) {
+        height: 380px;
+    }
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .chatbot--closed & {
+        display: none;
+    }
+}
+
+.chatbot__messages {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    width: auto;
+
+    li {
+        margin-bottom: 20px;
+
+        &.is-ai {
+            display: inline-flex;
+            align-items: flex-start;
+        }
+
+        &.is-user {
+            text-align: right;
+            display: inline-flex;
+            align-self: flex-end;
+        }
+
+        .is-ai__profile-picture {
+            margin-right: 8px;
+
+            .icon-avatar {
+                width: 40px;
+                height: 40px;
+                padding-top: 6px;
+            }
+
+        }
+    }
+}
+
+.chatbot__message {
+    display: inline-block;
+    padding: 12px 20px;
+    word-break: break-word;
+    margin: 0;
+    border-radius: 6px;
+    letter-spacing: -0.01em;
+    line-height: 1.45;
+    overflow: hidden;
+
+    .is-ai & {
+        background-color: #f0f0f0;
+        margin-right: calc(20px * 1.5);
+    }
+
+    .is-user & {
+        background-color: #7ee0d2;
+        margin-left: calc(20px * 1.5);
+    }
+
+    a {
+        color: #F58400;
+        word-break: break-all;
+        display: inline-block;
+    }
+
+    p:first-child {
+        margin-top: 0;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+
+    button{
+        background-color: #fff;
+        font-weight: 300;
+        border: 2px solid #F58400;
+        border-radius: 50px;
+        padding: 8px 20px;
+        margin: -8px 10px 18px 0;
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+
+        &:hover{
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        &:focus {
+            outline: none;
+        }
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .card {
+        background-color: #fff;
+        text-decoration: none;
+        overflow: hidden;
+        border-radius: 6px;
+        color: black;
+        word-break: normal;
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            margin-top: 0;
+        }
+
+        .card-button {
+            color: #F58400;
+            text-decoration: underline;
+        }
+    }
+
+}
+
+.animation{
+    &:last-child {
+        animation: fadein .25s;
+        animation-timing-function: cubic-bezier(0.550, 0.055, 0.675, 0.190);
+    }
+}
+
+.chatbot__arrow {
+    width: 0;
+    height: 0;
+    margin-top: 18px;
+}
+
+.chatbot__arrow--right {
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 6px solid #F58400;
+}
+
+.chatbot__arrow--left {
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid #f0f0f0;
+}
+
+.chatbot__entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 0 20px;
+    border-top: 1px solid #e6eaee;
+    background-color: #fff;
+
+    .chatbot--closed & {
+        display: none;
+    }
+}
+
+.chatbot__input {
+    height: 100%;
+    width: 80%;
+    border: 0;
+
+    &:focus {
+        outline: none;
+    }
+    &::-webkit-input-placeholder {
+        color:#7f7f7f;
+    }
+    &::-moz-placeholder {
+        color: #7f7f7f;
+    }
+    &::-ms-input-placeholder {
+        color: #0b0b0b;
+    }
+    &::-moz-placeholder {
+        color: #0b0b0b;
+    }
+}
+
+.chatbot__submit {
+    fill: #F58400;
+    height: 22px;
+    width: 22px;
+    transition: fill 0.2s ease;
+    cursor: pointer;
+    &:hover {
+        fill: #F58400; /* Darkened #7226e0 */
+    }
+}
+
+.u-text-highlight {
+    color: #0b0b0b;
+}
+
+/* Animated Loader */
+/* ---------------- */
+  .loader {
+      margin-bottom: -2px;
+      text-align: center;
+      opacity: .3;
+  }
+
+.loader__dot {
+    display: inline-block;
+    vertical-align: middle;
+    width: 6px;
+    height: 6px;
+    margin: 0 1px;
+    background: black;
+    border-radius: 50px;
+    animation: loader 0.45s infinite alternate;
+    &:nth-of-type(2) {
+        animation-delay: .15s;
+    }
+    &:nth-of-type(3) {
+        animation-delay: .35s;
+    }
+}
+
+@keyframes loader {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+        margin-top: 10px;
+        margin-bottom: 0;
+    }
+    to   {
+        opacity: 1;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+}
+
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,600');
+
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: url("https://images.unsplash.com/photo-1464823063530-08f10ed1a2dd?dpr=1&auto=compress,format&fit=crop&w=1199&h=799&q=80&cs=tinysrgb&crop=&bg=") no-repeat center center;
+    background-size: cover;
+    height: 1000px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+}
+
+input {
+    font-family: 'Open Sans', sans-serif;
+}
+
+strong {
+    font-weight: 600;
+}
+
+
+.intro {
+    display: block;
+    margin-bottom: 20px;
+}
+/* === HEADER ORANGE === */
+.chatbot__header {
+    background-color: #F58400 !important;
+}
+.chatbot__header:hover {
+    background-color: #FF8C00 !important;
+}
+
+/* === BOUTON SEND ORANGE === */
+.chatbot__submit {
+    fill: #F58400 !important;
+}
+
+/* Si tu veux aussi l’emoji “loader” en orange : */
+.loader__dot {
+    background: #F58400 !important;
+}
+
+/* Et si tu veux la flèche user (droite) en orange : */
+.chatbot__arrow--right {
+    border-left-color: #F58400 !important;
+}
+/* Avatar “H” : cercle vert + lettre blanche */
+.icon-avatar path:nth-child(1) {
+    fill: #E0E0E0 !important;   /* le cercle */
+}
+.icon-avatar path:nth-child(2) {
+    fill: #ffffff !important;   /* la lettre H */
+}
+/* 1) BULLE UTILISATEUR */
+/* cible les messages envoyés par “is-user” */
+.chatbot__messages .is-user .chatbot__message {
+    background-color: #E0B0FF !important; /* vert très clair, remplace par ton code */
+    color: #fff !important
+}
+
+/* 2) AVATAR “H” EN VERT */
+/* 1er <path> du SVG = le cercle, 2e <path> = la lettre */
+.icon-avatar path:nth-child(1) {
+    fill: #E0E0E0 !important;
+}
+.icon-avatar path:nth-child(2) {
+    fill: #ffffff !important;
+}
+
+/* 3) “Ask Harry” EN NOIR */
+/* annule la couleur par défaut de .u-text-highlight */
+.chatbot__header .u-text-highlight {
+    color: #000 !important;
+}
+/* === GOT A QUESTION ? === */
+.chatbot__header p strong {
+    color: #FFFFFF !important;      /* blanc, ou remplace par la couleur de ton choix */
+    font-weight: 600;               /* garde-le en gras */
+    font-size: 1rem;                /* ajuste si tu veux */
+    margin-right: 8px;              /* espace entre “Got a question?” et “Ask Harry” */
+}
+

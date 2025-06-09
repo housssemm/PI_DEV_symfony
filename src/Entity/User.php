@@ -344,8 +344,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user')]
-    private Collection $messages;
+//    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user')]
+//    private Collection $messages;
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'utilisateurExpediteur')]
+    private Collection $messagesSent;
+
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'utilisateurDestinataire')]
+    private Collection $messagesReceived;
 
     #[ORM\OneToMany(targetEntity: Panier::class, mappedBy: 'user')]
     private Collection $paniers;
@@ -366,6 +371,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->messagesSent = new ArrayCollection();
+        $this->messagesReceived = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->paniers = new ArrayCollection();
         $this->participantevenements = new ArrayCollection();
@@ -496,25 +503,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return 'user';
     }
 
-    public function getMessages(): Collection
+//    public function getMessages(): Collection
+//    {
+//        return $this->messages;
+//    }
+//
+//    public function addMessage(Message $message): self
+//    {
+//        if (!$this->messages->contains($message)) {
+//            $this->messages->add($message);
+//            $message->setUser($this);
+//        }
+//        return $this;
+//    }
+//
+//    public function removeMessage(Message $message): self
+//    {
+//        $this->messages->removeElement($message);
+//        return $this;
+//    }
+
+    public function getMessagesSent(): Collection
     {
-        return $this->messages;
+        return $this->messagesSent;
     }
 
-    public function addMessage(Message $message): self
+    public function addMessageSent(Message $message): self
     {
-        if (!$this->messages->contains($message)) {
-            $this->messages->add($message);
-            $message->setUser($this);
+        if (!$this->messagesSent->contains($message)) {
+            $this->messagesSent->add($message);
+            $message->setExpediteur($this);
         }
         return $this;
     }
 
-    public function removeMessage(Message $message): self
+    public function removeMessageSent(Message $message): self
     {
-        $this->messages->removeElement($message);
+        $this->messagesSent->removeElement($message);
         return $this;
     }
+
+    public function getMessagesReceived(): Collection
+    {
+        return $this->messagesReceived;
+    }
+
+    public function addMessageReceived(Message $message): self
+    {
+        if (!$this->messagesReceived->contains($message)) {
+            $this->messagesReceived->add($message);
+            $message->setDestinataire($this);
+        }
+        return $this;
+    }
+
+    public function removeMessageReceived(Message $message): self
+    {
+        $this->messagesReceived->removeElement($message);
+        return $this;
+    }
+
 
     public function getPaniers(): Collection
     {

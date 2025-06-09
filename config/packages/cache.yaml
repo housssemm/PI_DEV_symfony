@@ -1,5 +1,10 @@
 framework:
     cache:
+        pools:
+            rocket_chat_cache:
+                adapter: cache.adapter.redis
+                provider: 'redis://localhost:6379'
+
         # Unique name of your app: used to compute stable namespaces for cache keys.
         #prefix_seed: your_vendor_name/app_name
 

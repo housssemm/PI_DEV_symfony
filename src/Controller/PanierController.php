@@ -50,14 +50,7 @@ final class PanierController extends AbstractController
         // Récupérer le panier de l'utilisateur
         $panier = $panierRepository->findPanierByUser($user);
 
-        if (!$panier) {
-            // Si le panier est vide ou inexistant
-            return $this->render('panier/afficher.html.twig', [
-                'categories' => $categories,
-                'produits' => $produits,
-                'message' => 'Votre panier est vide.',
-            ]);
-        }
+
 
         // Récupérer les produits associés au panier
         $produitsPanier = $panierProduitRepository->findBy(['panier' => $panier]);

@@ -1,0 +1,61 @@
+{# templates/message/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <style>
+        body { background: #151515; color: white; margin: 0; font-family: sans-serif; }
+        .messaging-app { display: flex; height: 100vh; }
+        .user-list { width: 25%; background: #151515; overflow-y: auto; border-right: 1px solid #444; }
+        .user        { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #333; cursor: pointer; }
+        .user:hover, .user.selected { background: #333; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 8px; }
+        .chat-panel  { flex: 1; display: flex; flex-direction: column; background: #121212; }
+        .chat-header { padding: 12px; display: flex; align-items: center; border-bottom: 1px solid #333; }
+        .chat-header img { width: 40px; height: 40px; border-radius: 50%; margin-right: 8px; }
+        .chat-header h2 { flex: 1; }
+        .call-buttons button { margin-left: 8px; }
+        .messages    { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .message     { max-width: 70%; padding: 8px; border-radius: 8px; background: #333; color: white; }
+        .message.me  { background: #007bff; align-self: flex-end; }
+        .message audio { width: 100%; margin-top: 4px; }
+        .message-footer { padding: 12px; display: flex; gap: 8px; border-top: 1px solid #333; }
+        .message-footer textarea { flex: 1; background: #292929; border: none; padding: 8px; border-radius: 4px; color: white; }
+        .btn { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn.blue   { background: #007bff; color: white; }
+        .btn.green  { background: #28a745; color: white; }
+        .btn.gray   { background: #6c757d; color: white; }
+        .btn.yellow { background: #ffc107; color: black; }
+    </style>
+
+    <div class="messaging-app">
+        <aside class="user-list">
+            <h2 style="padding:12px">Utilisateurs</h2>
+            <ul id="users" style="list-style:none; margin:0; padding:0;"></ul>
+        </aside>
+        <section class="chat-panel">
+            <header class="chat-header">
+                <img id="user-avatar" src="{{ asset('img/default-avatar.png') }}" alt="Avatar">
+                <h2 id="user-name">Sélectionnez un utilisateur</h2>
+                <div class="call-buttons">
+                    <button id="start-video-call" class="btn blue">📹</button>
+                    <button id="start-voice-call" class="btn green">📞</button>
+                </div>
+            </header>
+            <div id="messages" class="messages"><em>Sélectionnez un utilisateur…</em></div>
+            <footer class="message-footer">
+                <textarea id="message-input" rows="2" placeholder="Écrivez un message…"></textarea>
+                <button id="send-message" class="btn blue">➡️</button>
+                <button id="record-voice-message" class="btn green">🎙️</button>
+                <button id="upload-file" class="btn gray">📤</button>
+                <button id="add-reaction" class="btn yellow">😊</button>
+            </footer>
+        </section>
+    </div>
+
+    {# Agora SDKs #}
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.14.0.js"></script>
+    <script src="https://download.agora.io/sdk/release/AgoraRTM_N-1.6.2.js"></script>
+
+    {# Ton code JS #}
+    <script src="{{ asset('js/agora-ui.js') }}"></script>
+{% endblock %}

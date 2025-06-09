@@ -34,6 +34,7 @@ class StripeService
             'amount' => $amount * 100, // Convertir en centimes (cents pour USD)
             'currency' => $currency, // Utiliser 'usd' par défaut
             'payment_method_types' => ['card'],
+            'metadata'             => $metadata,
         ]);
     }
 

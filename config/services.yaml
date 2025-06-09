@@ -1,57 +1,194 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
+##parameters:
+##  user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
+##  cv_directory: '%kernel.project_dir%/public/uploads/cv'
+##  RECAPTCHA_SECRET_KEY: '%env(string:RECAPTCHA3_SECRET)%'
+##  RECAPTCHA_SITE_KEY: '%env(string:RECAPTCHA3_KEY)%'
+##
+##  twilio.sid: '%env(TWILIO_SID)%'
+##  twilio.auth_token: '%env(TWILIO_AUTH_TOKEN)%'
+##  twilio.phone_number: '%env(TWILIO_PHONE_NUMBER)%'
+##
+##services:
+##  _defaults:
+##    autowire: true
+##    autoconfigure: true
+##    public: false
+##
+##  # Injection du Client Mailjet
+##  Mailjet\Client:
+##    arguments:
+##      $key:     '%env(MAILJET_APIKEY)%'
+##      $secret:  '%env
+#  (MAILJET_SECRET)%'
+##      $settings:
+##        version: 'v3.1'
+##
+##  App\Service\SmsSender:
+##    arguments:
+##      $sid: '%twilio.sid%'
+##      $authToken: '%twilio.auth_token%'
+##      $fromNumber: '%twilio.phone_number%'
+##
+##  App\:
+##    resource: '../src/'
+##    exclude:
+##      - '../src/DependencyInjection/'
+##      - '../src/Entity/'
+##      - '../src/Kernel.php'
+#
+## config/services.yaml
+#
+## config/services.yaml
+#
+## config/services.yaml
+#
+#parameters:
+#
 
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+#
+#
+#        twilio_account_sid: '%env(TWILIO_ACCOUNT_SID)%'
+#        twilio_auth_token: '%env(TWILIO_AUTH_TOKEN)%'
+#        twilio_phone_number: '%env(TWILIO_PHONE_NUMBER)%'
+#
+#
+#        mailjet_api_key: '%env(MAILJET_API_KEY)%'
+#        mailjet_api_secret: '%env(MAILJET_API_SECRET)%'
+#        #ghada
+#        stripe.public: '%env(STRIPE_PUBLIC)%'
+#        stripe.secret: '%env(STRIPE_SECRET)%'
+#
+#        # Clés ReCAPTCHA (inchangées)
+#        RECAPTCHA_SECRET_KEY:  '%env(string:RECAPTCHA3_SECRET)%'
+#        RECAPTCHA_SITE_KEY:    '%env(string:RECAPTCHA3_KEY)%'
+#
+#services:
+#    # default configuration for services in *this* file
+#    _defaults:
+#        autowire: true      # Automatically injects dependencies in your services.
+#        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+#        public: false
+#
+#
+#    # makes classes in src/ available to be used as services
+#    # this creates a service per class whose id is the fully-qualified class name
+##    App\:
+##        resource: '../src/'
+##        exclude:
+##            - '../src/DependencyInjection/'
+##            - '../src/Entity/'
+##            - '../src/Kernel.php'
+#  #ghada
+#
+#    # 2) Bind global pour les arguments de SmsSender
+#    bind:
+#      string $sid:        '%env(string:TWILIO_SID)%'
+#      string $authToken:  '%env(string:TWILIO_AUTH_TOKEN)%'
+#      string $fromNumber: '%env(string:TWILIO_PHONE_NUMBER)%'
+#
+#  # 3) Client Mailjet
+#    Mailjet\Client:
+#      arguments:
+#        $key:      '%env(string:MAILJET_APIKEY)%'
+#        $secret:   '%env(string:MAILJET_SECRET)%'
+#        $settings:
+#          version: 'v3.1'
+#
+#  # 4) Votre service Twilio SMS (il sera autowiré avec les binds ci-dessus)
+#    App\Service\SmsSender: ~
+#
+#    # 5) Le reste de vos services (controllers, etc.)
+#    App\:
+#      resource: '../src/'
+#      exclude:
+#        - '../src/DependencyInjection/'
+#        - '../src/Entity/'
+#        - '../src/Kernel.php'
+#
+#
+      #App\Service\StripeService:
+        #arguments:
+           # $stripeSecretKey: '%env(STRIPE_SECRET)%'
+#
+#    App\Service\TwilioService:
+#      arguments:
+#        $accountSid: '%env(TWILIO_ACCOUNT_SID)%'
+#        $authToken: '%env(TWILIO_AUTH_TOKEN)%'
+#        $fromNumber: '%env(TWILIO_FROM)%'
+#    # add more service definitions when explicit configuration is needed
+#    # please note that last definitions always *replace* previous ones
+#    #maissa
+   #App\Service\StripeService:
+       #arguments:
+           #$stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+           #$urlGenerator: '@router'
+
 
 parameters:
-        user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
-        cv_directory: '%kernel.project_dir%/public/uploads/cv'
-        #stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
-        #stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
-        videos_directory: '%kernel.project_dir%/public/uploads/videos'
+  user_images_directory: '%kernel.project_dir%/public/uploads/user_images'
+  cv_directory: '%kernel.project_dir%/public/uploads/cv'
+  videos_directory: '%kernel.project_dir%/public/uploads/videos'
+  #maissa
+  stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+  stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+  twilio_account_sid: '%env(TWILIO_ACCOUNT_SID)%'
+  twilio_auth_token: '%env(TWILIO_AUTH_TOKEN)%'
+  twilio_phone_number: '%env(TWILIO_PHONE_NUMBER)%'
 
-        twilio_account_sid: '%env(TWILIO_ACCOUNT_SID)%'
-        twilio_auth_token: '%env(TWILIO_AUTH_TOKEN)%'
-        twilio_phone_number: '%env(TWILIO_FROM)%'
 
 
-        #mailjet_api_key: '%env(MAILJET_API_KEY)%'
-        #mailjet_api_secret: '%env(MAILJET_API_SECRET)%'
-        stripe.public_key: '%env(STRIPE_PUBLIC)%'
-        stripe.secret_key: '%env(STRIPE_SECRET)%'
+  #farah
+  mailjet_api_key: '%env(MAILJET_API_KEY)%'
+  mailjet_api_secret: '%env(MAILJET_API_SECRET)%'
+
+
+  RECAPTCHA_SECRET_KEY: '%env(RECAPTCHA3_SECRET)%'
+  RECAPTCHA_SITE_KEY: '%env(RECAPTCHA3_KEY)%'
 
 services:
-    # default configuration for services in *this* file
-    _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        public: false
+  _defaults:
+    autowire: true      # Injecte automatiquement les dépendances dans vos services.
+    autoconfigure: true # Enregistre automatiquement vos services comme commandes, abonnés d'événements, etc.
+    public: false
+    bind:
+      $sid: '%env(string:TWILIO_ACCOUNT_SID)%'
+      $authToken: '%env(string:TWILIO_AUTH_TOKEN)%'
+      $fromNumber: '%env(string:TWILIO_PHONE_NUMBER)%'
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/'
-        exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
+  #farah
+  Mailjet\Client:
+    arguments:
+      $key: '%env(string:MAILJET_APIKEY)%' # Changed from MAILJET_API_KEY
+      $secret: '%env(string:MAILJET_SECRET)%' # Changed from MAILJET_API_SECRET
+      $settings:
+        version: 'v3.1'
+  # Service SmsSender
+  App\Service\SmsSender:
+    arguments:
+      $sid: '%env(TWILIO_SID)%'
+      $authToken: '%env(TWILIO_AUTH_TOKEN)%'
+      $fromNumber: '%env(TWILIO_PHONE_NUMBER)%'
 
-    App\Service\StripeService:
+  # Services généraux
+  App\:
+    resource: '../src/'
+    exclude:
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Kernel.php'
+
+
+  #maissa&houssem
+  App\Service\StripeService:
         arguments:
-            $stripeSecretKey: '%env(STRIPE_SECRET)%'
-
-    App\Service\TwilioService:
-        arguments:
-            $accountSid: '%env(TWILIO_ACCOUNT_SID)%'
-            $authToken: '%env(TWILIO_AUTH_TOKEN)%'
-            $fromNumber: '%env(TWILIO_FROM)%'
-
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+          $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+          $urlGenerator: '@router'
+  # Service Twilio
+  App\Service\TwilioService:
+    arguments:
+      $accountSid: '%env(TWILIO_ACCOUNT_SID)%'
+      $authToken: '%env(TWILIO_AUTH_TOKEN)%'
+      $fromNumber: '%env(TWILIO_PHONE_NUMBER)%'
 
 
-    #App\Service\StripeService:
-       #arguments:
-            #$stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
-            #$urlGenerator: '@router'
+

@@ -1,0 +1,18 @@
+const { RtcTokenBuilder, RtcRole } = require('agora-access-token');
+
+// Clé de votre application
+const appId = 'e7f6e9aeecf14b2ba10e3f40be9f56e7';
+const appCertificate = 'VOTRE_APP_CERTIFICATE';
+const channelName = 'test';
+const uid = 0; // 0 pour les utilisateurs anonymes
+const role = RtcRole.PUBLISHER; // RtcRole.SUBSCRIBER ou RtcRole.PUBLISHER
+
+// Durée d'expiration du token en secondes
+const expireTimeInSeconds = 3600;
+const currentTimestamp = Math.floor(Date.now() / 1000);
+const privilegeExpireTs = currentTimestamp + expireTimeInSeconds;
+
+// Générer le token
+const token = RtcTokenBuilder.buildTokenWithUid(appId, appCertificate, channelName, uid, role, privilegeExpireTs);
+
+console.log('Token généré :', token);

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\MessageRepository;
 
