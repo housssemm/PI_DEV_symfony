@@ -191,6 +191,11 @@
       <path value="$PROJECT_DIR$/vendor/symfony/webpack-encore-bundle" />
       <path value="$PROJECT_DIR$/vendor/karser/karser-recaptcha3-bundle" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php84" />
+      <path value="$PROJECT_DIR$/vendor/symfony/doctrine-messenger" />
+      <path value="$PROJECT_DIR$/vendor/stripe/stripe-php" />
+      <path value="$PROJECT_DIR$/vendor/peterujah/php-agora-tokens" />
+      <path value="$PROJECT_DIR$/vendor/symfony/ux-turbo" />
+      <path value="$PROJECT_DIR$/vendor/symfony/stimulus-bundle" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />

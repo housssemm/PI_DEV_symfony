@@ -10,10 +10,14 @@ Encore
     .setPublicPath('/build')
     .addEntry('app', './assets/app.js')
     .addEntry('pose_detection', './src/ia_cam/src/index.js')
+    .addEntry('livestream', './assets/livestream.js')
     .addAliases({
         '@pose': path.resolve(__dirname, 'src/ia_cam/src')
     })
     .splitEntryChunks()
+
+    // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
+    .enableStimulusBridge('./assets/controllers.json')
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()
     .enableSourceMaps(!Encore.isProduction())

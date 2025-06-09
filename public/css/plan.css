@@ -1,4 +1,27 @@
+@import url('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css'); /* Updated to match FullCalendar v6.1.15 from your template */@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import 'components/card.css';
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
+#calendrier {
+    max-width: 100%;
+    margin: 20px auto;
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    padding: 10px;
+}
 .actions {
     margin-top: 1rem;
     padding-top: 1rem;

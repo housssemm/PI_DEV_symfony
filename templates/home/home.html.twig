@@ -381,29 +381,42 @@
             <div class="row">
                 <div class="ts-slider owl-carousel">
                     {% for coach in coachs %}
-                        {% if coach is not null %}
+                        {% if coach is defined and coach is not null %}
                             <div class="col-lg-4">
                                 {% if is_granted('ROLE_ADHERENT') %}
                                     <a href="{{ path('payer_coach', {'id': coach.id}) }}" style="text-decoration: none; color: inherit;">
-                                        <div class="ts-item set-bg" data-setbg="{{ asset('img/' ~ coach.image) }}">
+                                        <div class="ts-item set-bg" data-setbg="{{ asset('img/' ~ (coach.image ?? 'default.jpg')) }}">
                                             <div class="ts_text text-center">
-                                                <h4>{{ coach.nom }} {{ coach.prenom }}</h4>
-                                                <span><strong>Spécialité :</strong> {{ coach.specialite }}</span><br>
+                                                <h4>{{ coach.nom|default('N/A') }} {{ coach.prenom|default('') }}</h4>
+                                                <span><strong>Spécialité :</strong> {{ coach.specialite|default('Non spécifiée') }}</span><br>
                                                 <span>{{ coach.anneeExperience == 0 ? 'Débutant' : 'Expérience : ' ~ coach.anneeExperience ~ ' an' ~ (coach.anneeExperience > 1 ? 's' : '') }}</span>
                                             </div>
                                         </div>
                                     </a>
                                 {% else %}
                                     <a href="#" onclick="return false;" style="cursor: default; text-decoration: none; color: inherit;">
-                                        <div class="ts-item set-bg" data-setbg="{{ asset('img/' ~ coach.image) }}">
+                                        <div class="ts-item set-bg" data-setbg="{{ asset('img/' ~ (coach.image ?? 'default.jpg')) }}">
                                             <div class="ts_text text-center">
-                                                <h4>{{ coach.nom }} {{ coach.prenom }}</h4>
-                                                <span><strong>Spécialité :</strong> {{ coach.specialite }}</span><br>
+                                                <h4>{{ coach.nom|default('N/A') }} {{ coach.prenom|default('') }}</h4>
+                                                <span><strong>Spécialité :</strong> {{ coach.specialite|default('Non spécifiée') }}</span><br>
                                                 <span>{{ coach.anneeExperience == 0 ? 'Débutant' : 'Expérience : ' ~ coach.anneeExperience ~ ' an' ~ (coach.anneeExperience > 1 ? 's' : '') }}</span>
                                             </div>
                                         </div>
                                     </a>
                                 {% endif %}
+                            </div>
+                        {% else %}
+                            <!-- Fallback for null coach -->
+                            <div class="col-lg-4">
+                                <a href="#" onclick="return false;" style="cursor: default; text-decoration: none; color: inherit;">
+                                    <div class="ts-item set-bg" data-setbg="{{ asset('img/default.jpg') }}">
+                                        <div class="ts_text text-center">
+                                            <h4>Coach Indisponible</h4>
+                                            <span><strong>Spécialité :</strong> Non spécifiée</span><br>
+                                            <span>Débutant</span>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         {% endif %}
                     {% endfor %}
@@ -411,7 +424,6 @@
             </div>
         </div>
     </section>
-
 
 
 

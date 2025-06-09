@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Regarder le Live - {{ seance.titre }}{% endblock %}
+
+{% block body %}
+    <style>
+        body {
+            background-color: #151515 !important;
+        }
+
+        #remote-player {
+            width: 100%;
+            height: 600px;
+            background-color: #000;
+            border: 2px solid #444;
+            border-radius: 8px;
+        }
+
+        .info {
+            margin-top: 10px;
+        }
+    </style>
+
+    <div class="container mt-4" style="color: #fff;">
+        <h2 style="color: whitesmoke">📺 Live en cours : {{ seance.titre }}</h2>
+        <p>{{ seance.description }}</p>
+
+        <div id="remote-player"></div>
+
+        <div class="info">
+            <p><strong>Canal :</strong> {{ channelName }}</p>
+            <p><strong>Votre rôle :</strong> Adhérent (spectateur)</p>
+            <p id="status" class="text-warning">⏳ Connexion au flux...</p>
+        </div>
+    </div>
+
+    <!-- Agora SDK -->
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
+
+    <script>
+        // Variables injectées depuis Twig
+        const appId = "{{ appId }}";
+        const token = "{{ token }}";
+        const channel = "{{ channelName }}";
+        const uid = "{{ app.user.id }}";
+
+        // Vérification des variables
+        if (!appId || !token || !channel || !uid) {
+            console.error("❌ Variables manquantes :", { appId, token, channel, uid });
+            const statusEl = document.getElementById('status');
+            statusEl.innerText = "🔴 Erreur : Variables non définies.";
+            statusEl.className = "text-danger";
+        } else {
+            // Initialisation du client Agora
+            const client = AgoraRTC.createClient({ mode: "live", codec: "h264" });
+
+            // Événements
+            client.on("user-published", async (user, mediaType) => {
+                try {
+                    await client.subscribe(user, mediaType);
+                    console.log("📡 Stream reçu de l'hôte :", user.uid);
+
+                    if (mediaType === "video") {
+                        user.videoTrack.play("remote-player");
+                    }
+                    if (mediaType === "audio") {
+                        user.audioTrack.play();
+                    }
+
+                    const statusEl = document.getElementById('status');
+                    statusEl.innerText = "🟢 En direct";
+                    statusEl.className = "text-success";
+                } catch (error) {
+                    console.error("Erreur lors de la gestion du flux :", error);
+                }
+            });
+
+            client.on("user-unpublished", (user) => {
+                const statusEl = document.getElementById('status');
+                statusEl.innerText = "🔴 Le coach a arrêté la diffusion.";
+                statusEl.className = "text-danger";
+            });
+
+            client.on("error", (err) => {
+                console.error("Erreur client Agora :", err);
+            });
+
+            // Fonction de connexion
+            async function joinLive() {
+                try {
+                    console.log("Joining with appId:", appId, "channel:", channel, "token:", token, "uid:", uid);
+                    await client.join(appId, channel, token, uid);
+                    await client.setClientRole("audience");
+                    console.log("✅ Connecté au live comme spectateur");
+                } catch (error) {
+                    console.error("❌ Erreur de connexion au live :", error.message, error);
+                    const statusEl = document.getElementById('status');
+                    statusEl.innerText = "🔴 Erreur de connexion : " + error.message;
+                    statusEl.className = "text-danger";
+                    alert("Erreur de connexion. Veuillez réessayer. Détails : " + error.message);
+                }
+            }
+
+            // Exécuter la connexion au chargement
+            joinLive();
+        }
+    </script>
+{% endblock %}

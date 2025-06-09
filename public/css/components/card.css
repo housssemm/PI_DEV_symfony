@@ -1,0 +1,58 @@
+.seance-card {
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.seance-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.seance-card .title {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.seance-card .badge {
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+.seance-card .badge.live {
+    background-color: #ff4444;
+    color: white;
+}
+
+.seance-card .badge.recorded {
+    background-color: #4444ff;
+    color: white;
+}
+
+.seance-card .meta-info,
+.seance-card .participants,
+.seance-card .actions {
+    margin: 10px 0;
+}
+
+.seance-card .btn-modify,
+.seance-card .btn-delete {
+    padding: 5px 10px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.seance-card .btn-delete {
+    background-color: #ff4444;
+    color: white;
+}
+
+.seance-card .btn-modify {
+    background-color: #4CAF50;
+    color: white;
+}
